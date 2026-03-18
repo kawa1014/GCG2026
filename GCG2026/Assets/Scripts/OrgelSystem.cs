@@ -32,19 +32,12 @@ public class OrgelSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// 毎フレーム呼ばれる処理。キー入力を監視します
+    /// 外部から呼ばれてON/OFFを切り替えるメソッド
     /// </summary>
-    void Update()
+    public void TogglePlayer()
     {
-        // スペースが押された瞬間を検知
-        if(Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            // 状態を反転させる
-            isPlaying = !isPlaying;
-
-            // 色を更新する
-            UpdateColor();
-        }
+        isPlaying = !isPlaying;
+        UpdateColor();
     }
 
     /// <summary>
