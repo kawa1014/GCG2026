@@ -54,9 +54,15 @@ public class PlayerInteractor : MonoBehaviour
             // もし持っていたら
             if (orgel != null)
             {
-                // オルゴール側の切り替え処理を呼び出す
-                orgel.TogglePlayer();
-                Debug.Log("<color=green> [Interact]オルゴールを操作しました!</color>");
+                // 鳴っている時だけTurnOff()を呼ぶようにする
+                if(orgel.isPlaying)
+                {
+                    orgel.TurnOff();
+                }
+                else
+                {
+                    Debug.Log("【Interact】今は鳴っていません。");
+                }
             }
         }
     }

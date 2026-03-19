@@ -14,10 +14,18 @@ public class OrgelSystem : MonoBehaviour
     [Tooltip("現在音が鳴っているか(ON/OFF)")]
     public bool isPlaying = false;
 
+    // 自動で音が鳴りだすまでの時間の幅を設定します
+    [Header("自動ON設定")]
+    [Tooltip("自動でONになるまでの最短時間(秒)")]
+    public float minTime = 5.0f;
+    [Tooltip("自動でONになるまでの最長時間(秒)")]
+    public float maxTime = 15.0f;
+
     /// <summary>
     /// オブジェクトの色を変更するための描画コンポーネントを保持しておく変数
     /// </summary>
     private Renderer objRenderer;
+    private float timer; // 次に鳴るまでのカウントダウンタイマー
 
     /// <summary>
     /// ゲーム開始時に1回だけ呼ばれる初期化処理
@@ -29,15 +37,57 @@ public class OrgelSystem : MonoBehaviour
 
         // 初期の状態に合わせて色を設定する
         UpdateColor();
+
+        ResetTimer(); // 最初のカウントダウンを開始
+    }
+
+    private void Update()
+    {
+        // 音が止まっている時だけ、タイマーを減らしていく
+        if(!isPlaying)
+        {
+            timer -= Time.deltaTime;
+
+            // タイマーが0以下になったら勝手に鳴りだす
+            if(timer <= 0f)
+            {
+                TurnOn();
+            }
+        }
     }
 
     /// <summary>
-    /// 外部から呼ばれてON/OFFを切り替えるメソッド
+    /// 自動的にオルゴールをONにする処理
     /// </summary>
-    public void TogglePlayer()
+    private void TurnOn()
     {
-        isPlaying = !isPlaying;
+        isPlaying = true;
         UpdateColor();
+        Debug.Log("<color=red>【Orgel】オルゴールが勝手に鳴り出しました！</color>");
+    }
+
+    /// <summary>
+    /// 外部から呼ばれてOFFにするメソッド
+    /// </summary>
+    public void TurnOff()
+    {
+        // 鳴っている時だけ消せる
+        if(isPlaying)
+        {
+            isPlaying = false;
+            UpdateColor();
+            ResetTimer(); // 消したら、また次になるまでのタイマーをセットする
+            Debug.Log("<color=green>【Orgel】オルゴールを止めました。</color>");
+        }
+    }
+
+    /// <summary>
+    /// ランダム時間を計算してタイマーにセットする処理
+    /// </summary>
+    private void ResetTimer()
+    {
+        timer = Random.Range(minTime, maxTime);
+        Debug.Log($"<color=gray>【Orgel】次に鳴るまであと {timer:F1} 秒...</color>");
     }
 
     /// <summary>
