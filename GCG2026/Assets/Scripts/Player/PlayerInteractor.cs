@@ -11,12 +11,17 @@ public class PlayerInteractor : MonoBehaviour
     /// </summary>
     [Tooltip("インタラクトできる距離")]
     public float interactRange = 3.0f;
+    [Tooltip("解除に必要な時間")]
+    public float requiredHoldTime = 3.0f;
 
     /// <summary>
     /// プレイヤーのカメラ(ここから視線の光線を飛ばします)
     /// </summary>
     [Tooltip("プレイヤーのカメラ")]
     public Camera playerCamera;
+
+    //---内部状態---
+    private float currentHoldTime = 0.0f; ///< 現在の長押し経過時間
 
     private void Update()
     {
@@ -26,10 +31,66 @@ public class PlayerInteractor : MonoBehaviour
             Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward * interactRange, Color.red);
         }
 
-        // マウスの右クリックが押された瞬間を検知
-        if(Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        // 左クリックが「今」押されているかチェック（長押し判定）
+        if (Mouse.current != null && Mouse.current.leftButton.isPressed)
         {
-            TryInteract();
+            CheckAndInteract();
+        }
+        else
+        {
+            // 指を離したらカウントをリセット
+            ResetInteraction();
+        }
+    }
+
+    /// <summary>
+    /// @brief 視線の先をチェックし、有効対象なら進捗を進める
+    /// </summary>
+    private void CheckAndInteract()
+    {
+        if (playerCamera == null) return;
+
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        RaycastHit hitInfo;
+
+        // レイを飛ばして何かに当たったか
+        if(Physics.Raycast(ray, out hitInfo, interactRange))
+        {
+            OrgelSystem orgel = hitInfo.collider.GetComponent<OrgelSystem>();
+            
+            // 鳴っているオルゴールに当たっている場合
+            if(orgel != null && orgel.isPlaying)
+            {
+                currentHoldTime += Time.deltaTime; // 内部で時間を加算
+
+                // デバッグ用にコンソールに進捗を表示
+                Debug.Log($"<color=cyan>【Action】解除中... {currentHoldTime:F1} / {requiredHoldTime} 秒</color>");
+
+                // 規定時間に達したら解除
+                if(currentHoldTime >= requiredHoldTime)
+                {
+                    orgel.TurnOff();
+                    ResetInteraction(); // 解除完了したのでリセット
+                    Debug.Log("<color=green>【Action】長押しによる解除に成功！</color>");
+                }
+                return;
+            }
+        }
+
+        // 何にも当たっていない、またはオルゴールから視線が外れた場合はリセット
+        ResetInteraction();
+    }
+
+    /// <summary>
+    /// @brief 長押し状態をリセットする
+    /// </summary>
+    private void ResetInteraction()
+    {
+        // カウントダウンが0より大きい場合のみリセットログを出す
+        if(currentHoldTime > 0.0f)
+        {
+            currentHoldTime = 0.0f;
+            Debug.Log("<color=orange>【Action】解除が中断されました。</color>");
         }
     }
 

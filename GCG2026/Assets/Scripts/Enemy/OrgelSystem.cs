@@ -2,11 +2,18 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// 音源オブジェクトのON/OFF状態を管理し、色で可視化するクラス
-/// 実際には音を鳴らさず、プロトタイプとして視覚的に表現します
+/// オルゴールの状態管理と3Dサウンド制御を行うクラス
+/// ランダムなタイミングで起動してAudioSourceを再生し、プレイヤーのアクションによって止められます
 /// </summary>
 public class OrgelSystem : MonoBehaviour
 {
+    [Header("サウンド設定")]
+    /// <summary>
+    /// @brief オルゴールの音を鳴らすためのコンポーネント
+    /// </summary>
+    [Tooltip("3Dサウンド設定を行ったAudioSourceをアタッチしてください")]
+    public AudioSource orgelAudioSource;
+
     /// <summary>
     /// 現在音が鳴っているかどうかの状態
     /// 外部(これから作る敵管理スクリプトなど)から読み取れるようにpublicにしています
@@ -57,11 +64,19 @@ public class OrgelSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// 自動的にオルゴールをONにする処理
+    /// オルゴールが起動する際の処理
+    /// タイマーなどから呼び出され、異常状態をONにして音を鳴らします
     /// </summary>
     private void TurnOn()
     {
         isPlaying = true;
+
+        // 3Dサウンドの再生開始
+        if(orgelAudioSource != null)
+        {
+            orgelAudioSource.Stop();
+        }
+
         UpdateColor();
         Debug.Log("<color=red>【Orgel】オルゴールが勝手に鳴り出しました！</color>");
     }
