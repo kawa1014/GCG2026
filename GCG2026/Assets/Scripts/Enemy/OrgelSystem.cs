@@ -74,7 +74,7 @@ public class OrgelSystem : MonoBehaviour
         // 3Dサウンドの再生開始
         if(orgelAudioSource != null)
         {
-            orgelAudioSource.Stop();
+            orgelAudioSource.Play();
         }
 
         UpdateColor();
@@ -90,6 +90,13 @@ public class OrgelSystem : MonoBehaviour
         if(isPlaying)
         {
             isPlaying = false;
+
+            // 3Dサウンドの再生を停止
+            if(orgelAudioSource != null)
+            {
+                orgelAudioSource.Stop();
+            }
+
             UpdateColor();
             ResetTimer(); // 消したら、また次になるまでのタイマーをセットする
             Debug.Log("<color=green>【Orgel】オルゴールを止めました。</color>");
