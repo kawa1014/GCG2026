@@ -76,7 +76,7 @@ public class OrgelSystem : MonoBehaviour
         {
             orgelAudioSource.Play();
         }
-
+        GameManager.instance.AddPlayingOrgel();
         UpdateColor();
         Debug.Log("<color=red>【Orgel】オルゴールが勝手に鳴り出しました！</color>");
     }
@@ -96,7 +96,7 @@ public class OrgelSystem : MonoBehaviour
             {
                 orgelAudioSource.Stop();
             }
-
+            GameManager.instance.RemovePlayingOrgel();
             UpdateColor();
             ResetTimer(); // 消したら、また次になるまでのタイマーをセットする
             Debug.Log("<color=green>【Orgel】オルゴールを止めました。</color>");
