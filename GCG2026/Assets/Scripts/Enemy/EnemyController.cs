@@ -11,13 +11,16 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     [Tooltip("敵のパラメータデータ")]
     public EnemyData enemyData;
+    private CharacterController controller;
 
     private Vector3 startPosition; // 出現した最初の位置
     private Vector3 targetPosition; // 次に向かう目的地
+    private Vector3 verticalVelocity;
     private Transform playerTransform; // プレイヤーの位置を記憶する変数
 
     private void Start()
     {
+        controller = GetComponent<CharacterController>();
         // 出現した位置を記憶しておき、そこを中心に徘徊するようにします
         startPosition = transform.position;
 
@@ -37,26 +40,23 @@ public class EnemyController : MonoBehaviour
         // もしデータがセットされていなかったらエラーを防ぐために処理を中止
         if (enemyData == null) return;
 
-        // プレイヤーが視界にいるかチェックする
-        bool isPlayerInSight = CheckSight();
-
-        if (isPlayerInSight)
+        // 重力の計算
+        if (controller.isGrounded && verticalVelocity.y <0)
         {
-            // 視界に入った
-            Debug.Log("<color=red>【Enemy】プレイヤーを発見！！</color>");
-
-            // プレイヤーの方を向く
-            Vector3 lookTarget = new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z);
-            transform.LookAt(lookTarget);
-
-            // プレイヤーに向かって移動する
-            transform.position = Vector3.MoveTowards(transform.position, lookTarget, enemyData.moveSpeed * Time.deltaTime);
+            verticalVelocity.y = -2f;
         }
-        else
+        verticalVelocity.y += -9.81f * Time.deltaTime;
+
+        // 状態判定
+        if(CheckSight())
         {
-            // 視界にいない場合は、今まで通り徘徊する
-            Wander();
+            // プレイヤーを追跡
+            Debug.Log("<color=red>【Enemy】発見!</color>");
         }
+        Wander();
+
+        // 最終的な垂直移動の適用
+        controller.Move(verticalVelocity * Time.deltaTime);
     }
 
     /// <summary>
@@ -93,8 +93,20 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     private void Wander()
     {
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, enemyData.moveSpeed * Time.deltaTime);
-        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
+        // 目的地への方向を計算
+        Vector3 direction = (targetPosition - transform.position);
+        direction.y = 0; // 高さは無視
+
+        if(direction.magnitude > 0.1f)
+        {
+            // 目的地を向く
+            transform.forward = Vector3.Slerp(transform.forward, direction.normalized, Time.deltaTime * 5.0f);
+
+            // 移動の実行
+            Vector3 move = transform.forward * enemyData.moveSpeed * Time.deltaTime;
+            controller.Move(move);
+        }
+        else
         {
             SetNextTarget();
         }

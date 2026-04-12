@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private float xRotation = 0.0f;
 
+    private Vector3 verticalVelocity; // 垂直方向の速度
+    private bool isGrounded;          // 接地判定
+
     /// <summary>
     /// 開始時に必要なコンポーネント取得とマウスカーソル設定を行う
     /// </summary>
@@ -55,6 +58,14 @@ public class PlayerController : MonoBehaviour
         // キーボードが接続されていない場合は処理をスキップ
         if (Keyboard.current == null) return;
 
+        // 接地チェック
+        isGrounded = controller.isGrounded;
+        if (isGrounded && verticalVelocity.y < 0)
+        {
+            // 地面にいたら、下方向への速度をわずかな値にリセット
+            verticalVelocity.y = -2f;
+        }
+
         float x = 0.0f;
         float z = 0.0f;
 
@@ -72,6 +83,13 @@ public class PlayerController : MonoBehaviour
 
         // CharacterControllerを使って移動を実行
         controller.Move(move * playerSettings.moveSpeed * Time.deltaTime);
+
+        // 重力の計算
+        float gravity = -9.81f;
+        verticalVelocity.y += gravity * Time.deltaTime;
+
+        // 垂直方向の移動
+        controller.Move(verticalVelocity * Time.deltaTime);
     }
 
     /// <summary>
