@@ -18,6 +18,10 @@ public class EnemyController : MonoBehaviour
     private Vector3 verticalVelocity;
     private Transform playerTransform; // プレイヤーの位置を記憶する変数
 
+    // 敵の現在の「状態」を管理する列挙型(モード切替用)
+    private enum State {Wander, Chase }
+    private State currentState = State.Wander
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();

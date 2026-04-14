@@ -24,8 +24,17 @@ public class GameManager : MonoBehaviour
     [Tooltip("“¯Žž‚É–Â‚é‚Æ‘¦ƒQ[ƒ€ƒI[ƒo[‚É‚È‚éƒIƒ‹ƒS[ƒ‹‚Ì”")]
     public int maxSimultaneousOrgels = 5;
 
+    [Header("‹°•|“xÝ’è")]
     [Tooltip("ƒIƒ‹ƒS[ƒ‹1‚Â‚É‚Â‚«A1•bŠÔ‚É‘‰Á‚·‚é‹°•|“x‚Ì—Ê")]
     public float fearIncreaseRate = 2.0f;
+    [Tooltip("‚·‚×‚Ä‚ÌƒIƒ‹ƒS[ƒ‹‚ªŽ~‚Ü‚Á‚Ä‚¢‚éŽž‚Ì1•bŠÔ‚Ì‰ñ•œ—Ê")]
+    public float fearRecoveryRate = 1.0f;
+
+    [Header("ƒIƒ‹ƒS[ƒ‹‚ÌoŒ»Ý’è")]
+    [Tooltip("ƒIƒ‹ƒS[ƒ‹‚ªŽŸ‚É–Â‚è‚¾‚·‚Ü‚Å‚ÌÅ’ZŽžŠÔ(•b)")]
+    public float minOrgelWaitTime = 5.0f;
+    [Tooltip("ƒIƒ‹ƒS[ƒ‹‚ªŽŸ‚É–Â‚è‚¾‚·‚Ü‚Å‚ÌÅ’·ŽžŠÔ")]
+    public float maxOrgelWaitTime = 15.0f;
 
     [Header("UIŽQÆ")]
     [Tooltip("Žc‚èŽžŠÔ‚ð•\Ž¦‚·‚éTextMeshPro")]
@@ -83,27 +92,25 @@ public class GameManager : MonoBehaviour
         }
 
         // ‹°•|“x‚Ìˆ—(–Â‚Á‚Ä‚¢‚é”‚É‰ž‚¶‚Ä‰ÁŽZ)
-        if(currentPlayingOrgels > 0)
+        if (currentPlayingOrgels > 0)
         {
-            // 2ŒÂ–Â‚Á‚Ä‚¢‚ê‚ÎA2”{‚Ì‘¬“x‚Å‹°•|“x‚ªã¸‚·‚é
-            currentFear += fearIncreaseRate * currentPlayingOrgels * Time.deltaTime;
-
-            if(currentFear >= maxFear)
-            {
-                GameOver("‹°•|“x‚ªŒÀŠE‚É’B‚µ‚½");
-                return;
-            }
+            // 1ŒÂ‚Å‚à–Â‚Á‚Ä‚¢‚ê‚ÎAˆê’è‘¬“x‚Åã¸
+            currentFear += fearIncreaseRate * Time.deltaTime;
         }
         else
         {
-            // ƒIƒ‹ƒS[ƒ‹‚ª‘S‚ÄŽ~‚Ü‚Á‚Ä‚¢‚éŽž‚ÍA‹°•|“x‚ª­‚µ‚¸‚Â‰ñ•œ‚·‚é
+            // ‘S‚ÄŽ~‚Ü‚Á‚Ä‚¢‚ê‚Î™X‚É‰ñ•œ
             currentFear -= fearIncreaseRate * Time.deltaTime;
-            // 0–¢–ž‚É‚Í‚È‚ç‚È‚¢‚æ‚¤‚É§ŒÀ‚·‚é
-            currentFear = Mathf.Clamp(currentFear, 0.0f, maxFear);
         }
 
+        currentFear = Mathf.Clamp(currentFear, 0.0f, maxFear);
         // ‹°•|“x‚ÌUI‚ðXV
         UpdateFearUI();
+
+        if(currentFear >= maxFear)
+        {
+            GameOver("‹°•|“x‚ªŒÀŠE‚É’B‚µ‚½");
+        }
     }
 
     /// <summary>

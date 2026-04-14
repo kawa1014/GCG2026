@@ -21,13 +21,6 @@ public class OrgelSystem : MonoBehaviour
     [Tooltip("現在音が鳴っているか(ON/OFF)")]
     public bool isPlaying = false;
 
-    // 自動で音が鳴りだすまでの時間の幅を設定します
-    [Header("自動ON設定")]
-    [Tooltip("自動でONになるまでの最短時間(秒)")]
-    public float minTime = 5.0f;
-    [Tooltip("自動でONになるまでの最長時間(秒)")]
-    public float maxTime = 15.0f;
-
     /// <summary>
     /// オブジェクトの色を変更するための描画コンポーネントを保持しておく変数
     /// </summary>
@@ -76,7 +69,12 @@ public class OrgelSystem : MonoBehaviour
         {
             orgelAudioSource.Play();
         }
-        GameManager.instance.AddPlayingOrgel();
+        
+        if(GameManager.instance != null)
+        {
+            GameManager.instance.AddPlayingOrgel();
+        }
+
         UpdateColor();
         Debug.Log("<color=red>【Orgel】オルゴールが勝手に鳴り出しました！</color>");
     }
@@ -96,7 +94,12 @@ public class OrgelSystem : MonoBehaviour
             {
                 orgelAudioSource.Stop();
             }
-            GameManager.instance.RemovePlayingOrgel();
+
+            if(GameManager.instance != null)
+            {
+                GameManager.instance.RemovePlayingOrgel();
+            }
+
             UpdateColor();
             ResetTimer(); // 消したら、また次になるまでのタイマーをセットする
             Debug.Log("<color=green>【Orgel】オルゴールを止めました。</color>");
@@ -108,7 +111,11 @@ public class OrgelSystem : MonoBehaviour
     /// </summary>
     private void ResetTimer()
     {
-        timer = Random.Range(minTime, maxTime);
+        // GameManagerから最小・最大時間を取得
+        float minWaitTime = GameManager.instance.minOrgelWaitTime;
+        float maxWaitTime = GameManager.instance.maxOrgelWaitTime;
+
+        timer = Random.Range(minWaitTime, maxWaitTime);
         Debug.Log($"<color=gray>【Orgel】次に鳴るまであと {timer:F1} 秒...</color>");
     }
 

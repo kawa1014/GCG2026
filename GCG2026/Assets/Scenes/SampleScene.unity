@@ -563,8 +563,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   timeLimit: 180
   maxFear: 100
-  maxSimultaneousOrgels: 6
+  maxSimultaneousOrgels: 5
   fearIncreaseRate: 1
+  fearRecoveryRate: 1
+  minOrgelWaitTime: 5
+  maxOrgelWaitTime: 25
   timeText: {fileID: 535467816}
   fearVignetteGroup: {fileID: 1874128342}
 --- !u!4 &276762875
@@ -3072,6 +3075,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (2)
@@ -3194,6 +3201,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (1)
@@ -3363,6 +3374,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: orgelAudioSource
       value: 
@@ -3633,6 +3648,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (4)
@@ -3886,17 +3905,6 @@ MonoBehaviour:
   isLeftNode: 0
   isConnected: 0
   wireThickness: 15
---- !u!114 &1235845489 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
-  m_PrefabInstance: {fileID: 1078525143}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98946dda7897b714b8043f6d870496f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OrgelSystem
 --- !u!1 &1307291819
 GameObject:
   m_ObjectHideFlags: 0
@@ -4132,7 +4140,7 @@ GameObject:
   - component: {fileID: 1363453343}
   - component: {fileID: 1363453342}
   m_Layer: 0
-  m_Name: EnemyManager
+  m_Name: EnemySpawner_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4150,7 +4158,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9e4558f79107d14db5f8ca74e19f23a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
-  orgelSystem: {fileID: 1235845489}
   enemyPrefab: {fileID: 789708083455014685, guid: b58a41f58be9e5c4c8bfa67c52fa370e, type: 3}
 --- !u!4 &1363453343
 Transform:
@@ -4903,7 +4910,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   interactRange: 5
-  requiredHoldTime: 3
+  requiredHoldTime: 2
   playerCamera: {fileID: 139897897}
 --- !u!1 &1748565612
 GameObject:
@@ -5025,6 +5032,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (3)
