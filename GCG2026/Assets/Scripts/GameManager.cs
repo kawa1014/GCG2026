@@ -142,7 +142,7 @@ public class GameManager : MonoBehaviour
     /// @brief ゲームーバーの処理
     /// @brief reason ゲームオーバーの理由(コンソール表示用)
     /// </summary>
-    private void GameOver(string reason)
+    public void GameOver(string reason)
     {
         isGameOver = true;
         Debug.Log($"<color=red>【Game Over】{reason}</color>");

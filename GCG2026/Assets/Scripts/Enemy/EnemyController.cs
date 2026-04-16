@@ -20,7 +20,7 @@ public class EnemyController : MonoBehaviour
 
     // 敵の現在の「状態」を管理する列挙型(モード切替用)
     private enum State {Wander, Chase }
-    private State currentState = State.Wander
+    private State currentState = State.Wander;
 
     private void Start()
     {
@@ -54,13 +54,41 @@ public class EnemyController : MonoBehaviour
         // 状態判定
         if(CheckSight())
         {
-            // プレイヤーを追跡
-            Debug.Log("<color=red>【Enemy】発見!</color>");
+            // 見つけたら追跡モードに切り替え
+            if(currentState != State.Chase)
+            {
+                currentState = State.Chase;
+                Debug.Log("<color=red>【Enemy】プレイヤー発見！追跡開始！</color>");
+            }
         }
-        Wander();
+        else if(currentState != State.Chase)
+        {
+            // 追跡中だが視界から外れた場合、距離が離れすぎたら諦める
+            if(playerTransform != null)
+            {
+                float distance = Vector3.Distance(transform.position, playerTransform.position);
+                // 視界の1.5倍の距離まで逃げ切られたら徘徊に戻る
+                if (distance > enemyData.viewRadius * 1.5f)
+                {
+                    currentState = State.Wander;
+                    SetNextTarget(); // 新しい徘徊ルートを設定
+                    Debug.Log("<color=blue>【Enemy】プレイヤーを見失った。徘徊に戻る。</color>");
+                }
+            }
+        }
+        
+        // 状況に応じた移動の実行
+        if(currentState == State.Chase)
+        {
+            Chase();
+        }
+        else
+        {
+            Wander();
+        }
 
-        // 最終的な垂直移動の適用
-        controller.Move(verticalVelocity * Time.deltaTime);
+            // 最終的な垂直移動の適用
+            controller.Move(verticalVelocity * Time.deltaTime);
     }
 
     /// <summary>
@@ -117,6 +145,27 @@ public class EnemyController : MonoBehaviour
     }
 
     /// <summary>
+    /// @brief プレイヤーを一直線に追いかける処理
+    /// </summary>
+    private void Chase()
+    {
+        if(playerTransform == null) return;
+
+        // プレイヤーの方向を計算
+        Vector3 direction = (playerTransform.position - transform.position);
+        direction.y = 0;
+
+        if( direction.magnitude > 0.1f)
+        {
+            // プレイヤーの方を素早く向く
+            transform.forward = Vector3.Slerp(transform.forward, direction.normalized, Time.deltaTime * 10.0f);
+
+            Vector3 move = transform.forward * (enemyData.moveSpeed * 1.5f) * Time.deltaTime;
+            controller.Move(move);
+        }
+    }
+
+    /// <summary>
     /// wanderRadius(徘徊半径)の範囲内で、次のランダムな目的地を決定する処理
     /// </summary>
     private void SetNextTarget()
@@ -129,5 +178,20 @@ public class EnemyController : MonoBehaviour
 
         // 出現した位置を基準に、ランダムにずらした場所を次の目的地にする
         targetPosition = startPosition + new Vector3(randomX, 0.0f, randomZ);
+    }
+
+    /// <summary>
+    /// @brief キャラクターコントローラーによる衝突判定
+    /// </summary>
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("<color=red>【Enemy】捕まえたぞ！</color>");
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.GameOver("敵に捕まってしまった...");
+            }
+        }
     }
 }

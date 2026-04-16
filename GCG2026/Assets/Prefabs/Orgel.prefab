@@ -128,8 +128,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrgelSystem
   orgelAudioSource: {fileID: -7569058216434971726}
   isPlaying: 0
-  minTime: 5
-  maxTime: 15
 --- !u!82 &-7569058216434971726
 AudioSource:
   m_ObjectHideFlags: 0
@@ -142,7 +140,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: b8b5d4cdf18afed40ba77d74765193ad, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
