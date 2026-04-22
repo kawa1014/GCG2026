@@ -25,11 +25,6 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
-        // シーンビューに赤い光線を可視化するプロのデバッグ技
-        if(playerCamera != null)
-        {
-            Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward * interactRange, Color.red);
-        }
 
         // 左クリックが「今」押されているかチェック（長押し判定）
         if (Mouse.current != null && Mouse.current.leftButton.isPressed)
@@ -126,5 +121,33 @@ public class PlayerInteractor : MonoBehaviour
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// @brief ギズモを描画するUnity標準のメソッド
+    /// @details 選択時だけでなく常に表示したい場合はOnDrawGizmos()を使用します
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        // カメラがセットされていなければ処理を中断
+        if (playerCamera == null) return;
+
+        // ギズモの色を赤に設定
+        Gizmos.color = Color.red;
+
+        // カメラの現在位置と、向いている方向を取得
+        Vector3 origin = playerCamera.transform.position;
+        Vector3 forward = playerCamera.transform.forward;
+
+        // 1本目：メインRay
+        Gizmos.DrawRay(origin, forward * interactRange);
+
+        // 2本目：左に少し傾けたRay
+        Vector3 leftRay = Quaternion.Euler(0, -5, 0) * forward;
+        Gizmos.DrawRay(origin, leftRay * interactRange);
+
+        // 3本目：右に少し傾けたRay（Y軸で 5度 回転させる）
+        Vector3 rightRay = Quaternion.Euler(0, 5, 0) * forward;
+        Gizmos.DrawRay(origin, rightRay * interactRange);
     }
 }
