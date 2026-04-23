@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a943bb2dc3b90d346bbbc4074dfb4416, type: 3}
   m_Name: PlayerSettings_Default
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSettings
-  moveSpeed: 10
+  moveSpeed: 12
   mouseSensitivity: 100
