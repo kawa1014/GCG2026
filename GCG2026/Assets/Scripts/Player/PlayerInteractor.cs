@@ -45,7 +45,11 @@ public class PlayerInteractor : MonoBehaviour
     {
         if (playerCamera == null) return;
 
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        Vector3 origin = playerCamera.transform.position
+                         - playerCamera.transform.up * 0.3f
+                         + playerCamera.transform.right * 0.3f;
+
+        Ray ray = new Ray(origin, playerCamera.transform.forward);
         RaycastHit hitInfo;
 
         // レイを飛ばして何かに当たったか
@@ -136,7 +140,9 @@ public class PlayerInteractor : MonoBehaviour
         Gizmos.color = Color.red;
 
         // カメラの現在位置と、向いている方向を取得
-        Vector3 origin = playerCamera.transform.position;
+        Vector3 origin = playerCamera.transform.position
+                         - playerCamera.transform.up * 0.3f
+                         + playerCamera.transform.right * 0.3f;
         Vector3 forward = playerCamera.transform.forward;
 
         // 1本目：メインRay

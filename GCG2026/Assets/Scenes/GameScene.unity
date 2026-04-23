@@ -248,7 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e8ca73384e1cfd41866ee7dd079e40a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
-  interactRange: 1000
+  interactRange: 10
   requiredHoldTime: 1
   playerCamera: {fileID: 1913414987}
 --- !u!1001 &39242664
@@ -1090,6 +1090,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: MaxDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: rolloffCustomCurve.m_Curve.Array.data[3].value
+      value: 0.2332489
+      objectReference: {fileID: 0}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel
