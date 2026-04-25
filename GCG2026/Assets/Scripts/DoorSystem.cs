@@ -1,23 +1,24 @@
 using UnityEngine;
 
-public class Door : MonoBehaviour
+public class DoorController : MonoBehaviour
 {
-    public bool isOpen = false; // ドアが開いているか
-    public float openAngle = 90f; // 開く角度
-    public float smooth = 2f;    // 動きの滑らかさ
+    public bool isOpen = false;
+    public float openAngle = 90f;
+    public float smooth = 2f;
 
     private Quaternion targetRotation;
     private Quaternion defaultRotation;
 
+    // プレイヤーが近くにいるかどうかを判定するフラグ
+    private bool isPlayerNear = false;
+
     void Start()
     {
-        // 最初の角度を保存
         defaultRotation = transform.localRotation;
     }
 
     void Update()
     {
-        // ターゲットとなる角度を決定
         if (isOpen)
         {
             targetRotation = defaultRotation * Quaternion.Euler(0, openAngle, 0);
@@ -27,18 +28,31 @@ public class Door : MonoBehaviour
             targetRotation = defaultRotation;
         }
 
-        // スムーズに回転させる
         transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * smooth);
 
-        // テスト用：スペースキーで開閉を切り替え
-        if (Input.GetKeyDown(KeyCode.Space))
+        // プレイヤーが近くにいて、かつスペースキーが押された時に開閉する
+        if (isPlayerNear && Input.GetKeyDown(KeyCode.Space))
         {
-            ToggleDoor();
+            isOpen = !isOpen;
         }
     }
 
-    public void ToggleDoor()
+    // プレイヤーが判定エリア（トリガー）に入った時
+    private void OnTriggerEnter(Collider other)
     {
-        isOpen = !isOpen;
+        // ぶつかった相手のタグが"Player"ならフラグをオンにする
+        if (other.CompareTag("Player"))
+        {
+            isPlayerNear = true;
+        }
+    }
+
+    // プレイヤーが判定エリア（トリガー）から出た時
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isPlayerNear = false;
+        }
     }
 }
