@@ -22,6 +22,11 @@ public class OrgelSystem : MonoBehaviour
     public bool isPlaying = false;
 
     /// <summary>
+    /// このオルゴールが今回のセッションで動くかどうか
+    /// </summary>
+    private bool isSessionActive = false;
+
+    /// <summary>
     /// オブジェクトの色を変更するための描画コンポーネントを保持しておく変数
     /// </summary>
     private Renderer objRenderer;
@@ -35,24 +40,40 @@ public class OrgelSystem : MonoBehaviour
         // 自分がくっついているオブジェクトのRendererを取得して保存
         objRenderer = GetComponent<Renderer>();
 
+        if (orgelAudioSource != null) orgelAudioSource.Stop();
+
         // 初期の状態に合わせて色を設定する
         UpdateColor();
+    }
 
-        ResetTimer(); // 最初のカウントダウンを開始
+    /// <summary>
+    ///  GameManagerから有効・無効に指示されるためのメソッド
+    /// </summary>
+    public void SetSessionActivity(bool isActive)
+    {
+        isSessionActive = isActive;
+        if(isSessionActive)
+        {
+            ResetTimer(); // 選ばれた場合のみ、タイマーを開始する
+        }
+        else
+        {
+            // 選ばれなかった場合、一生ならないようにスクリプト自体を止めてもいい
+            // this.enabled = false;
+        }
     }
 
     private void Update()
     {
-        // 音が止まっている時だけ、タイマーを減らしていく
-        if(!isPlaying)
-        {
-            timer -= Time.deltaTime;
+        // セッション無効、または既になっている場合は何もしない
+        if (!isSessionActive || isPlaying) return;
 
-            // タイマーが0以下になったら勝手に鳴りだす
-            if(timer <= 0f)
-            {
-                TurnOn();
-            }
+        timer -= Time.deltaTime;
+
+        // タイマーが0以下になったら勝手に鳴りだす
+        if(timer <= 0f)
+        {
+            TurnOn();
         }
     }
 
