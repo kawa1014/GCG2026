@@ -1,6 +1,9 @@
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections.Generic; // Listを使うために必要
+using System.Linq; // シャッフルに便利
+
 /// <summary>
 /// @brief GameManager.cs
 /// @brief ゲーム全体のルールを管理するクラス
@@ -71,6 +74,7 @@ public class GameManager : MonoBehaviour
     {
         UpdateTimerUI();
         UpdateFearUI();
+        SetupOrgelSession(); // オルゴールの抽選処理
     }
 
     /// <summary>
@@ -111,6 +115,14 @@ public class GameManager : MonoBehaviour
         {
             GameOver("恐怖度が限界に達した");
         }
+    }
+
+    /// <summary>
+    /// シーン内の全オルゴールかｒ規定数だけを選んで起動する
+    /// </summary>
+    private void SetupOrgelSession()
+    {
+
     }
 
     /// <summary>
