@@ -58,8 +58,8 @@ public class OrgelSystem : MonoBehaviour
         }
         else
         {
-            // 選ばれなかった場合、一生ならないようにスクリプト自体を止めてもいい
-            // this.enabled = false;
+            // 選ばれなかった場合は、オブジェクトを非表示にする
+            gameObject.SetActive(false);
         }
     }
 

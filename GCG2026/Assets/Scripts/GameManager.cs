@@ -27,6 +27,10 @@ public class GameManager : MonoBehaviour
     [Tooltip("同時に鳴ると即ゲームオーバーになるオルゴールの数")]
     public int maxSimultaneousOrgels = 5;
 
+    [Header("選抜システムで設定")]
+    [Tooltip("今回プレイで実際に動かすオルゴールの数")]
+    public int sessionActiveOrgelCount = 5;
+
     [Header("恐怖度設定")]
     [Tooltip("オルゴール1つにつき、1秒間に増加する恐怖度の量")]
     public float fearIncreaseRate = 2.0f;
@@ -122,7 +126,26 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void SetupOrgelSession()
     {
+        // シーン内の全てのOrgelSystemを探してリストに入れる
+        List<OrgelSystem> allOrgels = FindObjectsByType<OrgelSystem>(FindObjectsSortMode.None).ToList();
 
+        Debug.Log($"<color=white>【System】合計 {allOrgels.Count} 個のオルゴールを検知。</color>");
+
+        // リストをランダムに並び替える
+        List<OrgelSystem> shuffledOrgels = allOrgels.OrderBy(x => System.Guid.NewGuid()).ToList();
+
+        // 順番に有効・無効を指示していく
+        for(int i = 0; i < shuffledOrgels.Count; i++)
+        {
+            // 設定した数以内なら有効、それ以外は無効
+            bool shouldBeActive = (i < sessionActiveOrgelCount);
+            shuffledOrgels[i].SetSessionActivity(shouldBeActive);
+
+            if (shouldBeActive)
+            {
+                Debug.Log($"<color=green>【System】オルゴール {shuffledOrgels[i].name} を有効化しました。</color>");
+            }
+        }
     }
 
     /// <summary>
