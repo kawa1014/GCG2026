@@ -141,7 +141,7 @@ public class OrgelSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// isPlayingの状態に応じてオブジェクトの色を変更する自作のメソッド
+    /// isPlayingの状態に応じてオブジェクトの色とレイヤーを変更する自作のメソッド
     /// </summary>
     private void UpdateColor()
     {
@@ -150,11 +150,17 @@ public class OrgelSystem : MonoBehaviour
         {
             // 音が鳴っている状態(ON)は赤色
             objRenderer.material.color = Color.red;
+
+            //壁を透過して見えるカメラ用にレイヤーを「Orgel」に変更
+            gameObject.layer = LayerMask.NameToLayer("Orgel");
         }
         else
         {
             // 音が止まっている状態(OFF)は白色
             objRenderer.material.color = Color.white;
+
+            // 見えないように通常の「Default」レイヤーに戻す
+            gameObject.layer = LayerMask.NameToLayer("Default");
         }
     }
 }
