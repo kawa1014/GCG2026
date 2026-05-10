@@ -265,6 +265,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ListenSkill
   listenCamera: {fileID: 1709239967}
   grayscaleVolume: {fileID: 602074370}
+--- !u!4 &32924671 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
+  m_PrefabInstance: {fileID: 1218873415}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &39242664
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4916,12 +4921,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   timeLimit: 180
   maxFear: 100
-  maxSimultaneousOrgels: 5
-  sessionActiveOrgelCount: 5
   fearIncreaseRate: 1
   fearRecoveryRate: 1
-  minOrgelWaitTime: 10
-  maxOrgelWaitTime: 45
+  playerTransform: {fileID: 32924671}
+  exclusionRadius: 5
+  floorHeghtDifference: 2
   timeText: {fileID: 700215101}
   fearVignetteGroup: {fileID: 0}
 --- !u!4 &695401237
@@ -7629,6 +7633,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: waitTime
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (6)

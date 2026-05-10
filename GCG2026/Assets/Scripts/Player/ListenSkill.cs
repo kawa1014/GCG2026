@@ -17,13 +17,13 @@ public class ListenSkill : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             listenCamera.SetActive(true);
-            grayscaleVolume.SetActive(true); // 白黒エフェクトON
+            //grayscaleVolume.SetActive(true); // 白黒エフェクトON
         }
         // Eキーを離したら
         else if (Input.GetKeyUp(KeyCode.E))
         {
             listenCamera.SetActive(false);
-            grayscaleVolume.SetActive(false); // 白黒エフェクトOFF
+            //grayscaleVolume.SetActive(false); // 白黒エフェクトOFF
         }
     }
 }

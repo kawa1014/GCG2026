@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,17 +15,21 @@ public class OrgelSystem : MonoBehaviour
     [Tooltip("3Dサウンド設定を行ったAudioSourceをアタッチしてください")]
     public AudioSource orgelAudioSource;
 
+    [Header("時間指定")]
+    [Tooltip("このオルゴールが抽選されてからなりだすまでの待機時間(秒)")]
+    public float waitTime = 10.0f;
+
     /// <summary>
     /// 現在音が鳴っているかどうかの状態
     /// 外部(これから作る敵管理スクリプトなど)から読み取れるようにpublicにしています
     /// </summary>
     [Tooltip("現在音が鳴っているか(ON/OFF)")]
-    public bool isPlaying = false;
+    [HideInInspector] public bool isPlaying = false;
 
     /// <summary>
-    /// このオルゴールが今回のセッションで動くかどうか
+    /// 現在抽選されて出番待ちかどうか
     /// </summary>
-    private bool isSessionActive = false;
+    [HideInInspector] public bool isWaiting = false;
 
     /// <summary>
     /// オブジェクトの色を変更するための描画コンポーネントを保持しておく変数
@@ -47,26 +52,28 @@ public class OrgelSystem : MonoBehaviour
     }
 
     /// <summary>
-    ///  GameManagerから有効・無効に指示されるためのメソッド
+    ///  GameManagerから「次はお前だ」と抽選されたときに呼ばれる
     /// </summary>
-    public void SetSessionActivity(bool isActive)
+    public void StartCountdown()
     {
-        isSessionActive = isActive;
-        if(isSessionActive)
-        {
-            ResetTimer(); // 選ばれた場合のみ、タイマーを開始する
-        }
-        else
-        {
-            // 選ばれなかった場合は、オブジェクトを非表示にする
-            gameObject.SetActive(false);
-        }
+        isWaiting = true;
+        StartCoroutine(CountdownCoroutine());
+    }
+
+    // コルーチン本体(IEnumeratorを返すメソッド)
+    private System.Collections.IEnumerator CountdownCoroutine()
+    {
+        // 指定した時間(waitTime)だけここで待つ
+        yield return new WaitForSeconds(waitTime);
+
+        // 待機が終わったらTurnOnを実行
+        TurnOn();
     }
 
     private void Update()
     {
-        // セッション無効、または既になっている場合は何もしない
-        if (!isSessionActive || isPlaying) return;
+        // 待機中じゃない場合は何もしない
+        if (!isWaiting) return;
 
         timer -= Time.deltaTime;
 
@@ -83,6 +90,7 @@ public class OrgelSystem : MonoBehaviour
     /// </summary>
     private void TurnOn()
     {
+        isWaiting = false; // 待機状態を終了
         isPlaying = true;
 
         // 3Dサウンドの再生開始
@@ -91,6 +99,7 @@ public class OrgelSystem : MonoBehaviour
             orgelAudioSource.Play();
         }
         
+        // GameManagerに「鳴った」と報告する(ここで次の1個が連鎖的に抽選される)
         if(GameManager.instance != null)
         {
             GameManager.instance.AddPlayingOrgel();
@@ -122,22 +131,8 @@ public class OrgelSystem : MonoBehaviour
             }
 
             UpdateColor();
-            ResetTimer(); // 消したら、また次になるまでのタイマーをセットする
             Debug.Log("<color=green>【Orgel】オルゴールを止めました。</color>");
         }
-    }
-
-    /// <summary>
-    /// ランダム時間を計算してタイマーにセットする処理
-    /// </summary>
-    private void ResetTimer()
-    {
-        // GameManagerから最小・最大時間を取得
-        float minWaitTime = GameManager.instance.minOrgelWaitTime;
-        float maxWaitTime = GameManager.instance.maxOrgelWaitTime;
-
-        timer = Random.Range(minWaitTime, maxWaitTime);
-        Debug.Log($"<color=gray>【Orgel】次に鳴るまであと {timer:F1} 秒...</color>");
     }
 
     /// <summary>
@@ -145,22 +140,7 @@ public class OrgelSystem : MonoBehaviour
     /// </summary>
     private void UpdateColor()
     {
-        // 取得したRendererの中にあるMaterialの色を変更します
-        if (isPlaying)
-        {
-            // 音が鳴っている状態(ON)は赤色
-            objRenderer.material.color = Color.red;
-
-            //壁を透過して見えるカメラ用にレイヤーを「Orgel」に変更
-            gameObject.layer = LayerMask.NameToLayer("Orgel");
-        }
-        else
-        {
-            // 音が止まっている状態(OFF)は白色
-            objRenderer.material.color = Color.white;
-
-            // 見えないように通常の「Default」レイヤーに戻す
-            gameObject.layer = LayerMask.NameToLayer("Default");
-        }
+        if (objRenderer == null) return;
+        objRenderer.material.color = isPlaying ? Color.red : Color.white;
     }
 }

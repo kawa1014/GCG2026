@@ -24,24 +24,19 @@ public class GameManager : MonoBehaviour
     [Tooltip("ゲームオーバーになる最大恐怖度")]
     public float maxFear = 100.0f;
 
-    [Tooltip("同時に鳴ると即ゲームオーバーになるオルゴールの数")]
-    public int maxSimultaneousOrgels = 5;
-
-    [Header("選抜システムで設定")]
-    [Tooltip("今回プレイで実際に動かすオルゴールの数")]
-    public int sessionActiveOrgelCount = 5;
-
     [Header("恐怖度設定")]
     [Tooltip("オルゴール1つにつき、1秒間に増加する恐怖度の量")]
     public float fearIncreaseRate = 2.0f;
     [Tooltip("すべてのオルゴールが止まっている時の1秒間の回復量")]
     public float fearRecoveryRate = 1.0f;
 
-    [Header("オルゴールの出現設定")]
-    [Tooltip("オルゴールが次に鳴りだすまでの最短時間(秒)")]
-    public float minOrgelWaitTime = 5.0f;
-    [Tooltip("オルゴールが次に鳴りだすまでの最長時間")]
-    public float maxOrgelWaitTime = 15.0f;
+    [Header("抽選除外・階層判定設定")]
+    [Tooltip("プレイヤーのTransform。距離判定に使用します")]
+    public Transform playerTransform;
+    [Tooltip("抽選から除外する半径(メートル")]
+    public float exclusionRadius = 5.0f;
+    [Tooltip("同じ階層とみなすY座標の差(例：2m未満なら同じ階層)")]
+    public float floorHeghtDifference = 2.0f;
 
     [Header("UI参照")]
     [Tooltip("残り時間を表示するTextMeshPro")]
@@ -61,7 +56,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         // GameManagerがシーン内に1つだけになるようにする
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
@@ -78,7 +73,16 @@ public class GameManager : MonoBehaviour
     {
         UpdateTimerUI();
         UpdateFearUI();
-        SetupOrgelSession(); // オルゴールの抽選処理
+
+        // プレイヤーがセットされていなければ自動取得
+        if (playerTransform == null)
+        {
+            PlayerController player = FindAnyObjectByType<PlayerController>();
+            if (player != null) playerTransform = player.transform;
+        }
+
+        // 最初の一個目を抽選する
+        ChooseNextOrgel();
     }
 
     /// <summary>
@@ -93,7 +97,7 @@ public class GameManager : MonoBehaviour
         timeLimit -= Time.deltaTime;
         UpdateTimerUI();
 
-        if(timeLimit <= 0.0f)
+        if (timeLimit <= 0.0f)
         {
             GameClear();
             return;
@@ -115,36 +119,9 @@ public class GameManager : MonoBehaviour
         // 恐怖度のUIを更新
         UpdateFearUI();
 
-        if(currentFear >= maxFear)
+        if (currentFear >= maxFear)
         {
             GameOver("恐怖度が限界に達した");
-        }
-    }
-
-    /// <summary>
-    /// シーン内の全オルゴールかｒ規定数だけを選んで起動する
-    /// </summary>
-    private void SetupOrgelSession()
-    {
-        // シーン内の全てのOrgelSystemを探してリストに入れる
-        List<OrgelSystem> allOrgels = FindObjectsByType<OrgelSystem>(FindObjectsSortMode.None).ToList();
-
-        Debug.Log($"<color=white>【System】合計 {allOrgels.Count} 個のオルゴールを検知。</color>");
-
-        // リストをランダムに並び替える
-        List<OrgelSystem> shuffledOrgels = allOrgels.OrderBy(x => System.Guid.NewGuid()).ToList();
-
-        // 順番に有効・無効を指示していく
-        for(int i = 0; i < shuffledOrgels.Count; i++)
-        {
-            // 設定した数以内なら有効、それ以外は無効
-            bool shouldBeActive = (i < sessionActiveOrgelCount);
-            shuffledOrgels[i].SetSessionActivity(shouldBeActive);
-
-            if (shouldBeActive)
-            {
-                Debug.Log($"<color=green>【System】オルゴール {shuffledOrgels[i].name} を有効化しました。</color>");
-            }
         }
     }
 
@@ -153,14 +130,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void AddPlayingOrgel()
     {
+        if (isGameOver) return;
         currentPlayingOrgels++;
-        Debug.Log($"<color=yellow>【GameManager】鳴っているオルゴール: {currentPlayingOrgels} / {maxSimultaneousOrgels}</color>");
 
-        // 同時発火数の判定(規定数に達したらゲームオーバー)
-        if(currentPlayingOrgels >= maxSimultaneousOrgels)
-        {
-            GameOver("オルゴールの音が許容量を超え、意識を刈り取られた...");
-        }
+        // なった瞬間に、次の1個を抽選する
+        ChooseNextOrgel();
     }
 
     /// <summary>
@@ -171,6 +145,51 @@ public class GameManager : MonoBehaviour
         currentPlayingOrgels--;
         // マイナスにならないように安全対策
         currentPlayingOrgels = Mathf.Max(0, currentPlayingOrgels);
+    }
+
+    /// <summary>
+    /// 条件に合うオルゴールから1つをランダムに抽選する
+    /// </summary>
+    private void ChooseNextOrgel()
+    {
+        List<OrgelSystem> allOrgels = FindObjectsByType<OrgelSystem>(FindObjectsSortMode.None).ToList();
+
+        // 候補1：まだ鳴っていなくて。かつ次の待機状態でないもの
+        List<OrgelSystem> candidates = allOrgels.Where(o => !o.isPlaying && !o.isWaiting).ToList();
+
+        if(playerTransform != null)
+        {
+            // 候補2：プレイヤーと同じ階層で、かつ5m以内のものを排除する
+            candidates = candidates.Where(o =>
+            {
+                // Y座標の差を計算して階層が同じか判定
+                bool isSameFloor = Mathf.Abs(o.transform.position.y - playerTransform.position.y) < floorHeghtDifference;
+
+                // 高さを無視した平面(x, z)での距離を計算
+                Vector2 playerPos2D = new Vector2(playerTransform.position.x, playerTransform.position.z);
+                Vector2 orgelPos2D = new Vector2(o.transform.position.x, o.transform.position.z);
+                float distance = Vector2.Distance(playerPos2D, orgelPos2D);
+
+                // 同じ階層かつ5m以内なら除外(falseを返す)
+                if (isSameFloor && distance <= exclusionRadius) return false;
+
+                return true; // それ以外は候補に残す
+            }).ToList();
+        }
+
+        // 候補が0になってしまった場合の安全対策(全部なっている、全部近くにある等)
+        if(candidates.Count == 0)
+        {
+            Debug.LogWarning("【System】抽選条件に合うオルゴールがありません。応急措置として距離制限を無視して再抽選します。");
+            candidates = allOrgels.Where(o => !o.isPlaying && !o.isWaiting).ToList();
+            if (candidates.Count == 0) return; // それでもなければ何もしない
+        }
+
+        // の子xg蔦候補からランダムに1つ選んでカウントダウン開始
+        OrgelSystem nextOrgel = candidates[Random.Range(0, candidates.Count)];
+        nextOrgel.StartCountdown();
+
+        Debug.Log($"<color=green>【System】次弾装填：{nextOrgel.gameObject.name} が {nextOrgel.waitTime}秒後に鳴ります。</color>");
     }
 
     /// <summary>
