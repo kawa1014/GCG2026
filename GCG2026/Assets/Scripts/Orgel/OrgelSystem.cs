@@ -47,6 +47,9 @@ public class OrgelSystem : MonoBehaviour
 
         if (orgelAudioSource != null) orgelAudioSource.Stop();
 
+        isWaiting = false;
+        isPlaying = false;
+
         // 初期の状態に合わせて色を設定する
         UpdateColor();
     }
@@ -68,20 +71,6 @@ public class OrgelSystem : MonoBehaviour
 
         // 待機が終わったらTurnOnを実行
         TurnOn();
-    }
-
-    private void Update()
-    {
-        // 待機中じゃない場合は何もしない
-        if (!isWaiting) return;
-
-        timer -= Time.deltaTime;
-
-        // タイマーが0以下になったら勝手に鳴りだす
-        if(timer <= 0f)
-        {
-            TurnOn();
-        }
     }
 
     /// <summary>
