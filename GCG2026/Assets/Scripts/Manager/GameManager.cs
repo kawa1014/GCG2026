@@ -132,9 +132,6 @@ public class GameManager : MonoBehaviour
     {
         if (isGameOver) return;
         currentPlayingOrgels++;
-
-        // なった瞬間に、次の1個を抽選する
-        ChooseNextOrgel();
     }
 
     /// <summary>
@@ -145,6 +142,12 @@ public class GameManager : MonoBehaviour
         currentPlayingOrgels--;
         // マイナスにならないように安全対策
         currentPlayingOrgels = Mathf.Max(0, currentPlayingOrgels);
+
+        // オルゴールを解除した瞬間に、次の1つを抽選します
+        if (!isGameOver)
+        {
+            ChooseNextOrgel();
+        }
     }
 
     /// <summary>
@@ -251,5 +254,17 @@ public class GameManager : MonoBehaviour
         // 恐怖度0で完全に透明、恐怖度100で真っ赤になります
         float fearRatio = currentFear / maxFear;
         fearVignetteGroup.alpha = fearRatio;
+    }
+
+    /// <summary>
+    /// エディタ上で除外範囲を可視化する
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        if (playerTransform == null) return;
+
+        // プレイヤーの周囲に除外範囲を表示(緑色の線)
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(playerTransform.position, exclusionRadius);
     }
 }

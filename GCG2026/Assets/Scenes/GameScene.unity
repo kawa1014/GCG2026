@@ -4924,7 +4924,7 @@ MonoBehaviour:
   fearIncreaseRate: 1
   fearRecoveryRate: 1
   playerTransform: {fileID: 32924671}
-  exclusionRadius: 5
+  exclusionRadius: 40
   floorHeghtDifference: 2
   timeText: {fileID: 700215101}
   fearVignetteGroup: {fileID: 0}
