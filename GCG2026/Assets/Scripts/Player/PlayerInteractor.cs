@@ -10,120 +10,107 @@ public class PlayerInteractor : MonoBehaviour
     /// プレイヤーがオブジェクトに手が届く距離
     /// </summary>
     [Tooltip("インタラクトできる距離")]
-    public float interactRange = 3.0f;
+    public float InteractRange = 3.0f;
     [Tooltip("解除に必要な時間")]
-    public float requiredHoldTime = 3.0f;
+    public float RequiredHoldTime = 3.0f;
 
     /// <summary>
     /// プレイヤーのカメラ(ここから視線の光線を飛ばします)
     /// </summary>
     [Tooltip("プレイヤーのカメラ")]
-    public Camera playerCamera;
+    public Camera PlayerCamera;
 
     //---内部状態---
-    private float currentHoldTime = 0.0f; ///< 現在の長押し経過時間
+    private float _currentHoldTime = 0.0f; ///< 現在の長押し経過時間
 
     private void Update()
     {
 
-        // 左クリックが「今」押されているかチェック（長押し判定）
+        // 1.左クリック長押しによるインタラクト（オルゴール解除など）
         if (Mouse.current != null && Mouse.current.leftButton.isPressed)
         {
-            CheckAndInteract();
+            HandleHoldInteraction();
         }
         else
         {
-            // 指を離したらカウントをリセット
-            ResetInteraction();
+            ResetHoldInteraction();
+        }
+
+        // 2.スペースキーによる即時インタラクト（ドアの開閉のみ）
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            HandleQuickInteraction();
         }
     }
 
     /// <summary>
-    /// @brief 視線の先をチェックし、有効対象なら進捗を進める
+    /// 長押し（左クリック）の処理。対象がドアの場合は何もしない。
     /// </summary>
-    private void CheckAndInteract()
+    private void HandleHoldInteraction()
     {
-        if (playerCamera == null) return;
+        if (PlayerCamera == null) return;
+        
+        // Rayを視点から少し右下から出す
+        Vector3 origin = PlayerCamera.transform.position
+                         - PlayerCamera.transform.up * 0.3f
+                         + PlayerCamera.transform.right * 0.3f;
 
-        Vector3 origin = playerCamera.transform.position
-                         - playerCamera.transform.up * 0.3f
-                         + playerCamera.transform.right * 0.3f;
-
-        Ray ray = new Ray(origin, playerCamera.transform.forward);
-        RaycastHit hitInfo;
-
-        // レイを飛ばして何かに当たったか
-        if(Physics.Raycast(ray, out hitInfo, interactRange))
+        Ray ray = new Ray(origin, PlayerCamera.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange))
         {
-            OrgelSystem orgel = hitInfo.collider.GetComponent<OrgelSystem>();
-            
-            // 鳴っているオルゴールに当たっている場合
-            if(orgel != null && orgel.isPlaying)
+            IInteractable interactableObj = hit.collider.GetComponent<IInteractable>();
+
+            if (interactableObj != null && interactableObj.IsInteractable)
             {
-                currentHoldTime += Time.deltaTime; // 内部で時間を加算
-
-                // デバッグ用にコンソールに進捗を表示
-                Debug.Log($"<color=cyan>【Action】解除中... {currentHoldTime:F1} / {requiredHoldTime} 秒</color>");
-
-                // 規定時間に達したら解除
-                if(currentHoldTime >= requiredHoldTime)
+                // ★修正点：対象が『ドア（DoorController）』を持っていたら、長押し処理をスルー（中断）する
+                if (hit.collider.GetComponent<DoorController>() != null)
                 {
-                    orgel.TurnOff();
-                    ResetInteraction(); // 解除完了したのでリセット
-                    Debug.Log("<color=green>【Action】長押しによる解除に成功！</color>");
+                    ResetHoldInteraction(); // ゲージをリセットして何もしない
+                    return;
+                }
+
+                _currentHoldTime += Time.deltaTime;
+                Debug.Log($"<color=cyan>【Action】解除中... {_currentHoldTime:F1} / {RequiredHoldTime} 秒</color>");
+
+                if (_currentHoldTime >= RequiredHoldTime)
+                {
+                    interactableObj.ExecuteInteraction();
+                    _currentHoldTime = 0.0f;
+                    Debug.Log("<color=green>【Action】解除成功！</color>");
                 }
                 return;
             }
         }
-
-        // 何にも当たっていない、またはオルゴールから視線が外れた場合はリセット
-        ResetInteraction();
+        ResetHoldInteraction();
     }
 
     /// <summary>
-    /// @brief 長押し状態をリセットする
+    /// 即時実行（スペースキー）の処理
     /// </summary>
-    private void ResetInteraction()
+    private void HandleQuickInteraction()
     {
-        // カウントダウンが0より大きい場合のみリセットログを出す
-        if(currentHoldTime > 0.0f)
+        if (PlayerCamera == null) return;
+
+        Ray ray = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange))
         {
-            currentHoldTime = 0.0f;
-            Debug.Log("<color=orange>【Action】解除が中断されました。</color>");
+            IInteractable interactableObj = hit.collider.GetComponent<IInteractable>();
+
+            // 看板(IInteractable)を持っていて、有効なら即座に実行（ドアが開く）
+            if (interactableObj != null && interactableObj.IsInteractable)
+            {
+                interactableObj.ExecuteInteraction();
+                Debug.Log("<color=yellow>【Action】スペースキー実行</color>");
+            }
         }
     }
 
-    /// <summary>
-    /// 視線の先にインタラクト可能なオブジェクトがあるか判定して実行する処理
-    /// </summary>
-    private void TryInteract()
+    private void ResetHoldInteraction()
     {
-        // カメラがセットされていなければ処理を中断
-        if (playerCamera == null) return;
-
-        // カメラの位置から、カメラが向いている前方向へRayを作る
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        RaycastHit hitInfo; // 当たった物の情報を入れる箱を用意
-
-        // 光線を飛ばして、何かに当たったか判定(out hitInfoに情報が入ります)
-        if (Physics.Raycast(ray, out hitInfo, interactRange))
+        if (_currentHoldTime > 0.0f)
         {
-            // 当たったオブジェクトがOrgelSystemコンポーネントを持っているか確認
-            OrgelSystem orgel = hitInfo.collider.GetComponent<OrgelSystem>();
-
-            // もし持っていたら
-            if (orgel != null)
-            {
-                // 鳴っている時だけTurnOff()を呼ぶようにする
-                if(orgel.isPlaying)
-                {
-                    orgel.TurnOff();
-                }
-                else
-                {
-                    Debug.Log("【Interact】今は鳴っていません。");
-                }
-            }
+            _currentHoldTime = 0.0f;
+            Debug.Log("<color=orange>【Action】長押しがリセットされました。</color>");
         }
     }
 
@@ -134,26 +121,26 @@ public class PlayerInteractor : MonoBehaviour
     private void OnDrawGizmos()
     {
         // カメラがセットされていなければ処理を中断
-        if (playerCamera == null) return;
+        if (PlayerCamera == null) return;
 
         // ギズモの色を赤に設定
         Gizmos.color = Color.red;
 
         // カメラの現在位置と、向いている方向を取得
-        Vector3 origin = playerCamera.transform.position
-                         - playerCamera.transform.up * 0.3f
-                         + playerCamera.transform.right * 0.3f;
-        Vector3 forward = playerCamera.transform.forward;
+        Vector3 origin = PlayerCamera.transform.position
+                         - PlayerCamera.transform.up * 0.3f
+                         + PlayerCamera.transform.right * 0.3f;
+        Vector3 forward = PlayerCamera.transform.forward;
 
         // 1本目：メインRay
-        Gizmos.DrawRay(origin, forward * interactRange);
+        Gizmos.DrawRay(origin, forward * InteractRange);
 
         // 2本目：左に少し傾けたRay
         Vector3 leftRay = Quaternion.Euler(0, -5, 0) * forward;
-        Gizmos.DrawRay(origin, leftRay * interactRange);
+        Gizmos.DrawRay(origin, leftRay * InteractRange);
 
         // 3本目：右に少し傾けたRay（Y軸で 5度 回転させる）
         Vector3 rightRay = Quaternion.Euler(0, 5, 0) * forward;
-        Gizmos.DrawRay(origin, rightRay * interactRange);
+        Gizmos.DrawRay(origin, rightRay * InteractRange);
     }
 }

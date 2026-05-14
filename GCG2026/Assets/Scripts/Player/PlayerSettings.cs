@@ -9,10 +9,10 @@ public class PlayerSettings : ScriptableObject
     /// <summary>
     /// プレイヤーの移動速度
     /// </summary>
-    public float moveSpeed = 5.0f;
+    public float MoveSpeed = 5.0f;
 
     /// <summary>
     /// マウス感度
     /// </summary>
-    public float mouseSensitivity = 200.0f;
+    public float MouseSensitivity = 200.0f;
 }

@@ -1,58 +1,36 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class DoorController : MonoBehaviour
+public class DoorController : MonoBehaviour, IInteractable
 {
-    public bool isOpen = false;
-    public float openAngle = 90f;
-    public float smooth = 2f;
+    [Header("ドア設定")]
+    public float OpenAngle = 90f;
+    public float Smooth = 2f;
 
-    private Quaternion targetRotation;
-    private Quaternion defaultRotation;
+    // 外部から勝手に書き換えられないようにカプセル化
+    public bool IsOpen { get; private set; } = false;
 
-    // プレイヤーが近くにいるかどうかを判定するフラグ
-    private bool isPlayerNear = false;
+    // ---IInteractableの実装---
+    public bool IsInteractable => true; // ドアはいつでもインタラクト可能
+
+    // 視線を合わせて長押し(クリック)されたら呼ばれる
+    public void ExecuteInteraction()
+    {
+        IsOpen = !IsOpen; // 開いてれば閉じ、閉じていれば開く
+    }
+
+    private Quaternion _targetRotation;
+    private Quaternion _defaultRotation;
 
     void Start()
     {
-        defaultRotation = transform.localRotation;
+        _defaultRotation = transform.localRotation;
     }
 
     void Update()
     {
-        if (isOpen)
-        {
-            targetRotation = defaultRotation * Quaternion.Euler(0, openAngle, 0);
-        }
-        else
-        {
-            targetRotation = defaultRotation;
-        }
-
-        transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * smooth);
-
-        // プレイヤーが近くにいて、かつスペースキーが押された時に開閉する
-        if (isPlayerNear && Input.GetKeyDown(KeyCode.Space))
-        {
-            isOpen = !isOpen;
-        }
-    }
-
-    // プレイヤーが判定エリア（トリガー）に入った時
-    private void OnTriggerEnter(Collider other)
-    {
-        // ぶつかった相手のタグが"Player"ならフラグをオンにする
-        if (other.CompareTag("Player"))
-        {
-            isPlayerNear = true;
-        }
-    }
-
-    // プレイヤーが判定エリア（トリガー）から出た時
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            isPlayerNear = false;
-        }
+        // 状態に合わせて回転させるだけの処理
+        Quaternion target = IsOpen ? _defaultRotation * Quaternion.Euler(0, OpenAngle, 0) : _defaultRotation;
+        transform.localRotation = Quaternion.Slerp(transform.localRotation, target, Time.deltaTime * Smooth);
     }
 }

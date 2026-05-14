@@ -1,40 +1,49 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
 /// オルゴールの状態管理と3Dサウンド制御を行うクラス
-/// ランダムなタイミングで起動してAudioSourceを再生し、プレイヤーのアクションによって止められます
 /// </summary>
-public class OrgelSystem : MonoBehaviour
+public class OrgelSystem : MonoBehaviour, IInteractable
 {
+    // イベント駆動：自分が鳴った/止まったことを外部に知らせるAction
+    public static event Action<OrgelSystem> OnOrgelStarted;
+    public static event Action<OrgelSystem> OnOrgelStopped;
+
     [Header("サウンド設定")]
     /// <summary>
     /// @brief オルゴールの音を鳴らすためのコンポーネント
     /// </summary>
     [Tooltip("3Dサウンド設定を行ったAudioSourceをアタッチしてください")]
-    public AudioSource orgelAudioSource;
+    public AudioSource OrgelAudioSource;
 
     [Header("時間指定")]
     [Tooltip("このオルゴールが抽選されてからなりだすまでの待機時間(秒)")]
-    public float waitTime = 10.0f;
+    public float WaitTime = 10.0f;
 
-    /// <summary>
-    /// 現在音が鳴っているかどうかの状態
-    /// 外部(これから作る敵管理スクリプトなど)から読み取れるようにpublicにしています
-    /// </summary>
-    [Tooltip("現在音が鳴っているか(ON/OFF)")]
-    [HideInInspector] public bool isPlaying = false;
+    [Header("レイヤー設定")]
+    public string HighlightLayerName = "Highlight";
 
+    // プロパティによるカプセル化(外部からは読み取り専用)
+    public bool IsPlaying { get; private set; } = false;
     /// <summary>
     /// 現在抽選されて出番待ちかどうか
     /// </summary>
-    [HideInInspector] public bool isWaiting = false;
+    public bool IsWaiting { get; private set; } = false;
+
+    //--- IInteractableの実装---
+    /// <summary>
+    /// 現在音が鳴っているかどうかの状態
+    /// </summary>
+    public bool IsInteractable => IsPlaying; // 鳴っている時だけインタラクト可能
+    public void ExecuteInteraction() => TurnOff(); // インタラクトされたらTurnOffを実行
 
     /// <summary>
     /// オブジェクトの色を変更するための描画コンポーネントを保持しておく変数
     /// </summary>
-    private Renderer objRenderer;
+    private Renderer _objRenderer;
     private float timer; // 次に鳴るまでのカウントダウンタイマー
 
     /// <summary>
@@ -43,15 +52,11 @@ public class OrgelSystem : MonoBehaviour
     private void Start()
     {
         // 自分がくっついているオブジェクトのRendererを取得して保存
-        objRenderer = GetComponent<Renderer>();
-
-        if (orgelAudioSource != null) orgelAudioSource.Stop();
-
-        isWaiting = false;
-        isPlaying = false;
-
-        // 初期の状態に合わせて色を設定する
-        UpdateColor();
+        _objRenderer = GetComponent<Renderer>();
+        if (OrgelAudioSource != null) OrgelAudioSource.Stop();
+        IsWaiting = false;
+        IsPlaying = false;
+        UpdateColorAndLayer();
     }
 
     /// <summary>
@@ -59,15 +64,15 @@ public class OrgelSystem : MonoBehaviour
     /// </summary>
     public void StartCountdown()
     {
-        isWaiting = true;
+        IsWaiting = true;
         StartCoroutine(CountdownCoroutine());
     }
 
     // コルーチン本体(IEnumeratorを返すメソッド)
     private System.Collections.IEnumerator CountdownCoroutine()
     {
-        // 指定した時間(waitTime)だけここで待つ
-        yield return new WaitForSeconds(waitTime);
+        // 指定した時間(WaitTime)だけここで待つ
+        yield return new WaitForSeconds(WaitTime);
 
         // 待機が終わったらTurnOnを実行
         TurnOn();
@@ -79,22 +84,19 @@ public class OrgelSystem : MonoBehaviour
     /// </summary>
     private void TurnOn()
     {
-        isWaiting = false; // 待機状態を終了
-        isPlaying = true;
+        IsWaiting = false; // 待機状態を終了
+        IsPlaying = true;
 
         // 3Dサウンドの再生開始
-        if(orgelAudioSource != null)
+        if(OrgelAudioSource != null)
         {
-            orgelAudioSource.Play();
-        }
-        
-        // GameManagerに「鳴った」と報告する(ここで次の1個が連鎖的に抽選される)
-        if(GameManager.instance != null)
-        {
-            GameManager.instance.AddPlayingOrgel();
+            OrgelAudioSource.Play();
         }
 
-        UpdateColor();
+        // GameManagerを直接呼ばず、イベントを発火するだけ
+        OnOrgelStarted?.Invoke(this);
+
+        UpdateColorAndLayer();
         Debug.Log("<color=red>【Orgel】オルゴールが勝手に鳴り出しました！</color>");
     }
 
@@ -104,32 +106,39 @@ public class OrgelSystem : MonoBehaviour
     public void TurnOff()
     {
         // 鳴っている時だけ消せる
-        if(isPlaying)
+        if(IsPlaying)
         {
-            isPlaying = false;
+            IsPlaying = false;
 
             // 3Dサウンドの再生を停止
-            if(orgelAudioSource != null)
+            if(OrgelAudioSource != null)
             {
-                orgelAudioSource.Stop();
+                OrgelAudioSource.Stop();
             }
 
-            if(GameManager.instance != null)
-            {
-                GameManager.instance.RemovePlayingOrgel();
-            }
+            // イベントを発火するだけ
+            OnOrgelStarted?.Invoke(this);
 
-            UpdateColor();
+            UpdateColorAndLayer();
             Debug.Log("<color=green>【Orgel】オルゴールを止めました。</color>");
         }
     }
 
     /// <summary>
-    /// isPlayingの状態に応じてオブジェクトの色とレイヤーを変更する自作のメソッド
+    /// IsPlayingの状態に応じてオブジェクトの色とレイヤーを変更する自作のメソッド
     /// </summary>
-    private void UpdateColor()
+    private void UpdateColorAndLayer()
     {
-        if (objRenderer == null) return;
-        objRenderer.material.color = isPlaying ? Color.red : Color.white;
+        if (_objRenderer != null) _objRenderer.material.color = IsPlaying ? Color.red : Color.white;
+
+        if(IsPlaying)
+        {
+            int targetLayer = LayerMask.NameToLayer(HighlightLayerName);
+            if (targetLayer != -1) gameObject.layer = targetLayer;
+        }
+        else
+        {
+            gameObject.layer = LayerMask.NameToLayer("Default");
+        }
     }
 }

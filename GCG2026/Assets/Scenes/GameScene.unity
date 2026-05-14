@@ -248,9 +248,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e8ca73384e1cfd41866ee7dd079e40a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
-  interactRange: 10
-  requiredHoldTime: 1
-  playerCamera: {fileID: 1913414987}
+  InteractRange: 10
+  RequiredHoldTime: 1
+  PlayerCamera: {fileID: 1913414987}
 --- !u!114 &32924666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,8 +263,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c29a74c64e78574bb71fcf12d0e0fbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ListenSkill
-  listenCamera: {fileID: 1709239967}
-  grayscaleVolume: {fileID: 602074370}
+  ListenCamera: {fileID: 0}
+  GrayscaleVolume: {fileID: 0}
 --- !u!4 &32924671 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
@@ -474,6 +474,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 1105040549}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (5)
@@ -1209,6 +1213,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 725310008}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (4)
@@ -1475,12 +1483,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 163992231}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4995, y: 15, z: 2958.94}
-  m_LocalScale: {x: 0.2, y: 10, z: 8}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -75, y: 0, z: -0.12888816}
+  m_LocalScale: {x: 1, y: 1, z: 0.2962963}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2018904949}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &201051081
 GameObject:
@@ -2351,6 +2359,10 @@ PrefabInstance:
       propertyPath: rolloffCustomCurve.m_Curve.Array.data[3].value
       value: 0.2332489
       objectReference: {fileID: 0}
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 1450018632}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel
@@ -2408,6 +2420,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 928115869}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (1)
@@ -3355,6 +3371,16 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &455235088 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 582012142}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &460898566 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 702687444}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &473965343
 GameObject:
   m_ObjectHideFlags: 0
@@ -3524,6 +3550,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a7a7eeeeb576be49936cfd4e3e18f78, type: 3}
+--- !u!82 &482899483 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 2060048289}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &497608270
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3986,6 +4017,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 455235088}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (8)
@@ -4175,7 +4210,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1585904354196079696, guid: 50843b104f0193d4bbeb65d3b3a4e806, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 20
+      value: 20.5
       objectReference: {fileID: 0}
     - target: {fileID: 1585904354196079696, guid: 50843b104f0193d4bbeb65d3b3a4e806, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4919,15 +4954,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37a9661be68fd894a9e3bb294f39add7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  timeLimit: 180
-  maxFear: 100
-  fearIncreaseRate: 1
-  fearRecoveryRate: 1
-  playerTransform: {fileID: 32924671}
-  exclusionRadius: 40
-  floorHeghtDifference: 2
-  timeText: {fileID: 700215101}
-  fearVignetteGroup: {fileID: 0}
+  TimeLimit: 180
+  MaxFear: 100
+  FearIncreaseRate: 2
+  FearRecoveryRate: 1
+  PlayerTransform: {fileID: 32924671}
+  ExclusionRadius: 40
+  FloorHeightDifference: 2
+  TimeText: {fileID: 700215101}
+  FearVignetteGroup: {fileID: 0}
 --- !u!4 &695401237
 Transform:
   m_ObjectHideFlags: 0
@@ -5263,6 +5298,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 460898566}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (10)
@@ -5373,6 +5412,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a7a7eeeeb576be49936cfd4e3e18f78, type: 3}
+--- !u!82 &725310008 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 142386055}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &732054608
 GameObject:
   m_ObjectHideFlags: 0
@@ -6892,6 +6936,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &928115869 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 339104472}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &971490199
 GameObject:
   m_ObjectHideFlags: 0
@@ -7012,6 +7061,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 1285164426}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (2)
@@ -7523,6 +7576,16 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a7a7eeeeb576be49936cfd4e3e18f78, type: 3}
+--- !u!82 &1105040549 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 46693561}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1105591408 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 1112929444}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1106356559
 GameObject:
   m_ObjectHideFlags: 0
@@ -7637,6 +7700,10 @@ PrefabInstance:
       propertyPath: waitTime
       value: 11
       objectReference: {fileID: 0}
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 1105591408}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (6)
@@ -8563,11 +8630,11 @@ PrefabInstance:
       objectReference: {fileID: 1709239968}
     - target: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4979.44
+      value: -4987.74
       objectReference: {fileID: 0}
     - target: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.87
+      value: 3.35
       objectReference: {fileID: 0}
     - target: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8670,6 +8737,10 @@ PrefabInstance:
     - target: {fileID: 5739441311596290144, guid: 4a7a7eeeeb576be49936cfd4e3e18f78, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7835396356386154912, guid: 4a7a7eeeeb576be49936cfd4e3e18f78, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8908,6 +8979,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 1841148096}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (9)
@@ -8957,6 +9032,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+--- !u!82 &1285164426 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 992611394}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1285722313
 GameObject:
   m_ObjectHideFlags: 0
@@ -10634,6 +10714,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1438465930 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 1725745534}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1449053277
 GameObject:
   m_ObjectHideFlags: 0
@@ -10746,6 +10831,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1450018632 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 337767961}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1456431758
 GameObject:
   m_ObjectHideFlags: 0
@@ -11530,6 +11620,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1658631744 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 2014582455}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1709239967
 GameObject:
   m_ObjectHideFlags: 0
@@ -11778,6 +11873,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 1438465930}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (3)
@@ -12163,6 +12262,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1841148096 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -7569058216434971726, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+  m_PrefabInstance: {fileID: 1278315914}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1848795429
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13390,6 +13494,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 1658631744}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (11)
@@ -13548,7 +13656,8 @@ Transform:
   m_LocalPosition: {x: -4980, y: 15, z: 2962.42}
   m_LocalScale: {x: 0.2, y: 10, z: 27}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 163992235}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2019068525
@@ -13844,6 +13953,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2958473937978011173, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 482899483}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (7)
@@ -14443,7 +14556,6 @@ SceneRoots:
   - {fileID: 438025599}
   - {fileID: 2012737638}
   - {fileID: 2018904949}
-  - {fileID: 163992235}
   - {fileID: 1314155177}
   - {fileID: 1303925463}
   - {fileID: 762024267}

@@ -82,7 +82,7 @@ public class PlayerController : MonoBehaviour
         Vector3 move = transform.right * inputDir.x + transform.forward * inputDir.z;
 
         // CharacterControllerを使って移動を実行
-        controller.Move(move * playerSettings.moveSpeed * Time.deltaTime);
+        controller.Move(move * playerSettings.MoveSpeed * Time.deltaTime);
 
         // 重力の計算
         float gravity = -9.81f;
@@ -104,8 +104,8 @@ public class PlayerController : MonoBehaviour
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
         float sensitivityMultiplier = 0.01f;
-        float mouseX = mouseDelta.x * playerSettings.mouseSensitivity * sensitivityMultiplier;
-        float mouseY = mouseDelta.y * playerSettings.mouseSensitivity * sensitivityMultiplier;
+        float mouseX = mouseDelta.x * playerSettings.MouseSensitivity * sensitivityMultiplier;
+        float mouseY = mouseDelta.y * playerSettings.MouseSensitivity * sensitivityMultiplier;
 
         // 上下視点の計算(Y軸の動きでX軸を回転させる)
         xRotation -= mouseY;
