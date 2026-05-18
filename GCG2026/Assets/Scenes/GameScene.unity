@@ -482,6 +482,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Orgel (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
+      objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4978.74
@@ -1220,6 +1224,10 @@ PrefabInstance:
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
       objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2367,6 +2375,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Orgel
       objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
+      objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5022.89
@@ -2427,6 +2439,10 @@ PrefabInstance:
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
       objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4025,6 +4041,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Orgel (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
+      objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5004.8936
@@ -5305,6 +5325,10 @@ PrefabInstance:
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (10)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
       objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7069,6 +7093,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Orgel (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
+      objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5021.33
@@ -7707,6 +7735,10 @@ PrefabInstance:
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
       objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8986,6 +9018,10 @@ PrefabInstance:
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
       objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11881,6 +11917,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Orgel (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
+      objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4981.15
@@ -13502,6 +13542,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Orgel (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
+      objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4973.542
@@ -13960,6 +14004,10 @@ PrefabInstance:
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: m_TagString
+      value: Orgel
       objectReference: {fileID: 0}
     - target: {fileID: 9149822002578060066, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_LocalPosition.x
