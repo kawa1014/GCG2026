@@ -31,6 +31,12 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;          // 接地判定
 
     /// <summary>
+    /// プレイヤーが移動できるかどうか。
+    /// 聞き耳中はfalseにして移動を止める。
+    /// </summary>
+    private bool canMove = true;
+
+    /// <summary>
     /// 開始時に必要なコンポーネント取得とマウスカーソル設定を行う
     /// </summary>
     private void Start()
@@ -58,6 +64,8 @@ public class PlayerController : MonoBehaviour
         // キーボードが接続されていない場合は処理をスキップ
         if (Keyboard.current == null) return;
 
+        if (controller == null) return;
+
         // 接地チェック
         isGrounded = controller.isGrounded;
         if (isGrounded && verticalVelocity.y < 0)
@@ -66,30 +74,35 @@ public class PlayerController : MonoBehaviour
             verticalVelocity.y = -2f;
         }
 
-        float x = 0.0f;
-        float z = 0.0f;
+        Vector3 move = Vector3.zero;
 
-        // W, A, S, Dキーが押されているかを直接判定
-        if (Keyboard.current.dKey.isPressed) x += 1.0f;
-        if (Keyboard.current.aKey.isPressed) x -= 1.0f;
-        if (Keyboard.current.wKey.isPressed) z += 1.0f;
-        if (Keyboard.current.sKey.isPressed) z -= 1.0f;
+        if (canMove)
+        {
+            float x = 0.0f;
+            float z = 0.0f;
 
-        // 斜め移動時に速度が2倍(約1.4倍)にならないよう、長さを正規化する
-        Vector3 inputDir = new Vector3(x, 0, z).normalized;
+            // W, A, S, Dキーが押されているかを直接判定
+            if (Keyboard.current.dKey.isPressed) x += 1.0f;
+            if (Keyboard.current.aKey.isPressed) x -= 1.0f;
+            if (Keyboard.current.wKey.isPressed) z += 1.0f;
+            if (Keyboard.current.sKey.isPressed) z -= 1.0f;
 
-        // プレイヤーの向いている方向を基準に移動方向を決定
-        Vector3 move = transform.right * inputDir.x + transform.forward * inputDir.z;
+            // 斜め移動時に速度が2倍(約1.4倍)にならないよう、長さを正規化する
+            Vector3 inputDir = new Vector3(x, 0, z).normalized;
 
-        // CharacterControllerを使って移動を実行
-        controller.Move(move * playerSettings.MoveSpeed * Time.deltaTime);
+            // プレイヤーの向いている方向を基準に移動方向を決定
+            move = transform.right * inputDir.x + transform.forward * inputDir.z;
+
+            // 移動速度を反映
+            move *= playerSettings.MoveSpeed;
+        }
 
         // 重力の計算
         float gravity = -9.81f;
         verticalVelocity.y += gravity * Time.deltaTime;
 
-        // 垂直方向の移動
-        controller.Move(verticalVelocity * Time.deltaTime);
+        // CharacterControllerを使って移動を実行
+        controller.Move((move + verticalVelocity) * Time.deltaTime);
     }
 
     /// <summary>
@@ -109,12 +122,24 @@ public class PlayerController : MonoBehaviour
 
         // 上下視点の計算(Y軸の動きでX軸を回転させる)
         xRotation -= mouseY;
-        // 真上や真下を向きすぎなように角度を制限
+
+        // 真上や真下を向きすぎないように角度を制限
         xRotation = Mathf.Clamp(xRotation, -80.0f, 80.0f);
 
         // カメラは上下回転のみ
         cameraTransform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+
         // プレイヤー本体を左右回転
         transform.Rotate(Vector3.up * mouseX);
+    }
+
+    /// <summary>
+    /// プレイヤーの移動可否を設定する。
+    /// trueなら移動可能、falseなら移動不可。
+    /// </summary>
+    /// <param name="value">移動できるかどうか。</param>
+    public void SetCanMove(bool value)
+    {
+        canMove = value;
     }
 }
