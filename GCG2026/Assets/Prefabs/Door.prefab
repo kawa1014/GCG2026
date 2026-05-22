@@ -108,12 +108,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 60, y: 10, z: 40}
-  m_Center: {x: 0, y: 0, z: -20}
+  m_Size: {x: 2, y: 10, z: 40}
+  m_Center: {x: 0, y: 0.14, z: -20.5}
 --- !u!114 &2792113167700262108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,9 +126,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 610b69ee19159334386dbe0f6e73de23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  isOpen: 0
-  openAngle: 90
-  smooth: 2
+  OpenAngle: 90
+  Smooth: 2
 --- !u!1 &4004763218188124145
 GameObject:
   m_ObjectHideFlags: 0
