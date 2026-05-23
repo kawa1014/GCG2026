@@ -184,29 +184,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50843b104f0193d4bbeb65d3b3a4e806, type: 3}
---- !u!1 &472890654 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8751724538964997668, guid: 05a4b958850006246b27d72b94e449da, type: 3}
-  m_PrefabInstance: {fileID: 1067271502}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &472890659
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 472890654}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cba40c829cd9f2046beb5f257a53e3b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraController
-  InitialFov: 120
-  NearClipPlane: 0.01
-  EnableHeadBob: 1
-  BobFrequency: 4.18
-  BobAmplitube: 3.76
-  PlayerCharacterController: {fileID: 1519347672}
 --- !u!1001 &1067271502
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -218,6 +195,10 @@ PrefabInstance:
     - target: {fileID: 3579066121251953399, guid: 05a4b958850006246b27d72b94e449da, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5516414949425395976, guid: 05a4b958850006246b27d72b94e449da, type: 3}
+      propertyPath: InitialFov
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
       propertyPath: m_LocalPosition.x
@@ -262,10 +243,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8751724538964997668, guid: 05a4b958850006246b27d72b94e449da, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 472890659}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 05a4b958850006246b27d72b94e449da, type: 3}
 --- !u!1 &1414845969
 GameObject:
@@ -394,11 +372,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!143 &1519347672 stripped
-CharacterController:
-  m_CorrespondingSourceObject: {fileID: 7490217814813742370, guid: 05a4b958850006246b27d72b94e449da, type: 3}
-  m_PrefabInstance: {fileID: 1067271502}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
