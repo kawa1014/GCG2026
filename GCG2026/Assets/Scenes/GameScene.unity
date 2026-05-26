@@ -12405,18 +12405,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f93a28dc842a84bac1ef0bbb8b3c49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerator3D
-  mapCsv: {fileID: 4900000, guid: 73ed5ffd3339ed1418c3129ea807356e, type: 3}
-  floorPrefabs:
-  - {fileID: 1360868685609117505, guid: 0034cbc33d7126f49b1b0b04a3ebe513, type: 3}
-  northWallPrefabs:
-  - {fileID: 7218176887748605927, guid: 0785a404d590454459e9b3833043c63e, type: 3}
-  - {fileID: 6268445756979661854, guid: a72cfe8fecce8a1428145913548fe300, type: 3}
-  eastWallPrefabs:
-  - {fileID: 7093812871334289261, guid: 13f536cfcf35eaf4cb9e02301fe5d87c, type: 3}
-  - {fileID: 5333480413106828372, guid: 9efb5f0a6477a3c4195ee881d14fe761, type: 3}
-  furniturePrefabs:
-  - {fileID: 3813387156802618166, guid: 4cd309998d9f59f4c9c0c3f45faf21bc, type: 3}
-  blockSize: 5
 --- !u!65 &1841321160
 BoxCollider:
   m_ObjectHideFlags: 0
