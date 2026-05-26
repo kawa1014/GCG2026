@@ -31,7 +31,7 @@ Shader "Custom/URPUnlit" {
 			}
 
 			half4 Fragment() : SV_Target {
-				return half4(1, 0, 0, 1);
+				return half4(1, 1, 0, 1);
 			}
 			ENDHLSL
 		}
