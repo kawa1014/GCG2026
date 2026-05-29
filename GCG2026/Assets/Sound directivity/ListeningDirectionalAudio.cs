@@ -84,7 +84,8 @@ public class ListeningDirectionalAudio : MonoBehaviour
     /// 遠距離でも残す最低音量。
     /// 「鳴っているのに気づけない」を防ぐ。
     /// </summary>
-    [SerializeField] private float farMinimumVolume = 0.18f;
+    [SerializeField] private float farMinimumVolume = 0.14f;
+
     /// <summary>
     /// 正面に近い時に追加する音量。
     /// </summary>
@@ -153,7 +154,7 @@ public class ListeningDirectionalAudio : MonoBehaviour
     /// 上下方向がズレている時の最低音量倍率。
     /// 小さいほど、1階/2階の方向違いが分かりやすくなる。
     /// </summary>
-    [SerializeField] private float verticalMismatchRate = 0.12f;
+    [SerializeField] private float verticalMismatchRate = 0.08f;
 
     /// <summary>
     /// 上下方向がズレている時のLowPassFilter用の鮮明度倍率。
@@ -166,6 +167,25 @@ public class ListeningDirectionalAudio : MonoBehaviour
     /// 見上げた時に2階の音が分かりやすくなる。
     /// </summary>
     [SerializeField] private float verticalBonusVolume = 0.18f;
+
+    /// <summary>
+    /// 音源がほぼ真上・真下、またはカメラがほぼ真上・真下を向いている時の判定角度。
+    /// 0.92なら、だいたい上下23度以内を特殊処理する。
+    /// </summary>
+    [Header("真上・真下の無音防止")]
+    [Range(0.0f, 1.0f)]
+    [SerializeField] private float verticalExtremeDot = 0.92f;
+
+    /// <summary>
+    /// 真上・真下の音源を正しく向いている時に、最低限残す音量倍率。
+    /// 上下判定や階層差が重なっても、完全に無音になるのを防ぐ。
+    /// </summary>
+    [SerializeField] private float verticalExtremeFacingMinimumVolume = 0.30f;
+
+    /// <summary>
+    /// 真上・真下の音源を向けていない時でも、完全に消えないように残す最低音量倍率。
+    /// </summary>
+    [SerializeField] private float verticalExtremeMinimumVolume = 0.12f;
 
     /// <summary>
     /// プレイヤーと音源の高さ差がこれ以上ある場合、階層違いとして扱う。
@@ -189,7 +209,8 @@ public class ListeningDirectionalAudio : MonoBehaviour
     /// 階層差があるのに上下方向を見ていない時の追加音量倍率。
     /// 小さいほど、違う階を探している時に音がさらに小さくなる。
     /// </summary>
-    [SerializeField] private float differentFloorWrongLookVolumeRate = 0.35f;
+    [SerializeField] private float differentFloorWrongLookVolumeRate = 0.25f;
+
     /// <summary>
     /// 階層差があるのに上下方向を見ていない時の追加鮮明度倍率。
     /// 小さいほど、違う階を見ている時にさらにこもる。
@@ -341,6 +362,9 @@ public class ListeningDirectionalAudio : MonoBehaviour
         backSideVolumeRate = Mathf.Clamp01(backSideVolumeRate);
         verticalMismatchRate = Mathf.Clamp01(verticalMismatchRate);
         verticalMismatchClarityRate = Mathf.Clamp01(verticalMismatchClarityRate);
+        verticalExtremeDot = Mathf.Clamp01(verticalExtremeDot);
+        verticalExtremeFacingMinimumVolume = Mathf.Clamp01(verticalExtremeFacingMinimumVolume);
+        verticalExtremeMinimumVolume = Mathf.Clamp01(verticalExtremeMinimumVolume);
         differentFloorBaseVolumeRate = Mathf.Clamp01(differentFloorBaseVolumeRate);
         differentFloorBaseClarityRate = Mathf.Clamp01(differentFloorBaseClarityRate);
         differentFloorWrongLookVolumeRate = Mathf.Clamp01(differentFloorWrongLookVolumeRate);
@@ -465,6 +489,12 @@ public class ListeningDirectionalAudio : MonoBehaviour
 
         Vector3 directionToSound = toSound.normalized;
 
+        bool soundIsAlmostVertical = Mathf.Abs(directionToSound.y) >= verticalExtremeDot;
+        bool listenerLooksAlmostVertical = Mathf.Abs(listenerTransform.forward.normalized.y) >= verticalExtremeDot;
+        bool listenerLooksTowardVerticalSound =
+            soundIsAlmostVertical
+            && Mathf.Sign(listenerTransform.forward.normalized.y) == Mathf.Sign(directionToSound.y);
+
         float horizontalRate = CalculateHorizontalRate(directionToSound);
         float verticalRate = CalculateVerticalRate(directionToSound);
         float verticalClarityRate = CalculateVerticalClarityRate(directionToSound);
@@ -531,6 +561,28 @@ public class ListeningDirectionalAudio : MonoBehaviour
         // これで「ある場所だけ急にデカい」を抑える。
         finalVolume = Mathf.Min(finalVolume, naturalVolumeLimit);
 
+        // 真上・真下の特殊対策。
+        // 真上/真下は左右方向の情報がほぼ0になり、上下補正・階層差・壁補正が重なると
+        // 音量が極端に小さくなりすぎることがある。
+        // そのため、上下の極端なケースだけ最低音量を保証する。
+        if (soundIsAlmostVertical || listenerLooksAlmostVertical)
+        {
+            float verticalExtremeMinimum = listenerLooksTowardVerticalSound
+                ? verticalExtremeFacingMinimumVolume
+                : verticalExtremeMinimumVolume;
+
+            // [Fix] 真上・真下の時は、距離減衰・階層差・壁越し補正が重なっても
+            // 完全に無音にならないように、最終音量そのものへ最低保証をかける。
+            // 以前は verticalExtremeMinimum に distanceVolume などを掛けていたため、
+            // 条件が重なると最低保証も小さくなりすぎていた。
+            finalVolume = Mathf.Max(finalVolume, verticalExtremeMinimum);
+            finalVolume = Mathf.Min(finalVolume, naturalVolumeLimit);
+
+            // 真上・真下は左右差が存在しないため、パンを中央に戻す。
+            // これでUnityの3Dパン補助が極端な上下方向で不安定になるのを防ぐ。
+            pan = 0.0f;
+        }
+
         // 鮮明度は、真正面・上下一致・壁なしの時に最も高くなる。
         float finalClarity = Mathf.Clamp01(
             horizontalRate
@@ -539,6 +591,14 @@ public class ListeningDirectionalAudio : MonoBehaviour
             * floorLookClarityRate
             * wallClarity
         );
+
+        if (soundIsAlmostVertical || listenerLooksAlmostVertical)
+        {
+            // [Fix] 真上・真下で音が完全にこもりすぎて消えたように感じるのを防ぐ。
+            // 壁越しや違う階の濁りは残しつつ、最低限の聞こえを保証する。
+            float verticalExtremeMinimumClarity = listenerLooksTowardVerticalSound ? 0.45f : 0.20f;
+            finalClarity = Mathf.Max(finalClarity, verticalExtremeMinimumClarity * wallClarity);
+        }
 
         return new AudioState
         {
