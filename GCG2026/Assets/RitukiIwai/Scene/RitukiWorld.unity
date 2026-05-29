@@ -7463,9 +7463,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -9459,9 +9459,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -9685,9 +9685,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -10066,9 +10066,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -10606,9 +10606,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -11890,9 +11890,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -12349,9 +12349,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -12436,9 +12436,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -13459,9 +13459,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -15083,9 +15083,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -15733,9 +15733,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
@@ -15820,9 +15820,9 @@ MonoBehaviour:
   maxVolumeRisePerSecond: 0.55
   maxVolumeFallPerSecond: 1.8
   distanceFalloffRange: 28
-  farMinimumVolume: 0.18
+  farMinimumVolume: 0.25
   frontBonusVolume: 0.18
-  backSideVolumeRate: 0.2
+  backSideVolumeRate: 0.45
   sideDirectionBonusVolume: 0.3
   useStereoPanAssist: 1
   spatialBlend: 0.7
