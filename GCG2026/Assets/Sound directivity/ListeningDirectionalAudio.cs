@@ -183,9 +183,74 @@ public class ListeningDirectionalAudio : MonoBehaviour
     [SerializeField] private float verticalExtremeFacingMinimumVolume = 0.30f;
 
     /// <summary>
+    /// オルゴールがほぼ真上・真下にあり、プレイヤーが正面を向いている時に残す最低音量倍率。
+    /// 真上・真下を向いていなくても、真上/真下に音源があることに気づけるようにする。
+    /// </summary>
+    [SerializeField] private float verticalExtremeColumnMinimumVolume = 0.22f;
+
+    /// <summary>
+    /// オルゴールがほぼ真上・真下にあるのに、プレイヤーが逆方向の真上・真下を向いた時に残す最低音量倍率。
+    /// 例：音源が真下なのに真上を向いている場合。
+    /// </summary>
+    [SerializeField] private float verticalExtremeOppositeMinimumVolume = 0.10f;
+
+    /// <summary>
     /// 真上・真下の音源を向けていない時でも、完全に消えないように残す最低音量倍率。
+    /// 主に「カメラだけが真上/真下を向いている」場合の保険。
     /// </summary>
     [SerializeField] private float verticalExtremeMinimumVolume = 0.12f;
+
+    /// <summary>
+    /// [Fix] 音源がほぼ真上/真下にある時、Unity標準の3D音が極端に弱くなるのを避けるための判定半径。
+    /// プレイヤーとオルゴールのXZ距離がこの値以下なら、上下柱判定として扱う。
+    /// </summary>
+    [SerializeField] private float verticalColumnHorizontalRadius = 4.0f;
+
+    /// <summary>
+    /// [Fix] 高さ差に対してXZ距離がこの割合以下なら、ほぼ真上/真下として扱う。
+    /// 例：高さ差4m、値0.45なら、XZ距離1.8m以内を上下柱判定にする。
+    /// </summary>
+    [SerializeField] private float verticalColumnHorizontalRate = 1.20f;
+
+    /// <summary>
+    /// [Fix] 音源が真上/真下にある時の最低音量。
+    /// 正面を向いていても、完全に聞こえなくなるのを防ぐ。
+    /// </summary>
+    [SerializeField] private float verticalColumnSafeMinimumVolume = 0.65f;
+
+    /// <summary>
+    /// [Fix] 音源が真上/真下にある時、正面を向いていても最低限この音量を残す。
+    /// 「真下にいる状態で前を向くと音が消える」問題への直接対策。
+    /// </summary>
+    [SerializeField] private float verticalColumnForwardMinimumVolume = 0.70f;
+
+    /// <summary>
+    /// [Fix] 音源が真上/真下にある時、正面を向いていても最低限この鮮明度を残す。
+    /// 完全にクリアにはしないが、無音に感じない程度にする。
+    /// </summary>
+    [SerializeField] private float verticalColumnForwardMinimumClarity = 0.65f;
+
+    /// <summary>
+    /// [Fix] 音源が真上/真下にある時だけ、Unity標準3Dの上下方向で音が消える問題を避けるためにSpatial Blendを下げる。
+    /// 0.0がおすすめ。真上/真下だけ2D寄りにして、Unity標準3Dの上下方向で音が消える問題を止める。
+    /// </summary>
+    [Range(0.0f, 1.0f)]
+    [SerializeField] private float verticalColumnSpatialBlend = 0.0f;
+
+    /// <summary>
+    /// [Fix] 音源が真上/真下にある時だけ音の広がりを増やし、聞こえなくなる位置を減らす。
+    /// </summary>
+    [SerializeField] private float verticalColumnSpread = 180.0f;
+
+    /// <summary>
+    /// [Fix] 真上/真下対策中は、AudioSource側の距離減衰が原因で音が消えないように最小距離を広げる。
+    /// </summary>
+    [SerializeField] private float verticalColumnMinDistance = 50.0f;
+
+    /// <summary>
+    /// [Fix] 真上/真下対策中は、AudioSource側の最大距離不足で音が消えないように最大距離を広げる。
+    /// </summary>
+    [SerializeField] private float verticalColumnMaxDistance = 500.0f;
 
     /// <summary>
     /// プレイヤーと音源の高さ差がこれ以上ある場合、階層違いとして扱う。
@@ -197,25 +262,67 @@ public class ListeningDirectionalAudio : MonoBehaviour
     /// 階層差がある時に、常に全体音量へ掛ける倍率。
     /// 例：1階で鳴っているのに2階を探している時は、音を全体的に小さくする。
     /// </summary>
-    [SerializeField] private float differentFloorBaseVolumeRate = 0.65f;
+    [SerializeField] private float differentFloorBaseVolumeRate = 0.55f;
 
     /// <summary>
     /// 階層差がある時に、常に鮮明度へ掛ける倍率。
     /// 違う階にいる時の「目の前で鳴っている感じ」を弱める。
     /// </summary>
-    [SerializeField] private float differentFloorBaseClarityRate = 0.75f;
+    [SerializeField] private float differentFloorBaseClarityRate = 0.60f;
 
     /// <summary>
     /// 階層差があるのに上下方向を見ていない時の追加音量倍率。
     /// 小さいほど、違う階を探している時に音がさらに小さくなる。
     /// </summary>
-    [SerializeField] private float differentFloorWrongLookVolumeRate = 0.25f;
+    [SerializeField] private float differentFloorWrongLookVolumeRate = 0.35f;
 
     /// <summary>
     /// 階層差があるのに上下方向を見ていない時の追加鮮明度倍率。
     /// 小さいほど、違う階を見ている時にさらにこもる。
     /// </summary>
-    [SerializeField] private float differentFloorWrongLookClarityRate = 0.18f;
+    [SerializeField] private float differentFloorWrongLookClarityRate = 0.25f;
+
+    /// <summary>
+    /// [Fix] 階層差の効果が最大になる高さ差。
+    /// Floor Height Thresholdを超えた瞬間に音が急落しないよう、ここまでの高さ差でなめらかに補正を強くする。
+    /// </summary>
+    [SerializeField] private float differentFloorFullEffectHeight = 4.5f;
+
+    /// <summary>
+    /// [Fix] 上下方向を見ていない判定を始める上下一致率。
+    /// この値より下がると、違う階で見ていない補正が少しずつ入り始める。
+    /// </summary>
+    [SerializeField] private float differentFloorWrongLookStartRate = 0.70f;
+
+    /// <summary>
+    /// [Fix] 上下方向を完全に見ていない扱いにする上下一致率。
+    /// この値以下で、Different Floor Wrong Look系の倍率が最大まで効く。
+    /// </summary>
+    [SerializeField] private float differentFloorWrongLookFullRate = 0.25f;
+
+    /// <summary>
+    /// [Fix] 違う階のオルゴールの真上/真下付近を通り過ぎる時に残す最低音量。
+    /// 床をまたいだ瞬間や真下を通った瞬間に、音が極端に小さくなるのを防ぐ。
+    /// </summary>
+    [SerializeField] private float differentFloorPassingMinimumVolume = 0.28f;
+
+    /// <summary>
+    /// [Fix] 違う階のオルゴールの真上/真下付近を通り過ぎる時に残す最低鮮明度。
+    /// 完全にクリアにはしないが、急に消えたようなこもり方を防ぐ。
+    /// </summary>
+    [SerializeField] private float differentFloorPassingMinimumClarity = 0.28f;
+
+    /// <summary>
+    /// [Fix] 違う階で真上/真下付近にいる時の最大音量。
+    /// 真上/真下の無音防止が強すぎて、違う階なのに近くで鳴っているように聞こえる問題を防ぐ。
+    /// </summary>
+    [SerializeField] private float differentFloorVerticalColumnVolumeLimit = 0.48f;
+
+    /// <summary>
+    /// [Fix] 違う階で真上/真下付近にいる時の最大鮮明度。
+    /// 違う階の音は少しこもらせ、同じ部屋で鳴っている感じを弱める。
+    /// </summary>
+    [SerializeField] private float differentFloorVerticalColumnClarityLimit = 0.46f;
 
     /// <summary>
     /// 壁として扱うLayer。
@@ -223,6 +330,13 @@ public class ListeningDirectionalAudio : MonoBehaviour
     /// </summary>
     [Header("壁越し")]
     [SerializeField] private LayerMask wallLayer;
+
+    /// <summary>
+    /// [Fix] FloorAreaが付いている床・天井を壁越し判定から除外する。
+    /// 1階と2階の床をWall Layerにしている場合、Raycastが床を壁として数えて音が急に小さくなるため。
+    /// 階数差の聞こえ方はFloorArea側の階数補正で作る。
+    /// </summary>
+    [SerializeField] private bool ignoreFloorAreaInWallOcclusion = true;
 
     /// <summary>
     /// 壁1枚越しの音量倍率。
@@ -303,6 +417,16 @@ public class ListeningDirectionalAudio : MonoBehaviour
         /// -1が左、0が中央、1が右。
         /// </summary>
         public float pan;
+
+        /// <summary>
+        /// [Fix] 状況ごとのSpatial Blend。真上/真下の時だけ3D比率を下げて無音化を防ぐ。
+        /// </summary>
+        public float spatialBlend;
+
+        /// <summary>
+        /// [Fix] 状況ごとのSpread。真上/真下の時だけ広げて音抜けを防ぐ。
+        /// </summary>
+        public float spread;
     }
 
     /// <summary>
@@ -364,11 +488,37 @@ public class ListeningDirectionalAudio : MonoBehaviour
         verticalMismatchClarityRate = Mathf.Clamp01(verticalMismatchClarityRate);
         verticalExtremeDot = Mathf.Clamp01(verticalExtremeDot);
         verticalExtremeFacingMinimumVolume = Mathf.Clamp01(verticalExtremeFacingMinimumVolume);
+        verticalExtremeColumnMinimumVolume = Mathf.Clamp01(verticalExtremeColumnMinimumVolume);
+        verticalExtremeOppositeMinimumVolume = Mathf.Clamp01(verticalExtremeOppositeMinimumVolume);
         verticalExtremeMinimumVolume = Mathf.Clamp01(verticalExtremeMinimumVolume);
+        verticalColumnHorizontalRadius = Mathf.Max(0.0f, verticalColumnHorizontalRadius);
+        verticalColumnHorizontalRate = Mathf.Max(0.0f, verticalColumnHorizontalRate);
+        // [Fix] 既にシーンへ置いたコンポーネントは古いInspector値を保持するため、
+        // 無音対策に必要な最低値はここで強制的に引き上げる。
+        verticalColumnSafeMinimumVolume = Mathf.Max(Mathf.Clamp01(verticalColumnSafeMinimumVolume), 0.65f);
+        verticalColumnForwardMinimumVolume = Mathf.Max(Mathf.Clamp01(verticalColumnForwardMinimumVolume), 0.70f);
+        verticalColumnForwardMinimumClarity = Mathf.Max(Mathf.Clamp01(verticalColumnForwardMinimumClarity), 0.65f);
+        verticalColumnSpatialBlend = 0.0f;
+        verticalColumnSpread = Mathf.Clamp(Mathf.Max(verticalColumnSpread, 180.0f), 0.0f, 360.0f);
+        verticalColumnHorizontalRadius = Mathf.Max(verticalColumnHorizontalRadius, 4.0f);
+        verticalColumnHorizontalRate = Mathf.Max(verticalColumnHorizontalRate, 1.20f);
+        verticalColumnMinDistance = Mathf.Max(verticalColumnMinDistance, 50.0f);
+        verticalColumnMaxDistance = Mathf.Max(verticalColumnMaxDistance, verticalColumnMinDistance + 100.0f);
         differentFloorBaseVolumeRate = Mathf.Clamp01(differentFloorBaseVolumeRate);
         differentFloorBaseClarityRate = Mathf.Clamp01(differentFloorBaseClarityRate);
         differentFloorWrongLookVolumeRate = Mathf.Clamp01(differentFloorWrongLookVolumeRate);
         differentFloorWrongLookClarityRate = Mathf.Clamp01(differentFloorWrongLookClarityRate);
+        differentFloorFullEffectHeight = Mathf.Max(floorHeightThreshold + 0.01f, differentFloorFullEffectHeight);
+        differentFloorWrongLookStartRate = Mathf.Clamp01(differentFloorWrongLookStartRate);
+        differentFloorWrongLookFullRate = Mathf.Clamp01(differentFloorWrongLookFullRate);
+        if (differentFloorWrongLookFullRate > differentFloorWrongLookStartRate)
+        {
+            differentFloorWrongLookFullRate = differentFloorWrongLookStartRate;
+        }
+        differentFloorPassingMinimumVolume = Mathf.Clamp01(differentFloorPassingMinimumVolume);
+        differentFloorPassingMinimumClarity = Mathf.Clamp01(differentFloorPassingMinimumClarity);
+        differentFloorVerticalColumnVolumeLimit = Mathf.Clamp(differentFloorVerticalColumnVolumeLimit, 0.05f, naturalVolumeLimit);
+        differentFloorVerticalColumnClarityLimit = Mathf.Clamp01(differentFloorVerticalColumnClarityLimit);
         singleWallVolumeRate = Mathf.Clamp01(singleWallVolumeRate);
         multiWallVolumeRate = Mathf.Clamp01(multiWallVolumeRate);
         minimumWallVolumeRate = Mathf.Clamp01(minimumWallVolumeRate);
@@ -406,6 +556,11 @@ public class ListeningDirectionalAudio : MonoBehaviour
         // ここはUnity標準の3D広がりを抑える。
         // 左右の分かりやすさは、このスクリプトのpanStereo補助で作る。
         targetAudioSource.spread = 0.0f;
+
+        // AudioSource側の距離設定が小さいと、こちらでvolumeを上げても最終的に聞こえないことがある。
+        // 通常時も最低限の聞こえを確保するため、極端に小さい値だけ補正する。
+        targetAudioSource.minDistance = Mathf.Max(targetAudioSource.minDistance, 1.0f);
+        targetAudioSource.maxDistance = Mathf.Max(targetAudioSource.maxDistance, distanceFalloffRange);
     }
 
     /// <summary>
@@ -426,6 +581,19 @@ public class ListeningDirectionalAudio : MonoBehaviour
         }
 
         AudioState audioState = CalculateAudioState();
+
+        // [Fix] 真上/真下のようにUnity標準3D音が弱くなりやすい場面では、
+        // このフレームだけSpatial BlendとSpreadを切り替える。
+        targetAudioSource.spatialBlend = audioState.spatialBlend;
+        targetAudioSource.spread = audioState.spread;
+
+        // [Fix] 真上/真下の時は、AudioSourceの3D距離減衰も一時的に広げる。
+        // これで「スクリプト上は音量があるのにUnity側の距離減衰で聞こえない」を防ぐ。
+        if (audioState.spatialBlend <= 0.001f)
+        {
+            targetAudioSource.minDistance = verticalColumnMinDistance;
+            targetAudioSource.maxDistance = verticalColumnMaxDistance;
+        }
 
         bool isListening = Input.GetKey(listenKey);
         float listenRate = isListening ? 1.0f : normalVolumeRate;
@@ -483,23 +651,64 @@ public class ListeningDirectionalAudio : MonoBehaviour
             {
                 volume = 1.0f,
                 clarity = 1.0f,
-                pan = 0.0f
+                pan = 0.0f,
+                spatialBlend = spatialBlend,
+                spread = 0.0f
             };
         }
 
         Vector3 directionToSound = toSound.normalized;
 
-        bool soundIsAlmostVertical = Mathf.Abs(directionToSound.y) >= verticalExtremeDot;
-        bool listenerLooksAlmostVertical = Mathf.Abs(listenerTransform.forward.normalized.y) >= verticalExtremeDot;
+        float horizontalDistance = new Vector2(toSound.x, toSound.z).magnitude;
+        float verticalDistance = Mathf.Abs(toSound.y);
+        float verticalColumnRadiusByHeight = verticalDistance * verticalColumnHorizontalRate;
+        bool soundIsVerticalColumn =
+            verticalDistance >= 0.25f
+            && horizontalDistance <= Mathf.Max(verticalColumnHorizontalRadius, verticalColumnRadiusByHeight);
+
+        float listenerForwardY = listenerTransform.forward.normalized.y;
+        bool soundIsAlmostVertical = Mathf.Abs(directionToSound.y) >= verticalExtremeDot || soundIsVerticalColumn;
+        bool listenerLooksAlmostVertical = Mathf.Abs(listenerForwardY) >= verticalExtremeDot;
         bool listenerLooksTowardVerticalSound =
             soundIsAlmostVertical
-            && Mathf.Sign(listenerTransform.forward.normalized.y) == Mathf.Sign(directionToSound.y);
+            && listenerLooksAlmostVertical
+            && Mathf.Sign(listenerForwardY) == Mathf.Sign(directionToSound.y);
+        bool listenerLooksOppositeVerticalSound =
+            soundIsAlmostVertical
+            && listenerLooksAlmostVertical
+            && Mathf.Sign(listenerForwardY) != Mathf.Sign(directionToSound.y);
 
         float horizontalRate = CalculateHorizontalRate(directionToSound);
         float verticalRate = CalculateVerticalRate(directionToSound);
         float verticalClarityRate = CalculateVerticalClarityRate(directionToSound);
+
+        // [Fix] 真上/真下の無音防止で verticalRate を底上げする前の値。
+        // 階数違いの「上下を見ていない」判定にはこの生の値を使う。
+        // これにより、補正が急にON/OFFせず自然に変化する。
+        float rawVerticalRate = verticalRate;
+
         float sideRate = CalculateSideRate(directionToSound);
         float pan = CalculateStereoPan(directionToSound);
+        float dynamicSpatialBlend = spatialBlend;
+        float dynamicSpread = 0.0f;
+
+        if (soundIsVerticalColumn)
+        {
+            // [Fix] 真上/真下の音源では、水平角度・左右パンを無理に使わない。
+            // 真上/真下にいるのに前を向いた時、水平判定で音が消えるのを防ぐ。
+            horizontalRate = 1.0f;
+            sideRate = 0.0f;
+            pan = 0.0f;
+
+            // [Fix] 真下/真上にいる時は、上下の向きズレによる極端な音量低下を防ぐ。
+            // 前を向いているだけで verticalMismatchRate まで落ちると、無音に感じるため強めに保証する。
+            verticalRate = 1.0f;
+
+            // [Fix] Unity標準の3D音は真上/真下で聞こえ方が不安定になりやすい。
+            // この時だけ2D寄りにして、音量・こもり・方向感はこのスクリプト側で制御する。
+            dynamicSpatialBlend = verticalColumnSpatialBlend;
+            dynamicSpread = verticalColumnSpread;
+        }
 
         WallOcclusionState wallOcclusionState = CalculateWallOcclusionState(
             listenerPosition,
@@ -521,20 +730,28 @@ public class ListeningDirectionalAudio : MonoBehaviour
         distanceVolume = Mathf.Min(distanceVolume, closeDistanceVolumeLimit);
 
         float heightDifference = Mathf.Abs(toSound.y);
+
+        // [Fix] 階数差を bool で急に切り替えると、
+        // オルゴールの真下/真上を通り過ぎた瞬間に音が極端に小さくなる。
+        // そのため、高さ差に応じて0〜1でなめらかに階層補正を強くする。
         bool differentFloor = heightDifference >= floorHeightThreshold;
-        bool verticalDirectionIsWrong = verticalRate <= 0.55f;
+        float floorEffectRate = differentFloor
+            ? Mathf.InverseLerp(floorHeightThreshold, differentFloorFullEffectHeight, heightDifference)
+            : 0.0f;
 
-        float floorBaseVolumeRate = differentFloor ? differentFloorBaseVolumeRate : 1.0f;
-        float floorBaseClarityRate = differentFloor ? differentFloorBaseClarityRate : 1.0f;
+        // [Fix] 「違う階を見ていない」補正も急にONにせず、
+        // 上下方向の一致率が下がるほど少しずつ効かせる。
+        float wrongLookRate = floorEffectRate * Mathf.InverseLerp(
+            differentFloorWrongLookStartRate,
+            differentFloorWrongLookFullRate,
+            rawVerticalRate
+        );
 
-        float floorLookVolumeRate = 1.0f;
-        float floorLookClarityRate = 1.0f;
+        float floorBaseVolumeRate = Mathf.Lerp(1.0f, differentFloorBaseVolumeRate, floorEffectRate);
+        float floorBaseClarityRate = Mathf.Lerp(1.0f, differentFloorBaseClarityRate, floorEffectRate);
 
-        if (differentFloor && verticalDirectionIsWrong)
-        {
-            floorLookVolumeRate = differentFloorWrongLookVolumeRate;
-            floorLookClarityRate = differentFloorWrongLookClarityRate;
-        }
+        float floorLookVolumeRate = Mathf.Lerp(1.0f, differentFloorWrongLookVolumeRate, wrongLookRate);
+        float floorLookClarityRate = Mathf.Lerp(1.0f, differentFloorWrongLookClarityRate, wrongLookRate);
 
         // 正面と上下が合っているほど、クリアで少し大きく聞こえる。
         float frontAndVerticalRate = horizontalRate * verticalRate;
@@ -561,22 +778,81 @@ public class ListeningDirectionalAudio : MonoBehaviour
         // これで「ある場所だけ急にデカい」を抑える。
         finalVolume = Mathf.Min(finalVolume, naturalVolumeLimit);
 
+        if (differentFloor && soundIsVerticalColumn)
+        {
+            // [Fix] 違う階のオルゴールの真上/真下付近を通る時だけ、
+            // 階層差・上下方向・壁越し補正が重なっても極端には小さくしない。
+            // floorEffectRateを掛けることで、高さ差が小さい時は保証も弱くなる。
+            finalVolume = Mathf.Max(finalVolume, differentFloorPassingMinimumVolume * floorEffectRate);
+        }
+
         // 真上・真下の特殊対策。
         // 真上/真下は左右方向の情報がほぼ0になり、上下補正・階層差・壁補正が重なると
         // 音量が極端に小さくなりすぎることがある。
         // そのため、上下の極端なケースだけ最低音量を保証する。
         if (soundIsAlmostVertical || listenerLooksAlmostVertical)
         {
-            float verticalExtremeMinimum = listenerLooksTowardVerticalSound
-                ? verticalExtremeFacingMinimumVolume
-                : verticalExtremeMinimumVolume;
+            float verticalExtremeMinimum = verticalExtremeMinimumVolume;
 
-            // [Fix] 真上・真下の時は、距離減衰・階層差・壁越し補正が重なっても
+            if (soundIsAlmostVertical)
+            {
+                if (listenerLooksTowardVerticalSound)
+                {
+                    // 音源が真上/真下で、その方向をちゃんと向いている時。
+                    verticalExtremeMinimum = verticalExtremeFacingMinimumVolume;
+                }
+                else if (listenerLooksOppositeVerticalSound)
+                {
+                    // 音源が真下なのに真上を見る、または音源が真上なのに真下を見る時。
+                    // 完全無音にはしないが、方向違いとして弱める。
+                    verticalExtremeMinimum = verticalExtremeOppositeMinimumVolume;
+                }
+                else
+                {
+                    // [Fix] 今回の重要修正。
+                    // 音源が真上/真下にある状態でプレイヤーが正面を向くと、
+                    // 上下補正が弱判定になって音が消えやすかった。
+                    // 正面を向いていても、真上/真下に音源があることが分かる最低音量を残す。
+                    verticalExtremeMinimum = verticalExtremeColumnMinimumVolume;
+                }
+            }
+
+            // 真上・真下の時は、距離減衰・階層差・壁越し補正が重なっても
             // 完全に無音にならないように、最終音量そのものへ最低保証をかける。
-            // 以前は verticalExtremeMinimum に distanceVolume などを掛けていたため、
-            // 条件が重なると最低保証も小さくなりすぎていた。
+            if (soundIsVerticalColumn)
+            {
+                if (differentFloor)
+                {
+                    // [Fix] 違う階では「真上/真下の無音防止」を弱める。
+                    // ここで verticalColumnSafeMinimumVolume / verticalColumnForwardMinimumVolume を使うと、
+                    // 違う階なのに音量0.65〜0.70が保証されて大きすぎる。
+                    verticalExtremeMinimum = Mathf.Max(
+                        verticalExtremeMinimum,
+                        differentFloorPassingMinimumVolume * floorEffectRate
+                    );
+                }
+                else
+                {
+                    verticalExtremeMinimum = Mathf.Max(verticalExtremeMinimum, verticalColumnSafeMinimumVolume);
+
+                    if (!listenerLooksAlmostVertical)
+                    {
+                        // [Fix] 同じ階の真上/真下にいて、カメラを前へ向けている時の最低保証。
+                        // 違う階では使わない。階数差の聞こえ方が消えるため。
+                        verticalExtremeMinimum = Mathf.Max(verticalExtremeMinimum, verticalColumnForwardMinimumVolume);
+                    }
+                }
+            }
+
             finalVolume = Mathf.Max(finalVolume, verticalExtremeMinimum);
             finalVolume = Mathf.Min(finalVolume, naturalVolumeLimit);
+
+            if (differentFloor && soundIsVerticalColumn)
+            {
+                // [Fix] 違う階の真上/真下付近では最大音量にも上限をかける。
+                // これで「上の部屋で鳴っているのに、真下を通ると同じ部屋みたいにデカい」を防ぐ。
+                finalVolume = Mathf.Min(finalVolume, differentFloorVerticalColumnVolumeLimit);
+            }
 
             // 真上・真下は左右差が存在しないため、パンを中央に戻す。
             // これでUnityの3Dパン補助が極端な上下方向で不安定になるのを防ぐ。
@@ -592,19 +868,89 @@ public class ListeningDirectionalAudio : MonoBehaviour
             * wallClarity
         );
 
+        if (differentFloor && soundIsVerticalColumn)
+        {
+            // [Fix] 違う階の真上/真下付近で、LowPassが急に下がりすぎるのを防ぐ。
+            // 壁越しのこもりは残すため、wallClarityは掛ける。
+            finalClarity = Mathf.Max(
+                finalClarity,
+                differentFloorPassingMinimumClarity * floorEffectRate * wallClarity
+            );
+        }
+
         if (soundIsAlmostVertical || listenerLooksAlmostVertical)
         {
             // [Fix] 真上・真下で音が完全にこもりすぎて消えたように感じるのを防ぐ。
             // 壁越しや違う階の濁りは残しつつ、最低限の聞こえを保証する。
-            float verticalExtremeMinimumClarity = listenerLooksTowardVerticalSound ? 0.45f : 0.20f;
-            finalClarity = Mathf.Max(finalClarity, verticalExtremeMinimumClarity * wallClarity);
+            float verticalExtremeMinimumClarity = 0.22f;
+
+            if (soundIsAlmostVertical)
+            {
+                if (listenerLooksTowardVerticalSound)
+                {
+                    verticalExtremeMinimumClarity = 0.50f;
+                }
+                else if (listenerLooksOppositeVerticalSound)
+                {
+                    verticalExtremeMinimumClarity = 0.16f;
+                }
+                else
+                {
+                    // 音源が真上/真下で、正面を向いている時。
+                    // 少しこもるが、消えたようには感じない程度に残す。
+                    verticalExtremeMinimumClarity = 0.32f;
+                }
+            }
+
+            if (soundIsVerticalColumn)
+            {
+                if (differentFloor)
+                {
+                    // [Fix] 違う階では真上/真下でもクリアにしすぎない。
+                    // verticalColumnForwardMinimumClarity = 0.65 を使うと、
+                    // 上の部屋の音が同じ部屋のように鮮明になる。
+                    verticalExtremeMinimumClarity = Mathf.Max(
+                        verticalExtremeMinimumClarity,
+                        differentFloorPassingMinimumClarity * floorEffectRate
+                    );
+                }
+                else
+                {
+                    verticalExtremeMinimumClarity = Mathf.Max(verticalExtremeMinimumClarity, 0.38f);
+
+                    if (!listenerLooksAlmostVertical)
+                    {
+                        // [Fix] 同じ階の真上/真下の音源を前向きで聞いた時、
+                        // こもりすぎて消えたように感じるのを防ぐ。
+                        verticalExtremeMinimumClarity = Mathf.Max(verticalExtremeMinimumClarity, verticalColumnForwardMinimumClarity);
+                    }
+                }
+            }
+
+            if (soundIsVerticalColumn)
+            {
+                // [Fix] 真上/真下の無音問題を優先する。
+                // ただし、違う階では後で最大鮮明度の上限をかける。
+                finalClarity = Mathf.Max(finalClarity, verticalExtremeMinimumClarity);
+
+                if (differentFloor)
+                {
+                    finalClarity = Mathf.Min(finalClarity, differentFloorVerticalColumnClarityLimit);
+                }
+            }
+            else
+            {
+                finalClarity = Mathf.Max(finalClarity, verticalExtremeMinimumClarity * wallClarity);
+            }
         }
 
         return new AudioState
         {
             volume = finalVolume,
             clarity = finalClarity,
-            pan = pan
+            pan = pan,
+            spatialBlend = dynamicSpatialBlend,
+            spread = dynamicSpread
         };
     }
 
@@ -641,7 +987,34 @@ public class ListeningDirectionalAudio : MonoBehaviour
             QueryTriggerInteraction.Ignore
         );
 
-        int wallCount = Mathf.Min(hits.Length, maxWallHitCount);
+        int wallCount = 0;
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            Collider hitCollider = hits[i].collider;
+
+            if (hitCollider == null)
+            {
+                continue;
+            }
+
+            // [Fix] FloorArea付きの床・天井は壁として数えない。
+            // オルゴールが上の部屋にある時、1階と2階の床をWallとして数えると、
+            // 真下付近を通った瞬間に壁2枚以上扱いになり、音が急に小さくなる。
+            // 階数違いの音量差はfloorBaseVolumeRate側で処理する。
+            if (ignoreFloorAreaInWallOcclusion
+                && hitCollider.GetComponentInParent<FloorArea>() != null)
+            {
+                continue;
+            }
+
+            wallCount++;
+
+            if (wallCount >= maxWallHitCount)
+            {
+                break;
+            }
+        }
 
         if (wallCount <= 0)
         {
