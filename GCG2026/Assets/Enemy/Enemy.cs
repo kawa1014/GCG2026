@@ -30,6 +30,18 @@ public class Enemy : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
 
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.transform;
+            }
+            else
+            {
+                Debug.LogError("'Player'タグのオブジェクトがいません！");
+            }
+        }
         //最初の目的地を設定
         if ((waypoints.Length > 0))
         {
