@@ -200,6 +200,14 @@ PrefabInstance:
       propertyPath: InitialFov
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 5516414949425395976, guid: 05a4b958850006246b27d72b94e449da, type: 3}
+      propertyPath: BobAmplitube
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5516414949425395976, guid: 05a4b958850006246b27d72b94e449da, type: 3}
+      propertyPath: BobFrequency
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4972.068
