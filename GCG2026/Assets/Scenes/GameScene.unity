@@ -12405,18 +12405,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f93a28dc842a84bac1ef0bbb8b3c49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerator3D
-  mapCsv: {fileID: 4900000, guid: 73ed5ffd3339ed1418c3129ea807356e, type: 3}
+  mapCsv: {fileID: 4900000, guid: 0f6f61f762552b943a587cc3b55ed701, type: 3}
   floorPrefabs:
   - {fileID: 1360868685609117505, guid: 0034cbc33d7126f49b1b0b04a3ebe513, type: 3}
-  northWallPrefabs:
+  wallPrefabs:
   - {fileID: 7218176887748605927, guid: 0785a404d590454459e9b3833043c63e, type: 3}
   - {fileID: 6268445756979661854, guid: a72cfe8fecce8a1428145913548fe300, type: 3}
-  eastWallPrefabs:
-  - {fileID: 7093812871334289261, guid: 13f536cfcf35eaf4cb9e02301fe5d87c, type: 3}
   - {fileID: 5333480413106828372, guid: 9efb5f0a6477a3c4195ee881d14fe761, type: 3}
-  furniturePrefabs:
-  - {fileID: 3813387156802618166, guid: 4cd309998d9f59f4c9c0c3f45faf21bc, type: 3}
+  - {fileID: 7093812871334289261, guid: 13f536cfcf35eaf4cb9e02301fe5d87c, type: 3}
+  - {fileID: 3086532229979879472, guid: f3bd996769b86624c84e03653835dc9c, type: 3}
+  - {fileID: 136985385492046404, guid: bbf342fc089bc634a9e3c2eee966eb76, type: 3}
+  - {fileID: 7785759884235843891, guid: 9a4aa0deb3389414c98adbee64191907, type: 3}
+  - {fileID: 661801576502479455, guid: c78a985513724fc45b7dda8261ace38e, type: 3}
+  doorPrefabs:
+  - {fileID: 5787598183455338865, guid: cb28546489cf63f47b72c4cd71a718a4, type: 3}
+  - {fileID: 5787598183455338865, guid: 7f7202f6db3af09418676c79f38d4244, type: 3}
+  - {fileID: 5787598183455338865, guid: 251f9f2d6da0bf14a923a67d6b2bc5e2, type: 3}
+  - {fileID: 5787598183455338865, guid: 251f9f2d6da0bf14a923a67d6b2bc5e2, type: 3}
+  windowPrefabs: []
+  furniturePrefabs: []
   blockSize: 5
+  floorHeight: 10
 --- !u!65 &1841321160
 BoxCollider:
   m_ObjectHideFlags: 0
