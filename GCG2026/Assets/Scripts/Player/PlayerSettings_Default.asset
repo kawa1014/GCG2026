@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: PlayerSettings_Default
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSettings
   MoveSpeed: 12
-  MouseSensitivity: 100
+  MouseSensitivity: 10

@@ -12405,6 +12405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f93a28dc842a84bac1ef0bbb8b3c49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerator3D
+<<<<<<< HEAD
   mapCsv: {fileID: 4900000, guid: 0f6f61f762552b943a587cc3b55ed701, type: 3}
   floorPrefabs:
   - {fileID: 1360868685609117505, guid: 0034cbc33d7126f49b1b0b04a3ebe513, type: 3}
@@ -12426,6 +12427,8 @@ MonoBehaviour:
   furniturePrefabs: []
   blockSize: 5
   floorHeight: 10
+=======
+>>>>>>> ProtoBanana/Kawatani
 --- !u!65 &1841321160
 BoxCollider:
   m_ObjectHideFlags: 0
