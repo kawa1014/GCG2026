@@ -4,7 +4,11 @@
 TagManager:
   serializedVersion: 3
   tags:
+<<<<<<< HEAD
   - Orgel
+=======
+  - Door
+>>>>>>> protoAlpha/Tougou
   layers:
   - Default
   - TransparentFX

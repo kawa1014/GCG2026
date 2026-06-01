@@ -24,11 +24,24 @@ public class Enemy : MonoBehaviour
 
     private NavMeshAgent agent;
     private int currentWaypointIndex = 0;
+    private float doorCheckCooldown = 0f; //ドアの判定をとるクールダウンタイマー
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
 
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.transform;
+            }
+            else
+            {
+                Debug.LogError("'Player'タグのオブジェクトがいません！");
+            }
+        }
         //最初の目的地を設定
         if ((waypoints.Length > 0))
         {
@@ -38,6 +51,11 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        //ドアの判定をとるタイマーを減らす
+        if(doorCheckCooldown > 0)
+        {
+            doorCheckCooldown -= Time.deltaTime;
+        }
         //状態に応じた行動を実行
         switch (currentState)
         {
@@ -121,6 +139,11 @@ public class Enemy : MonoBehaviour
     //4.右側に扉があるかのチェック
     private void CheckDoorOnRight()
     {
+        //☆ドアの判定をとるクールダウン中はチェックしない
+        if (doorCheckCooldown > 0)
+        {
+            return;
+        }
         //右側にレイを飛ばして扉の確認
         RaycastHit hit;
         Vector3 rightDir = transform.right; //右方向
@@ -130,6 +153,8 @@ public class Enemy : MonoBehaviour
             //当たった物がDoorタグのオブジェクトか
             if (hit.collider.CompareTag("Door"))
             {
+                //☆次にドアの判定をとるまでのクールダウンを設定（例: 5秒）
+                doorCheckCooldown = 5.0f;
                 //扉を開けるアクションを開始
                 StartCoroutine(OpenDoorAction(hit.collider.gameObject));
             }
@@ -145,12 +170,22 @@ public class Enemy : MonoBehaviour
         //NavMeshAgent移動を停止
         agent.isStopped = true;
 
+        ////扉として認識させないためタグを消す
+        //door.tag = "Untagged";
+
         Debug.Log("扉を開けるアクション開始");
         //ここで扉を開けるアニメーションや処理を実装
         //例: door.GetComponent<Door>().Open();
 
         //仮に2秒間のアクションとする
         yield return new WaitForSeconds(2f);
+
+        ////エネミーが物理的に引っかからないよう、当たり判定も消す
+        //Collider doorCollider = door.GetComponent<Collider>();
+        //if (doorCollider != null)
+        //{
+        //    doorCollider.enabled = false;
+        //}
 
         Debug.Log("中に入り見回す");
         //ここで指定位置に移動したり、首を振るアニメーションや処理を実装
@@ -166,5 +201,34 @@ public class Enemy : MonoBehaviour
 
         //状態をwalkに戻す
         currentState = State.walk;
+    }
+
+    private void OnDrawGizmos()
+    {
+        //敵が存在しないときが描画しない
+        if(transform == null) return;
+
+        //視界の半径を赤いワイヤーで表示
+        Gizmos.color = new Color(1, 0, 0, 0.5f); //半透明の赤
+
+        //正面の線
+        Gizmos.DrawLine(transform.position, transform.position + transform.forward * visionRadius);
+        //左視界端の方向を計算して線を引く
+        Vector3 leftDir = Quaternion.Euler(0, -visionAngle / 2f, 0) * transform.forward;
+        Gizmos.DrawLine(transform.position, transform.position + leftDir * visionRadius);
+        //右視界端の方向を計算して線を引く
+        Vector3 rightDir = Quaternion.Euler(0, visionAngle / 2f, 0) * transform.forward;
+        Gizmos.DrawLine(transform.position, transform.position + rightDir * visionRadius);
+
+        //弧を描画
+        int segments = 20; //弧の分割数
+        for (int i = 0; i <= segments; i++)
+        {
+            float angle_a = -visionAngle / 2f + (visionAngle / segments) * i;
+            float angle_b = -visionAngle / 2f + (visionAngle / segments) * (i + 1);
+            Vector3 dir_a = Quaternion.Euler(0, angle_a, 0) * transform.forward;
+            Vector3 dir_b = Quaternion.Euler(0, angle_b, 0) * transform.forward;
+            Gizmos.DrawLine(transform.position + dir_a * visionRadius, transform.position + dir_b * visionRadius);
+        }
     }
 }
