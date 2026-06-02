@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class TestRotateCamera : MonoBehaviour
 {
     [SerializeField]
     private Vector3 _center = Vector3.zero;
