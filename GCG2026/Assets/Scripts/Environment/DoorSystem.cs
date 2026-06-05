@@ -1,65 +1,66 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class DoorController : MonoBehaviour, IInteractable
+public class DoorSystem : MonoBehaviour, IInteractable
 {
     [Header("ドア設定")]
     public float OpenAngle = 90f;
     public float Smooth = 2f;
 
-    // 外部から勝手に書き換えられないようにカプセル化
-    public bool IsOpen { get; private set; } = false;
+    [Header("自動で閉まる設定")]
+    public bool AutoClose = true; // チェックを入れると自動で閉まる
+    public float CloseTime = 3f;  // 開いてから何秒後に閉まるか
 
-    // ---IInteractableの実装---
-    public bool IsInteractable => true; // ドアはいつでもインタラクト可能
+    public bool IsOpen { get; private set; } = false;
+    public bool IsInteractable => true;
 
     private Quaternion _defaultRotation;
+    private float _targetAngle = 0f;
 
-    // 実際に開く方向（角度）を保持する変数
-    private float _currentOpenAngle;
+    // 時間を測るためのタイマー変数
+    private float _timer = 0f;
 
     void Start()
     {
         _defaultRotation = transform.localRotation;
     }
 
-    // 視線を合わせて長押し(クリック)されたら呼ばれる
     public void ExecuteInteraction()
     {
-        if (!IsOpen)
+        IsOpen = !IsOpen;
+
+        if (IsOpen)
         {
-            // 開くときの処理：プレイヤー（カメラ）の位置を取得
-            Transform playerTransform = Camera.main.transform;
+            Vector3 dirToPlayer = Camera.main.transform.position - transform.position;
+            float dot = Vector3.Dot(transform.right, dirToPlayer);
+            _targetAngle = (dot > 0) ? OpenAngle : -OpenAngle;
 
-            // 扉からプレイヤーへの方向ベクトルを計算
-            Vector3 directionToPlayer = playerTransform.position - transform.position;
-
-            // 扉の正面方向とプレイヤーへの方向の内積を計算
-            float dot = Vector3.Dot(transform.forward, directionToPlayer);
-
-            // プレイヤーが前にいるか後ろにいるかで開く方向を反転させる
-            if (dot > 0)
-            {
-                _currentOpenAngle = OpenAngle;
-            }
-            else
-            {
-                _currentOpenAngle = -OpenAngle;
-            }
-
-            IsOpen = true;
+            // ドアを開けた瞬間にタイマーを0にリセットする
+            _timer = 0f;
         }
         else
         {
-            // 閉じるときの処理
-            IsOpen = false;
+            _targetAngle = 0f;
         }
     }
 
     void Update()
     {
-        // _currentOpenAngle を使って回転させる
-        Quaternion target = IsOpen ? _defaultRotation * Quaternion.Euler(0, _currentOpenAngle, 0) : _defaultRotation;
-        transform.localRotation = Quaternion.Slerp(transform.localRotation, target, Time.deltaTime * Smooth);
+        // 1. ドアを滑らかに回転させる処理（今まで通り）
+        Quaternion targetRot = _defaultRotation * Quaternion.Euler(0, _targetAngle, 0);
+        transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRot, Time.deltaTime * Smooth);
+
+        // 2. 自動で閉まるタイマー処理
+        if (IsOpen && AutoClose)
+        {
+            _timer += Time.deltaTime; // 経過時間をどんどん足していく
+
+            if (_timer >= CloseTime) // 設定した秒数（CloseTime）を超えたら
+            {
+                IsOpen = false;
+                _targetAngle = 0f; // 角度を0に戻す＝閉める
+                _timer = 0f;       // タイマーをリセット
+            }
+        }
     }
 }

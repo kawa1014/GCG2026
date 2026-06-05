@@ -2445,6 +2445,10 @@ PrefabInstance:
       propertyPath: OrgelAudioSource
       value: 
       objectReference: {fileID: 928115869}
+    - target: {fileID: 3723501686832635483, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: listenerTransform
+      value: 
+      objectReference: {fileID: 32924671}
     - target: {fileID: 5171073424388259775, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: m_Name
       value: Orgel (1)

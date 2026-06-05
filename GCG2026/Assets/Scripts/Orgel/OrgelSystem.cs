@@ -117,7 +117,7 @@ public class OrgelSystem : MonoBehaviour, IInteractable
             }
 
             // イベントを発火するだけ
-            OnOrgelStarted?.Invoke(this);
+            OnOrgelStopped?.Invoke(this);
 
             UpdateColorAndLayer();
             Debug.Log("<color=green>【Orgel】オルゴールを止めました。</color>");

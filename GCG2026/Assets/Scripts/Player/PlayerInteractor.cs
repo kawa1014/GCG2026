@@ -62,8 +62,8 @@ public class PlayerInteractor : MonoBehaviour
 
             if (interactableObj != null && interactableObj.IsInteractable)
             {
-                // ★修正点：対象が『ドア（DoorController）』を持っていたら、長押し処理をスルー（中断）する
-                if (hit.collider.GetComponent<DoorController>() != null)
+                // ★修正点：対象が『ドア（DoorSystem）』を持っていたら、長押し処理をスルー（中断）する
+                if (hit.collider.GetComponent<DoorSystem>() != null)
                 {
                     ResetHoldInteraction(); // ゲージをリセットして何もしない
                     return;

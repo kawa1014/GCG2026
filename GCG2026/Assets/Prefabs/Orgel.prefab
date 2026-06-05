@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4089864748716982391}
   - component: {fileID: 2958473937978011173}
   - component: {fileID: -7569058216434971726}
+  - component: {fileID: 3723501686832635483}
   m_Layer: 0
   m_Name: Orgel
   m_TagString: Untagged
@@ -126,8 +127,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98946dda7897b714b8043f6d870496f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrgelSystem
-  orgelAudioSource: {fileID: -7569058216434971726}
-  isPlaying: 0
+  OrgelAudioSource: {fileID: 0}
+  WaitTime: 10
+  HighlightLayerName: Highlight
 --- !u!82 &-7569058216434971726
 AudioSource:
   m_ObjectHideFlags: 0
@@ -243,3 +245,82 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3723501686832635483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5171073424388259775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a29903d2f476ac479dacbc4b42b8f67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ListeningDirectionalAudio
+  listenerTransform: {fileID: 0}
+  targetAudioSource: {fileID: 0}
+  lowPassFilter: {fileID: 0}
+  listenKey: 101
+  normalVolumeRate: 0.25
+  maxVolume: 1
+  naturalVolumeLimit: 0.82
+  closeDistanceVolumeLimit: 0.78
+  directionBonusLimit: 0.22
+  maxVolumeRisePerSecond: 0.65
+  maxVolumeFallPerSecond: 1.8
+  distanceFalloffRange: 35
+  farMinimumVolume: 0.14
+  frontBonusVolume: 0.18
+  backSideVolumeRate: 0.15
+  sideDirectionBonusVolume: 0.22
+  useStereoPanAssist: 1
+  spatialBlend: 0.85
+  stereoPanStrength: 2
+  panLerpSpeed: 14
+  clearAngle: 30
+  weakAngle: 130
+  verticalClearAngle: 18
+  verticalWeakAngle: 60
+  verticalMismatchRate: 0.08
+  verticalMismatchClarityRate: 0.06
+  verticalBonusVolume: 0.18
+  verticalExtremeDot: 0.92
+  verticalExtremeFacingMinimumVolume: 0.3
+  verticalExtremeColumnMinimumVolume: 0.22
+  verticalExtremeOppositeMinimumVolume: 0.1
+  verticalExtremeMinimumVolume: 0.12
+  verticalColumnHorizontalRadius: 4
+  verticalColumnHorizontalRate: 1.2
+  verticalColumnSafeMinimumVolume: 0.65
+  verticalColumnForwardMinimumVolume: 0.7
+  verticalColumnForwardMinimumClarity: 0.65
+  verticalColumnSpatialBlend: 0
+  verticalColumnSpread: 180
+  verticalColumnMinDistance: 50
+  verticalColumnMaxDistance: 500
+  floorHeightThreshold: 1.5
+  differentFloorBaseVolumeRate: 0.55
+  differentFloorBaseClarityRate: 0.6
+  differentFloorWrongLookVolumeRate: 0.35
+  differentFloorWrongLookClarityRate: 0.25
+  differentFloorFullEffectHeight: 4.5
+  differentFloorWrongLookStartRate: 0.7
+  differentFloorWrongLookFullRate: 0.25
+  differentFloorPassingMinimumVolume: 0.28
+  differentFloorPassingMinimumClarity: 0.28
+  differentFloorVerticalColumnVolumeLimit: 0.48
+  differentFloorVerticalColumnClarityLimit: 0.46
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  ignoreFloorAreaInWallOcclusion: 1
+  singleWallVolumeRate: 0.75
+  multiWallVolumeRate: 0.6
+  minimumWallVolumeRate: 0.45
+  singleWallClarityRate: 0.65
+  multiWallClarityRate: 0.35
+  maxWallHitCount: 2
+  clearCutoffFrequency: 22000
+  muffledCutoffFrequency: 650
+  volumeLerpSpeed: 10
+  filterLerpSpeed: 10
