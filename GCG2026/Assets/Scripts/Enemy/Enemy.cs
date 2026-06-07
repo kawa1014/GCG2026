@@ -22,6 +22,9 @@ public class Enemy : MonoBehaviour
     [Range(0, 360)]
     public float visionAngle = 90f; //視界の角度
 
+    [Header("Enemyの見た目用")]
+    public Renderer enemyRenderer; // エネミーの色を変える用
+
     private NavMeshAgent agent;
     private int currentWaypointIndex = 0;
     private float doorCheckCooldown = 0f; //ドアの判定をとるクールダウンタイマー
@@ -56,6 +59,22 @@ public class Enemy : MonoBehaviour
         {
             doorCheckCooldown -= Time.deltaTime;
         }
+
+        // 状態に応じて体の色を変える処理
+        if (enemyRenderer != null)
+        {
+            if( currentState == State.chase)
+            {
+                // 発見時赤
+                enemyRenderer.material.color = Color.red;
+            }
+            else
+            {
+                // 未発見時緑
+                enemyRenderer.material.color = Color.green;
+            }
+        }
+
         //状態に応じた行動を実行
         switch (currentState)
         {
@@ -77,6 +96,8 @@ public class Enemy : MonoBehaviour
     //1.徘徊(walk)の処理
     private void PatrolRoutine()
     {
+        if (waypoints == null || waypoints.Length == 0) return;
+
         //目的地に到達したら次のポイントへ
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {

@@ -70,8 +70,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
-        OrgelSystem.OnOrgelStarted -= HandleOrgelStarted;
-        OrgelSystem.OnOrgelStopped -= HandleOrgelStopped;
+        OrgelSystem.OnOrgelStarted += HandleOrgelStarted;
+        OrgelSystem.OnOrgelStopped += HandleOrgelStopped;
     }
 
     /// <summary>
@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour
         else
         {
             // ‘S‚Ä~‚Ü‚Á‚Ä‚¢‚ê‚Î™X‚É‰ñ•œ
-            _currentFear -= FearIncreaseRate * Time.deltaTime;
+            _currentFear -= FearRecoveryRate * Time.deltaTime;
         }
 
         _currentFear = Mathf.Clamp(_currentFear, 0.0f, MaxFear);
