@@ -46,7 +46,21 @@ public class Enemy : MonoBehaviour
             }
         }
         //最初の目的地を設定
-        if ((waypoints.Length > 0))
+        if (waypoints != null && waypoints.Length > 0 && waypoints[0] != null)
+        {
+            agent.SetDestination(waypoints[currentWaypointIndex].position);
+        }
+    }
+
+    // マネージャーからセンサーを受け取り、WayPointの箱に入れる
+    public void SetSensorAsWayPoint(Transform sensorTransform)
+    {
+        // Waypointの箱を「1つだけ」新しく作り、そこにセンサーをセットする
+        waypoints = new Transform[1];
+        waypoints[0] = sensorTransform;
+        currentWaypointIndex = 0;
+
+        if (agent != null && currentState == State.walk)
         {
             agent.SetDestination(waypoints[currentWaypointIndex].position);
         }
@@ -97,6 +111,7 @@ public class Enemy : MonoBehaviour
     private void PatrolRoutine()
     {
         if (waypoints == null || waypoints.Length == 0) return;
+        if (waypoints[currentWaypointIndex] == null) return;
 
         //目的地に到達したら次のポイントへ
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
@@ -152,8 +167,12 @@ public class Enemy : MonoBehaviour
         {
             Debug.Log("プレイヤーを見失った。徘徊に戻る。");
             currentState = State.walk;
-            //目指していた徘徊ポイントへ戻る
-            agent.SetDestination(waypoints[currentWaypointIndex].position);
+            // 元のセンサーの場所に戻る
+            if(waypoints != null && waypoints.Length > 0 && waypoints[currentWaypointIndex] != null)
+            {
+                agent.SetDestination(waypoints[currentWaypointIndex].position);
+            }
+            
         }
     }
 

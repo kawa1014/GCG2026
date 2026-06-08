@@ -5428,7 +5428,7 @@ MonoBehaviour:
   TimeLimit: 180
   MaxFear: 100
   FearIncreaseRate: 2
-  FearRecoveryRate: 1
+  FearRecoveryRate: 2
   PlayerTransform: {fileID: 32924671}
   ExclusionRadius: 40
   FloorHeightDifference: 2
@@ -9105,7 +9105,7 @@ Transform:
   m_GameObject: {fileID: 1137558358}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 10, z: 2900}
+  m_LocalPosition: {x: -5029.9, y: 10, z: 2900}
   m_LocalScale: {x: 0.2, y: 20, z: 150}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9734,6 +9734,18 @@ PrefabInstance:
     - target: {fileID: 5516414949425395976, guid: 05a4b958850006246b27d72b94e449da, type: 3}
       propertyPath: InitialFov
       value: 61
+      objectReference: {fileID: 0}
+    - target: {fileID: 5516414949425395976, guid: 05a4b958850006246b27d72b94e449da, type: 3}
+      propertyPath: BobFrequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5516414949425395976, guid: 05a4b958850006246b27d72b94e449da, type: 3}
+      propertyPath: BobVerticalAmplitude
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 5516414949425395976, guid: 05a4b958850006246b27d72b94e449da, type: 3}
+      propertyPath: BobHorizontalAmplitude
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
       propertyPath: m_LocalPosition.x
