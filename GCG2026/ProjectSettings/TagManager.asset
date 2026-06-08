@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Orgel
   - Door
+  - Waypoint
   layers:
   - Default
   - TransparentFX

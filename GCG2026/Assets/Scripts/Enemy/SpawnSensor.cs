@@ -18,7 +18,7 @@ public class SpawnSensor : MonoBehaviour
             nextEnableTime = Time.time + cooldownTime;
 
             //マネージャーに出現ポイントのリストを渡して、抽選
-            EnemySpawnManager.Instance.TrySpawnEnemy(spawnPoints, this.transform);
+            EnemySpawnManager.Instance.TrySpawnEnemy(spawnPoints);
         }
     }
 

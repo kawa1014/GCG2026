@@ -50,7 +50,7 @@ public class EnemySpawnManager : MonoBehaviour
     }
 
     //センサーから呼び出される、エネミーをスポーンさせるための関数
-    public void TrySpawnEnemy(Transform[] spawnPoints, Transform sensorTransform)
+    public void TrySpawnEnemy(Transform[] spawnPoints)
     {
         //すでにエネミーがスポーンしている場合は、何もしない
         if (currentEnemy != null) return;
@@ -68,12 +68,6 @@ public class EnemySpawnManager : MonoBehaviour
             //敵を出現させ、currentEnemyに登録
             currentEnemy = Instantiate(enemyPrefab, selectedPoint.position, selectedPoint.rotation);
             Debug.Log($"[出現成功] 現在の確率: {spawnProbability * 100}% / 経過時間: {gameTimer:F1}秒");
-
-            Enemy enemyScript = currentEnemy.GetComponent<Enemy>();
-            if (enemyScript != null)
-            {
-                enemyScript.SetSensorAsWayPoint(sensorTransform);
-            }
 
             //消滅チェックを行うコルーチン（裏処理）をスタート
             StartCoroutine(DespawnCheckRoutine(currentEnemy));

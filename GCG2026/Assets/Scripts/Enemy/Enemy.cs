@@ -46,9 +46,14 @@ public class Enemy : MonoBehaviour
             }
         }
         //最初の目的地を設定
-        if (waypoints != null && waypoints.Length > 0 && waypoints[0] != null)
+        if (waypoints != null || waypoints.Length == 0)
         {
-            agent.SetDestination(waypoints[currentWaypointIndex].position);
+            GameObject[] foundPoints = GameObject.FindGameObjectsWithTag("Waypoint");
+            waypoints = new Transform[foundPoints.Length];
+            for (int i = 0; i < foundPoints.Length; i++)
+            {
+                waypoints[i] = foundPoints[i].transform;
+            }
         }
     }
 
@@ -77,16 +82,7 @@ public class Enemy : MonoBehaviour
         // 状態に応じて体の色を変える処理
         if (enemyRenderer != null)
         {
-            if( currentState == State.chase)
-            {
-                // 発見時赤
-                enemyRenderer.material.color = Color.red;
-            }
-            else
-            {
-                // 未発見時緑
-                enemyRenderer.material.color = Color.green;
-            }
+            enemyRenderer.material.color = (currentState == State.chase) ? Color.red : Color.green;
         }
 
         //状態に応じた行動を実行
@@ -241,6 +237,16 @@ public class Enemy : MonoBehaviour
 
         //状態をwalkに戻す
         currentState = State.walk;
+    }
+
+    // プレイヤーに接触した時のゲームオーバー処理
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            currentState = State.Action;
+            if (GameManager.Instance != null) GameManager.Instance.GameOver("幽霊に捕獲された");
+        }
     }
 
     private void OnDrawGizmos()
