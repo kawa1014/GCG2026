@@ -22,9 +22,6 @@ public class Enemy : MonoBehaviour
     [Range(0, 360)]
     public float visionAngle = 90f; //視界の角度
 
-    [Header("Enemyの見た目用")]
-    public Renderer enemyRenderer; // エネミーの色を変える用
-
     private NavMeshAgent agent;
     private int currentWaypointIndex = 0;
     private float doorCheckCooldown = 0f; //ドアの判定をとるクールダウンタイマー
@@ -46,26 +43,7 @@ public class Enemy : MonoBehaviour
             }
         }
         //最初の目的地を設定
-        if (waypoints != null || waypoints.Length == 0)
-        {
-            GameObject[] foundPoints = GameObject.FindGameObjectsWithTag("Waypoint");
-            waypoints = new Transform[foundPoints.Length];
-            for (int i = 0; i < foundPoints.Length; i++)
-            {
-                waypoints[i] = foundPoints[i].transform;
-            }
-        }
-    }
-
-    // マネージャーからセンサーを受け取り、WayPointの箱に入れる
-    public void SetSensorAsWayPoint(Transform sensorTransform)
-    {
-        // Waypointの箱を「1つだけ」新しく作り、そこにセンサーをセットする
-        waypoints = new Transform[1];
-        waypoints[0] = sensorTransform;
-        currentWaypointIndex = 0;
-
-        if (agent != null && currentState == State.walk)
+        if ((waypoints.Length > 0))
         {
             agent.SetDestination(waypoints[currentWaypointIndex].position);
         }
@@ -74,17 +52,10 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         //ドアの判定をとるタイマーを減らす
-        if(doorCheckCooldown > 0)
+        if (doorCheckCooldown > 0)
         {
             doorCheckCooldown -= Time.deltaTime;
         }
-
-        // 状態に応じて体の色を変える処理
-        if (enemyRenderer != null)
-        {
-            enemyRenderer.material.color = (currentState == State.chase) ? Color.red : Color.green;
-        }
-
         //状態に応じた行動を実行
         switch (currentState)
         {
@@ -106,9 +77,6 @@ public class Enemy : MonoBehaviour
     //1.徘徊(walk)の処理
     private void PatrolRoutine()
     {
-        if (waypoints == null || waypoints.Length == 0) return;
-        if (waypoints[currentWaypointIndex] == null) return;
-
         //目的地に到達したら次のポイントへ
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
@@ -163,12 +131,8 @@ public class Enemy : MonoBehaviour
         {
             Debug.Log("プレイヤーを見失った。徘徊に戻る。");
             currentState = State.walk;
-            // 元のセンサーの場所に戻る
-            if(waypoints != null && waypoints.Length > 0 && waypoints[currentWaypointIndex] != null)
-            {
-                agent.SetDestination(waypoints[currentWaypointIndex].position);
-            }
-            
+            //目指していた徘徊ポイントへ戻る
+            agent.SetDestination(waypoints[currentWaypointIndex].position);
         }
     }
 
@@ -239,20 +203,10 @@ public class Enemy : MonoBehaviour
         currentState = State.walk;
     }
 
-    // プレイヤーに接触した時のゲームオーバー処理
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            currentState = State.Action;
-            if (GameManager.Instance != null) GameManager.Instance.GameOver("幽霊に捕獲された");
-        }
-    }
-
     private void OnDrawGizmos()
     {
         //敵が存在しないときが描画しない
-        if(transform == null) return;
+        if (transform == null) return;
 
         //視界の半径を赤いワイヤーで表示
         Gizmos.color = new Color(1, 0, 0, 0.5f); //半透明の赤
