@@ -42,8 +42,29 @@ public class Enemy : MonoBehaviour
                 Debug.LogError("'Player'タグのオブジェクトがいません！");
             }
         }
+
+        if (waypoints == null || waypoints.Length == 0)
+        {
+            // "Waypoint"タグを持つ全オブジェクトを取得
+            GameObject[] wpObjs = GameObject.FindGameObjectsWithTag("Waypoint");
+
+            if (wpObjs.Length > 0)
+            {
+                waypoints = new Transform[wpObjs.Length];
+                for (int i = 0; i < wpObjs.Length; i++)
+                {
+                    waypoints[i] = wpObjs[i].transform;
+                }
+                Debug.Log($"[システム] Waypointを自動で {wpObjs.Length} 個取得しました。");
+            }
+            else
+            {
+                Debug.LogWarning("[システム] Waypointが一つも設定されておらず、タグからも見つかりませんでした。");
+            }
+        }
+
         //最初の目的地を設定
-        if ((waypoints.Length > 0))
+        if (waypoints != null && waypoints.Length > 0)
         {
             agent.SetDestination(waypoints[currentWaypointIndex].position);
         }

@@ -156,11 +156,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   currentState: 0
-  player: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
+  player: {fileID: 0}
   waypoints: []
   visionRadius: 10
   visionAngle: 90
-  enemyRenderer: {fileID: 0}
 --- !u!195 &523959026174964411
 NavMeshAgent:
   m_ObjectHideFlags: 0
