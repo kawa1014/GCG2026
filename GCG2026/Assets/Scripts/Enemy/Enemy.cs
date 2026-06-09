@@ -56,6 +56,20 @@ public class Enemy : MonoBehaviour
         {
             doorCheckCooldown -= Time.deltaTime;
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (player != null)
+            {
+                float dist = Vector3.Distance(transform.position, player.position);
+                Debug.Log($"【強制調査】現在ターゲットにしている物: {player.name} / 距離: {dist:F1}m / 現在の状態: {currentState}");
+            }
+            else
+            {
+                Debug.LogError("【強制調査】ターゲット(player)が空っぽ（null）です！");
+            }
+        }
+
         //状態に応じた行動を実行
         switch (currentState)
         {
@@ -95,14 +109,23 @@ public class Enemy : MonoBehaviour
     //3.視界のチェック判定
     private void CheckVision()
     {
+        if (player == null)
+        {
+            Debug.LogWarning("[索敵エラー] player変数が設定されていません！");
+            return;
+        }
+
         //プレイヤーとの距離を測定
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         //距離が視界の半径内か
         if (distanceToPlayer <= visionRadius)
         {
+            Vector3 rayOrigin = transform.position + Vector3.up * 1.0f + transform.forward * 0.5f;
+            Vector3 targetPos = player.position + Vector3.up * 1.0f; // プレイヤーの胸の高さ
+
             //プレイヤーへの方向ベクトルを計算
-            Vector3 dirToPlayer = (player.position - transform.position).normalized;
+            Vector3 dirToPlayer = (targetPos - rayOrigin).normalized;
             //自分の正面とプレイヤーへの方向の角度を計算
             float angle = Vector3.Angle(transform.forward, dirToPlayer);
             //角度が視界の半分以内か
@@ -110,8 +133,10 @@ public class Enemy : MonoBehaviour
             {
                 //壁越しに見えないようにレイキャストで確認
                 RaycastHit hit;
-                if (Physics.Raycast(transform.position, dirToPlayer, out hit, visionRadius))
+                if (Physics.Raycast(rayOrigin, dirToPlayer, out hit, visionRadius))
                 {
+                    Debug.Log($"[索敵デバッグ] Rayが当たった物: {hit.collider.gameObject.name} (Tag: {hit.collider.tag})");
+
                     if (hit.collider.CompareTag("Player"))
                     {
                         //プレイヤーを見つけたら追跡状態に遷移
@@ -129,6 +154,7 @@ public class Enemy : MonoBehaviour
         //プレイヤーが見えない場合は徘徊状態に戻る
         if (currentState == State.chase && distanceToPlayer > visionRadius)
         {
+            Debug.Log($"[距離デバッグ] 距離が{distanceToPlayer:F1}mのため、プレイヤーを見失った。徘徊に戻る。");
             Debug.Log("プレイヤーを見失った。徘徊に戻る。");
             currentState = State.walk;
             //目指していた徘徊ポイントへ戻る

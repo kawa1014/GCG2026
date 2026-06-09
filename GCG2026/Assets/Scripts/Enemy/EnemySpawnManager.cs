@@ -90,7 +90,7 @@ public class EnemySpawnManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
 
             //プレイヤーの視界外&敵と同じ部屋(エリア)にいない場合
-            if(IsEnemyOutOfPlayerVision(enemy) && IsNotInSameArea(enemy))
+            if (IsEnemyOutOfPlayerVision(enemy) && IsNotInSameArea(enemy))
             {
                 //1秒ごとに50%の確率で消滅の抽選
                 if (Random.value <= 0.5f)
@@ -117,7 +117,7 @@ public class EnemySpawnManager : MonoBehaviour
                         screenPoint.y >= 0 && screenPoint.y <= 1 &&
                         screenPoint.z > 0;
 
-        if(inScreen)
+        if (inScreen)
         {
             //画面内であっても「壁」に遮られているかをRaycastで判定
             Vector3 direction = (enemy.transform.position - playerCamera.transform.position).normalized;
@@ -143,7 +143,7 @@ public class EnemySpawnManager : MonoBehaviour
     //※もし「部屋ごとの管理スクリプト」を作る場合は、ここをその判定に置き換える
     private bool IsNotInSameArea(GameObject enemy)
     {
-        if(playerTransform == null || enemy == null) return true;
+        if (playerTransform == null || enemy == null) return true;
 
         //15m以上離れている場合は、同じ部屋にいないと判断
         float distance = Vector3.Distance(playerTransform.position, enemy.transform.position);
