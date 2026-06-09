@@ -1252,7 +1252,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-<<<<<<< HEAD:GCG2026/Assets/Scenes/GamaOverScene.unity
 --- !u!114 &2080548760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1298,9 +1297,7 @@ MonoBehaviour:
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
 --- !u!1 &2140669693
-=======
 --- !u!1 &2084858910
->>>>>>> protoAlpha/Morita:GCG2026/Assets/Scenes/ResultScene.unity
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
