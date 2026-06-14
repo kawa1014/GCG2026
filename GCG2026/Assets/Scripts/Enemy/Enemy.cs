@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
     public float visionRadius = 10f; //視界の半径
     [Range(0, 360)]
     public float visionAngle = 90f; //視界の角度
-
+    
     private NavMeshAgent agent;
     private int currentWaypointIndex = 0;
     private float doorCheckCooldown = 0f; //ドアの判定をとるクールダウンタイマー

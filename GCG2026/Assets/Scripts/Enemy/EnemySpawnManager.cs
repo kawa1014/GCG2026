@@ -12,6 +12,11 @@ public class EnemySpawnManager : MonoBehaviour
     [Header("ゲーム開始からの経過時間（確認用）")]
     [SerializeField] private float gameTimer = 0f;
 
+    //================================
+    [Header("デバック用")]
+    public bool Spawn100 = false;
+    //================================
+
     private GameObject currentEnemy = null; //現在スポーンしているエネミーの参照
     private Camera playerCamera; //プレイヤーのカメラの参照
     private Transform playerTransform; //プレイヤーの位置の参照
@@ -55,10 +60,14 @@ public class EnemySpawnManager : MonoBehaviour
         //すでにエネミーがスポーンしている場合は、何もしない
         if (currentEnemy != null) return;
 
-        //[ルール]全体を5分としたとき、3分半時点で確率Up
+        //[ルール]全体を5分としたとき、1分半時点で確率Up
         //最初は50%,3分半以降は75%の確率でスポーンさせる
-        float spawnProbability = (gameTimer >= 210f) ? 0.75f : 0.5f;
+        float spawnProbability = (gameTimer >= 90f) ? 0.75f : 0.5f;
 
+        if (Spawn100)
+        {
+            spawnProbability = 1.0f;
+        }
         //確率の抽選(0.0~0.1のランダムな値)
         if (Random.value <= spawnProbability)
         {
