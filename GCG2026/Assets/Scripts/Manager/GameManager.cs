@@ -312,4 +312,23 @@ public class GameManager : MonoBehaviour
             prevPoint = nextPoint;
         }
     }
+
+    /// <summary>
+    /// @brief エネミーに接触された際に、恐怖度を最大にして即座にゲームオーバーにするメソッド
+    /// @details Enemy.csの接触判定から呼び出されます。
+    /// </summary>
+    public void MaxOutFearAndGameOver()
+    {
+        // 既にゲームオーバー状態なら処理を重複させないためにブロック
+        if (_isGameOver) return;
+
+        // 恐怖度を強制的に最大値（MaxFear）に上書きする
+        _currentFear = MaxFear;
+
+        // 画面の赤いエフェクト（Vignette）を最大にするためにUIを更新
+        UpdateFearUI();
+
+        // 理由を添えてゲームオーバー処理を実行
+        GameOver("エネミーに捕獲されたため、恐怖度が限界を突破した");
+    }
 }

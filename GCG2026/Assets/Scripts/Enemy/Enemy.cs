@@ -2,6 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
+
+
+
 public class Enemy : MonoBehaviour
 {
     //エネミーの状態を定義
@@ -25,6 +28,10 @@ public class Enemy : MonoBehaviour
     private NavMeshAgent agent;
     private int currentWaypointIndex = 0;
     private float doorCheckCooldown = 0f; //ドアの判定をとるクールダウンタイマー
+
+    [Header("捕獲設定")]
+    [Tooltip("プレイヤーとの距離がこの値以下になったらゲームオーバー(捕獲)")]
+    public float catchDistance = 1.5f; // ★これを追加（Inspectorで調整可能です）
 
     void Start()
     {
@@ -72,6 +79,8 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        CheckCatchPlayer();
+
         //ドアの判定をとるタイマーを減らす
         if (doorCheckCooldown > 0)
         {
@@ -276,6 +285,69 @@ public class Enemy : MonoBehaviour
             Vector3 dir_a = Quaternion.Euler(0, angle_a, 0) * transform.forward;
             Vector3 dir_b = Quaternion.Euler(0, angle_b, 0) * transform.forward;
             Gizmos.DrawLine(transform.position + dir_a * visionRadius, transform.position + dir_b * visionRadius);
+        }
+    }
+
+    /// <summary>
+    /// @brief 他の物理コライダーと接触した際に呼ばれる処理
+    /// @param collision 衝突した相手のオブジェクト情報
+    /// @details プレイヤーに触れた瞬間、GameManagerにゲームオーバーを指示します。
+    /// </summary>
+    private void OnCollisionEnter(Collision collision)
+    {
+        // ぶつかった相手のタグが "Player" かどうかを確認
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("【Enemy】プレイヤーを捕獲しました！(Collision)");
+
+            // GameManagerが存在するか安全確認してから、ゲームオーバー処理を呼び出す
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.MaxOutFearAndGameOver();
+            }
+        }
+    }
+
+    /// <summary>
+    /// @brief 他のトリガーコライダー（すり抜ける判定）と接触した際に呼ばれる処理
+    /// @param other 侵入してきた相手のコライダー情報
+    /// @details エネミーの判定が「Is Trigger」の場合や、プレイヤーがトリガーの場合に備えた予備処理です。
+    /// </summary>
+    private void OnTriggerEnter(Collider other)
+    {
+        // 侵入した相手のタグが "Player" かどうかを確認
+        if (other.CompareTag("Player"))
+        {
+            Debug.Log("【Enemy】プレイヤーを捕獲しました！(Trigger)");
+
+            // GameManagerが存在するか安全確認してから、ゲームオーバー処理を呼び出す
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.MaxOutFearAndGameOver();
+            }
+        }
+    }
+
+    /// <summary>
+    /// @brief プレイヤーとの距離を計算し、捕獲距離以内に入ったらゲームオーバーにする処理
+    /// @details Updateメソッド内で毎フレーム呼ばれます。物理演算に依存しない確実な判定です。
+    /// </summary>
+    private void CheckCatchPlayer()
+    {
+        // プレイヤーとGameManagerが両方存在している場合のみ実行
+        if (player != null && GameManager.Instance != null)
+        {
+            // 敵とプレイヤーの間の直線距離を計算
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+            // 距離が catchDistance (例: 1.5m) 以下に近づいた場合
+            if (distanceToPlayer <= catchDistance)
+            {
+                Debug.Log($"【Enemy】プレイヤーとの距離が {distanceToPlayer:F1}m になったため、捕獲しました！");
+
+                // GameManagerのゲームオーバー処理を呼び出す
+                GameManager.Instance.MaxOutFearAndGameOver();
+            }
         }
     }
 }

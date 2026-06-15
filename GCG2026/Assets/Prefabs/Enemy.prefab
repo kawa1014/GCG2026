@@ -160,6 +160,7 @@ MonoBehaviour:
   waypoints: []
   visionRadius: 10
   visionAngle: 90
+  catchDistance: 2
 --- !u!195 &523959026174964411
 NavMeshAgent:
   m_ObjectHideFlags: 0

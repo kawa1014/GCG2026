@@ -64,10 +64,10 @@ public class EnemySpawnManager : MonoBehaviour
         //最初は50%,3分半以降は75%の確率でスポーンさせる
         float spawnProbability = (gameTimer >= 90f) ? 0.75f : 0.5f;
 
-        if (Spawn100)
-        {
-            spawnProbability = 1.0f;
-        }
+        //if (Spawn100)
+        //{
+        //    spawnProbability = 1.0f;
+        //}
         //確率の抽選(0.0~0.1のランダムな値)
         if (Random.value <= spawnProbability)
         {
