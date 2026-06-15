@@ -29,13 +29,19 @@ public class Enemy : MonoBehaviour
     private int currentWaypointIndex = 0;
     private float doorCheckCooldown = 0f; //ドアの判定をとるクールダウンタイマー
 
+    //色を変える為のRenderer
+    private Renderer enemyRenderer;
+
     [Header("捕獲設定")]
     [Tooltip("プレイヤーとの距離がこの値以下になったらゲームオーバー(捕獲)")]
-    public float catchDistance = 1.5f; // ★これを追加（Inspectorで調整可能です）
+    public float catchDistance = 1.5f;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+
+        //エネミーの見た目
+        enemyRenderer = GetComponentInChildren<Renderer>();
 
         if (player == null)
         {
@@ -79,6 +85,21 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        //ゲームオーバー状態なら最優先でエネミーの動きを止める処理
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
+        {
+            if (agent != null && !agent.isStopped)
+            {
+                agent.isStopped = true;        //navigationの停止
+                agent.velocity = Vector3.zero; //慣性の滑りをゼロにする
+            }
+
+            //扉を開けるコルーチン(OpendoorAction)が途中で動き続けないように強制終了
+            StopAllCoroutines();
+
+            return; //これ以降の追跡や捕獲判定を、タイマー処理をスキップ
+        }
+        
         CheckCatchPlayer();
 
         //ドアの判定をとるタイマーを減らす
@@ -104,20 +125,34 @@ public class Enemy : MonoBehaviour
         switch (currentState)
         {
             case State.walk:
+                //徘徊時は緑色
+                SetColor(Color.green);
+
                 PatrolRoutine();
                 CheckVision();
                 CheckDoorOnRight();
                 break;
             case State.chase:
+                SetColor(Color.red);
                 ChaseRoutine();
                 CheckVision();
                 break;
             case State.Action:
+                SetColor(Color.yellow);
                 //コルーチンで処理中なので、何もしない
                 break;
         }
     }
 
+    //色変更
+    private void SetColor(Color color)
+    {
+        if(enemyRenderer != null)
+        {
+            //マテリアルの色を直接書き換える
+            enemyRenderer.material.color = color;
+        }
+    }
     //1.徘徊(walk)の処理
     private void PatrolRoutine()
     {

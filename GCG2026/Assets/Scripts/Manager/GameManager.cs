@@ -49,6 +49,9 @@ public class GameManager : MonoBehaviour
     private int _currentPlayingOrgels = 0; ///< 現在なっているオルゴールの数
     private bool _isGameOver = false; ///< ゲームが終了したかどうかのフラグ
 
+    //外からgameover処理を拾いたいため
+    public bool IsGameOver => _isGameOver;
+
     /// <summary>
     /// @brief 初期化処理
     /// </summary>
