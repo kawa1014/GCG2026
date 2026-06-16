@@ -230,12 +230,16 @@ public class GameManager : MonoBehaviour
     public void GameOver(string reason)
     {
         _isGameOver = true;
+
         Debug.Log($"<color=red>【Game Over】{reason}</color>");
 
         if (TimeText != null)
         {
             TimeText.text = "GAME OVER";
         }
+
+        // 3秒後にQuitGameメソッドを実行してゲームを閉じる
+        Invoke(nameof(QuitGame), 3.0f);
 
         // 今後ここでリトライ画面を表示する処理を作る
     }
@@ -252,6 +256,9 @@ public class GameManager : MonoBehaviour
         {
             TimeText.text = "SURVIVED";
         }
+
+        // 3秒後にQuitGameメソッドを実行してゲームを閉じる
+        Invoke(nameof(QuitGame), 3.0f);
 
         // 今後ここでクリア画面を表示する処理を作る
     }
@@ -333,5 +340,22 @@ public class GameManager : MonoBehaviour
 
         // 理由を添えてゲームオーバー処理を実行
         GameOver("エネミーに捕獲されたため、恐怖度が限界を突破した");
+    }
+
+    /// <summary>
+    /// @brief ゲームアプリケーション自体を終了する処理
+    /// @details Unityエディター上でのプレイ停止と、ビルド後のアプリ終了の両方に対応します
+    /// </summary>
+    private void QuitGame()
+    {
+        Debug.Log("ゲームを終了します");
+
+#if UNITY_EDITOR
+        // Unityエディターでプレイ中の場合は、プレイモードを停止する
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // 実際にビルドされたゲームの場合は、アプリを終了する
+        Application.Quit();
+#endif
     }
 }
