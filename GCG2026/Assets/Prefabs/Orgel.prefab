@@ -263,6 +263,7 @@ MonoBehaviour:
   listenKey: 101
   normalVolumeRate: 0.25
   maxVolume: 1
+  masterVolume: 1
   naturalVolumeLimit: 0.82
   closeDistanceVolumeLimit: 0.78
   directionBonusLimit: 0.22
@@ -299,20 +300,22 @@ MonoBehaviour:
   verticalColumnMinDistance: 50
   verticalColumnMaxDistance: 500
   floorHeightThreshold: 1.5
-  differentFloorBaseVolumeRate: 0.55
-  differentFloorBaseClarityRate: 0.6
+  differentFloorBaseVolumeRate: 0.42
+  differentFloorBaseClarityRate: 0.35
   differentFloorWrongLookVolumeRate: 0.35
   differentFloorWrongLookClarityRate: 0.25
   differentFloorFullEffectHeight: 4.5
   differentFloorWrongLookStartRate: 0.7
   differentFloorWrongLookFullRate: 0.25
-  differentFloorPassingMinimumVolume: 0.28
-  differentFloorPassingMinimumClarity: 0.28
-  differentFloorVerticalColumnVolumeLimit: 0.48
-  differentFloorVerticalColumnClarityLimit: 0.46
+  differentFloorPassingMinimumVolume: 0.14
+  differentFloorPassingMinimumClarity: 0.1
+  differentFloorVerticalColumnVolumeLimit: 0.32
+  differentFloorVerticalColumnClarityLimit: 0.2
+  differentFloorCeilingVolumeRate: 0.62
+  differentFloorCeilingClarityRate: 0.28
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 16
   ignoreFloorAreaInWallOcclusion: 1
   singleWallVolumeRate: 0.75
   multiWallVolumeRate: 0.6

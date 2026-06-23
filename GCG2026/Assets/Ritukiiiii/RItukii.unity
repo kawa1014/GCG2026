@@ -6066,6 +6066,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 999741932}
     - target: {fileID: 3723501686832635483, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: wallLayer.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3723501686832635483, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: listenerTransform
       value: 
       objectReference: {fileID: 74370661}
