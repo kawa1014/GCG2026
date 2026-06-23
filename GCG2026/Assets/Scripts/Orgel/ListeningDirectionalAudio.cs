@@ -45,6 +45,13 @@ public class ListeningDirectionalAudio : MonoBehaviour
     [SerializeField] private float maxVolume = 1.0f;
 
     /// <summary>
+    /// このスクリプト全体のマスターボリューム。
+    /// オルゴール音だけをまとめて小さくしたい時に使う。
+    /// </summary>
+    [Range(0.0f, 1.0f)]
+    [SerializeField] private float masterVolume = 1.0f;
+
+    /// <summary>
     /// 急に音が大きくなりすぎるのを防ぐ最終音量の上限。
     /// 1.0に近いほど大きく、0.7〜0.85だと自然に聞こえやすい。
     /// </summary>
@@ -262,13 +269,13 @@ public class ListeningDirectionalAudio : MonoBehaviour
     /// 階層差がある時に、常に全体音量へ掛ける倍率。
     /// 例：1階で鳴っているのに2階を探している時は、音を全体的に小さくする。
     /// </summary>
-    [SerializeField] private float differentFloorBaseVolumeRate = 0.55f;
+    [SerializeField] private float differentFloorBaseVolumeRate = 0.42f;
 
     /// <summary>
     /// 階層差がある時に、常に鮮明度へ掛ける倍率。
     /// 違う階にいる時の「目の前で鳴っている感じ」を弱める。
     /// </summary>
-    [SerializeField] private float differentFloorBaseClarityRate = 0.60f;
+    [SerializeField] private float differentFloorBaseClarityRate = 0.35f;
 
     /// <summary>
     /// 階層差があるのに上下方向を見ていない時の追加音量倍率。
@@ -304,25 +311,37 @@ public class ListeningDirectionalAudio : MonoBehaviour
     /// [Fix] 違う階のオルゴールの真上/真下付近を通り過ぎる時に残す最低音量。
     /// 床をまたいだ瞬間や真下を通った瞬間に、音が極端に小さくなるのを防ぐ。
     /// </summary>
-    [SerializeField] private float differentFloorPassingMinimumVolume = 0.28f;
+    [SerializeField] private float differentFloorPassingMinimumVolume = 0.14f;
 
     /// <summary>
     /// [Fix] 違う階のオルゴールの真上/真下付近を通り過ぎる時に残す最低鮮明度。
     /// 完全にクリアにはしないが、急に消えたようなこもり方を防ぐ。
     /// </summary>
-    [SerializeField] private float differentFloorPassingMinimumClarity = 0.28f;
+    [SerializeField] private float differentFloorPassingMinimumClarity = 0.10f;
 
     /// <summary>
     /// [Fix] 違う階で真上/真下付近にいる時の最大音量。
     /// 真上/真下の無音防止が強すぎて、違う階なのに近くで鳴っているように聞こえる問題を防ぐ。
     /// </summary>
-    [SerializeField] private float differentFloorVerticalColumnVolumeLimit = 0.48f;
+    [SerializeField] private float differentFloorVerticalColumnVolumeLimit = 0.32f;
 
     /// <summary>
     /// [Fix] 違う階で真上/真下付近にいる時の最大鮮明度。
     /// 違う階の音は少しこもらせ、同じ部屋で鳴っている感じを弱める。
     /// </summary>
-    [SerializeField] private float differentFloorVerticalColumnClarityLimit = 0.46f;
+    [SerializeField] private float differentFloorVerticalColumnClarityLimit = 0.20f;
+
+    /// <summary>
+    /// 違う階にある音へ、床・天井越しとして追加で掛ける音量倍率。
+    /// Wall Layerの床を壁判定から外していても、上下階の音を近く聞こえすぎないようにする。
+    /// </summary>
+    [SerializeField] private float differentFloorCeilingVolumeRate = 0.62f;
+
+    /// <summary>
+    /// 違う階にある音へ、床・天井越しとして追加で掛ける鮮明度倍率。
+    /// 小さいほど、見上げた時や見下ろした時も壁越しらしく曇る。
+    /// </summary>
+    [SerializeField] private float differentFloorCeilingClarityRate = 0.28f;
 
     /// <summary>
     /// 壁として扱うLayer。
@@ -395,6 +414,12 @@ public class ListeningDirectionalAudio : MonoBehaviour
     /// フィルター変化の滑らかさ。
     /// </summary>
     [SerializeField] private float filterLerpSpeed = 10.0f;
+
+    /// <summary>
+    /// 前フレームにAudioSourceが再生中だったか。
+    /// 再生開始直後の一瞬だけ、停止前やInspectorの音量で鳴るのを防ぐために使う。
+    /// </summary>
+    private bool wasPlayingLastFrame = false;
 
     /// <summary>
     /// 音量・鮮明度・左右パンの計算結果。
@@ -473,6 +498,9 @@ public class ListeningDirectionalAudio : MonoBehaviour
         }
 
         ApplyAudioSourceSettings();
+
+        targetAudioSource.volume = 0.0f;
+        wasPlayingLastFrame = false;
     }
 
     /// <summary>
@@ -483,6 +511,7 @@ public class ListeningDirectionalAudio : MonoBehaviour
         distanceFalloffRange = Mathf.Max(0.01f, distanceFalloffRange);
         farMinimumVolume = Mathf.Clamp01(farMinimumVolume);
         normalVolumeRate = Mathf.Clamp01(normalVolumeRate);
+        masterVolume = Mathf.Clamp01(masterVolume);
         backSideVolumeRate = Mathf.Clamp01(backSideVolumeRate);
         verticalMismatchRate = Mathf.Clamp01(verticalMismatchRate);
         verticalMismatchClarityRate = Mathf.Clamp01(verticalMismatchClarityRate);
@@ -519,6 +548,19 @@ public class ListeningDirectionalAudio : MonoBehaviour
         differentFloorPassingMinimumClarity = Mathf.Clamp01(differentFloorPassingMinimumClarity);
         differentFloorVerticalColumnVolumeLimit = Mathf.Clamp(differentFloorVerticalColumnVolumeLimit, 0.05f, naturalVolumeLimit);
         differentFloorVerticalColumnClarityLimit = Mathf.Clamp01(differentFloorVerticalColumnClarityLimit);
+        differentFloorCeilingVolumeRate = Mathf.Clamp01(differentFloorCeilingVolumeRate);
+        differentFloorCeilingClarityRate = Mathf.Clamp01(differentFloorCeilingClarityRate);
+
+        // 既存Prefab/Sceneは古いInspector値を保持するため、
+        // 違う階の音が近く・鮮明に聞こえすぎる値だけは上限を下げる。
+        differentFloorBaseVolumeRate = Mathf.Min(differentFloorBaseVolumeRate, 0.42f);
+        differentFloorBaseClarityRate = Mathf.Min(differentFloorBaseClarityRate, 0.35f);
+        differentFloorPassingMinimumVolume = Mathf.Min(differentFloorPassingMinimumVolume, 0.14f);
+        differentFloorPassingMinimumClarity = Mathf.Min(differentFloorPassingMinimumClarity, 0.10f);
+        differentFloorVerticalColumnVolumeLimit = Mathf.Min(differentFloorVerticalColumnVolumeLimit, 0.32f);
+        differentFloorVerticalColumnClarityLimit = Mathf.Min(differentFloorVerticalColumnClarityLimit, 0.20f);
+        differentFloorCeilingVolumeRate = Mathf.Min(differentFloorCeilingVolumeRate, 0.62f);
+        differentFloorCeilingClarityRate = Mathf.Min(differentFloorCeilingClarityRate, 0.28f);
         singleWallVolumeRate = Mathf.Clamp01(singleWallVolumeRate);
         multiWallVolumeRate = Mathf.Clamp01(multiWallVolumeRate);
         minimumWallVolumeRate = Mathf.Clamp01(minimumWallVolumeRate);
@@ -577,6 +619,8 @@ public class ListeningDirectionalAudio : MonoBehaviour
 
         if (!targetAudioSource.isPlaying)
         {
+            targetAudioSource.volume = 0.0f;
+            wasPlayingLastFrame = false;
             return;
         }
 
@@ -598,19 +642,27 @@ public class ListeningDirectionalAudio : MonoBehaviour
         bool isListening = Input.GetKey(listenKey);
         float listenRate = isListening ? 1.0f : normalVolumeRate;
 
-        float targetVolume = audioState.volume * listenRate * maxVolume;
+        float targetVolume = audioState.volume * listenRate * maxVolume * masterVolume;
 
-        // Lerpだけだと、角度や階層判定が切り替わった瞬間に音量が跳ねることがある。
-        // MoveTowardsで1秒あたりの増減量を制限して、急な爆音を防ぐ。
-        float volumeChangeSpeed = targetVolume > targetAudioSource.volume
-            ? maxVolumeRisePerSecond
-            : maxVolumeFallPerSecond;
+        if (!wasPlayingLastFrame)
+        {
+            targetAudioSource.volume = targetVolume;
+            wasPlayingLastFrame = true;
+        }
+        else
+        {
+            // Lerpだけだと、角度や階層判定が切り替わった瞬間に音量が跳ねることがある。
+            // MoveTowardsで1秒あたりの増減量を制限して、急な爆音を防ぐ。
+            float volumeChangeSpeed = targetVolume > targetAudioSource.volume
+                ? maxVolumeRisePerSecond
+                : maxVolumeFallPerSecond;
 
-        targetAudioSource.volume = Mathf.MoveTowards(
-            targetAudioSource.volume,
-            targetVolume,
-            volumeChangeSpeed * Time.deltaTime
-        );
+            targetAudioSource.volume = Mathf.MoveTowards(
+                targetAudioSource.volume,
+                targetVolume,
+                volumeChangeSpeed * Time.deltaTime
+            );
+        }
 
         float targetCutoff = Mathf.Lerp(
             muffledCutoffFrequency,
@@ -749,6 +801,8 @@ public class ListeningDirectionalAudio : MonoBehaviour
 
         float floorBaseVolumeRate = Mathf.Lerp(1.0f, differentFloorBaseVolumeRate, floorEffectRate);
         float floorBaseClarityRate = Mathf.Lerp(1.0f, differentFloorBaseClarityRate, floorEffectRate);
+        float floorCeilingVolumeRate = Mathf.Lerp(1.0f, differentFloorCeilingVolumeRate, floorEffectRate);
+        float floorCeilingClarityRate = Mathf.Lerp(1.0f, differentFloorCeilingClarityRate, floorEffectRate);
 
         float floorLookVolumeRate = Mathf.Lerp(1.0f, differentFloorWrongLookVolumeRate, wrongLookRate);
         float floorLookClarityRate = Mathf.Lerp(1.0f, differentFloorWrongLookClarityRate, wrongLookRate);
@@ -770,6 +824,7 @@ public class ListeningDirectionalAudio : MonoBehaviour
             * horizontalRate
             * verticalRate
             * floorBaseVolumeRate
+            * floorCeilingVolumeRate
             * floorLookVolumeRate
             * wallVolume
         );
@@ -826,10 +881,7 @@ public class ListeningDirectionalAudio : MonoBehaviour
                     // [Fix] 違う階では「真上/真下の無音防止」を弱める。
                     // ここで verticalColumnSafeMinimumVolume / verticalColumnForwardMinimumVolume を使うと、
                     // 違う階なのに音量0.65〜0.70が保証されて大きすぎる。
-                    verticalExtremeMinimum = Mathf.Max(
-                        verticalExtremeMinimum,
-                        differentFloorPassingMinimumVolume * floorEffectRate
-                    );
+                    verticalExtremeMinimum = differentFloorPassingMinimumVolume * floorEffectRate;
                 }
                 else
                 {
@@ -864,6 +916,7 @@ public class ListeningDirectionalAudio : MonoBehaviour
             horizontalRate
             * verticalClarityRate
             * floorBaseClarityRate
+            * floorCeilingClarityRate
             * floorLookClarityRate
             * wallClarity
         );
@@ -909,10 +962,7 @@ public class ListeningDirectionalAudio : MonoBehaviour
                     // [Fix] 違う階では真上/真下でもクリアにしすぎない。
                     // verticalColumnForwardMinimumClarity = 0.65 を使うと、
                     // 上の部屋の音が同じ部屋のように鮮明になる。
-                    verticalExtremeMinimumClarity = Mathf.Max(
-                        verticalExtremeMinimumClarity,
-                        differentFloorPassingMinimumClarity * floorEffectRate
-                    );
+                    verticalExtremeMinimumClarity = differentFloorPassingMinimumClarity * floorEffectRate;
                 }
                 else
                 {
