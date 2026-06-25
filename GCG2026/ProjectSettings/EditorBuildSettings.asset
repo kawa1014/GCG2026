@@ -9,8 +9,22 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+<<<<<<< HEAD
     path: Assets/Enemy/New Scene.unity
     guid: 3507d0eb5f4582e429be235623c616d0
+=======
+    path: Assets/Scenes/TitleScene.unity
+    guid: 6a7075324fc82a34fb0a7c7cadc81405
+  - enabled: 1
+    path: Assets/Scenes/ResultScene.unity
+    guid: fdcbeec4c5872324b9f05da962fd2001
+  - enabled: 1
+    path: Assets/Scenes/GameScene.unity
+    guid: 72edc27c94f81ad4dab78a4e46adb5d6
+  - enabled: 1
+    path: Assets/Scenes/SelectScene.unity
+    guid: 09444a6ce0a867c48bb5ae65a97f8f07
+>>>>>>> Alpha/MoritaUI
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
