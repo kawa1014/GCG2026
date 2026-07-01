@@ -23,6 +23,12 @@ public class PlayerInteractor : MonoBehaviour
     //---内部状態---
     private float _currentHoldTime = 0.0f; ///< 現在の長押し経過時間
 
+    // ハイライト用
+    private Renderer _lastRenderer = null;
+    private Color _originalColor;
+    public UnityEngine.UI.Image ReticleImage;
+    public Color NormalReticleColor = Color.white;
+    public Color HighlightReticleColor = Color.red;
     private void Update()
     {
 
@@ -41,6 +47,9 @@ public class PlayerInteractor : MonoBehaviour
         {
             HandleQuickInteraction();
         }
+
+        // 3.見ているオブジェクトのハイライト処理
+        HandleHightlight();
     }
 
     /// <summary>
@@ -112,6 +121,59 @@ public class PlayerInteractor : MonoBehaviour
             _currentHoldTime = 0.0f;
             Debug.Log("<color=orange>【Action】長押しがリセットされました。</color>");
         }
+    }
+
+    /// <summary>
+    /// 見ているオブジェクトがドアなら赤くハイライトする
+    /// </summary>
+    private void HandleHightlight()
+    {
+        if (PlayerCamera == null) return;
+
+        Ray ray = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange))
+        {
+            DoorSystem door = hit.collider.GetComponent<DoorSystem>();
+
+            if (door != null)
+            {
+                Renderer r = hit.collider.GetComponent<Renderer>();
+                if (r != null)
+                {
+                    // 前のオブジェクトの色を戻す
+                    if (_lastRenderer != null && _lastRenderer != r)
+                    {
+                        _lastRenderer.material.color = _originalColor;
+                    }
+
+                    // 新しいオブジェクトをハイライト
+                    if (_lastRenderer != r)
+                    {
+                        _lastRenderer = r;
+                        _originalColor = r.material.color;
+                        r.material.color = Color.red;
+                    }
+
+                    // ★レティクルを赤に変更
+                    if (ReticleImage != null)
+                        ReticleImage.color = HighlightReticleColor;
+
+                    return;
+                }
+            }
+        }
+
+        // 何も見ていない or ドア以外 → 色を戻す
+        if (_lastRenderer != null)
+        {
+            _lastRenderer.material.color = _originalColor;
+            _lastRenderer = null;
+        }
+
+        // ★レティクルを通常色に戻す
+        if (ReticleImage != null)
+            ReticleImage.color = NormalReticleColor;
     }
 
     /// <summary>
