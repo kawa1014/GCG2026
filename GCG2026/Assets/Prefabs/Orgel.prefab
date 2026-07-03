@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98946dda7897b714b8043f6d870496f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrgelSystem
-  OrgelAudioSource: {fileID: 0}
+  OrgelAudioSource: {fileID: -7569058216434971726}
   WaitTime: 10
   HighlightLayerName: Highlight
 --- !u!82 &-7569058216434971726

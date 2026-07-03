@@ -410,6 +410,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1811180310}
     - target: {fileID: 3723501686832635483, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
+      propertyPath: masterVolume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3723501686832635483, guid: 959d19a06d0f8214cab84608f7837087, type: 3}
       propertyPath: lowPassFilter
       value: 
       objectReference: {fileID: 1811180308}
@@ -6565,6 +6569,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnManager
   enemyPrefab: {fileID: 789708083455014685, guid: b58a41f58be9e5c4c8bfa67c52fa370e, type: 3}
   gameTimer: 0
+  Spawn100: 0
 --- !u!4 &749663514
 Transform:
   m_ObjectHideFlags: 0
@@ -6731,6 +6736,9 @@ MonoBehaviour:
   InteractRange: 10
   RequiredHoldTime: 1
   PlayerCamera: {fileID: 74370665}
+  ReticleImage: {fileID: 0}
+  NormalReticleColor: {r: 1, g: 1, b: 1, a: 1}
+  HighlightReticleColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &781449239
 GameObject:
   m_ObjectHideFlags: 0
@@ -17528,10 +17536,10 @@ SceneRoots:
   - {fileID: 1074238093}
   - {fileID: 787528591}
   - {fileID: 1438263622}
-  - {fileID: 749663514}
   - {fileID: 1500966397}
   - {fileID: 121602507}
   - {fileID: 244251759}
+  - {fileID: 749663514}
   - {fileID: 547010292}
   - {fileID: 35524089}
   - {fileID: 1163496509}
