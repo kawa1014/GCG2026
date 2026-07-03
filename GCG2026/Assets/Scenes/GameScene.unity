@@ -424,6 +424,9 @@ MonoBehaviour:
   InteractRange: 10
   RequiredHoldTime: 1
   PlayerCamera: {fileID: 1913414987}
+  ReticleImage: {fileID: 0}
+  NormalReticleColor: {r: 1, g: 1, b: 1, a: 1}
+  HighlightReticleColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &32924666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4657,6 +4660,51 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5010, y: 15, z: 2936.93}
   m_LocalScale: {x: 0.2, y: 10, z: 15}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &443298050
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 443298052}
+  - component: {fileID: 443298051}
+  m_Layer: 0
+  m_Name: OrgelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &443298051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 443298050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a20789c8de84512478408aa27a3bfa8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrgelManager
+  OrgelList: []
+--- !u!4 &443298052
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 443298050}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5035.26, y: 3.23993, z: 2950.2646}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -24046,3 +24094,4 @@ SceneRoots:
   - {fileID: 861648838}
   - {fileID: 1326302768}
   - {fileID: 272830227}
+  - {fileID: 443298052}

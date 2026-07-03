@@ -47,7 +47,8 @@ public class GameManager : MonoBehaviour
     //---内部状態を管理する変数---
     private float _currentFear = 0.0f; ///< 現在の恐怖度
     private int _currentPlayingOrgels = 0; ///< 現在なっているオルゴールの数
-    private bool _isGameOver = false; ///< ゲームが終了したかどうかのフラグ
+    private bool _isGameOver = false; ///< ゲームオーバーフラグ
+    private bool _isGameClear = false; ///< ゲームクリアフラグ
 
     //外からgameover処理を拾いたいため
     public bool IsGameOver => _isGameOver;
@@ -249,7 +250,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void GameClear()
     {
-        _isGameOver = true;
+        _isGameClear = true;
         Debug.Log("<color=cyan>【Game Clear】朝まで生き延びた！</color>");
 
         if (TimeText != null)
