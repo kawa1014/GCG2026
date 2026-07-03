@@ -1,14 +1,15 @@
 using System;
-using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 /// <summary>
-/// オルゴールの状態管理と3Dサウンド制御を行うクラス
+/// オルゴール自身の状態管理(鳴っているか等)と3Dサウンド制御のみを行うクラスです
+/// 待機時間のパラメーターはOrgelManagerが管理するため、ここからは削除されています
 /// </summary>
 public class OrgelSystem : MonoBehaviour, IInteractable
 {
-    // イベント駆動：自分が鳴った/止まったことを外部に知らせるAction
+    /// <summary>
+    /// イベント駆動：自分が鳴った/止まったことを外部に知らせるAction
+    /// </summary>
     public static event Action<OrgelSystem> OnOrgelStarted;
     public static event Action<OrgelSystem> OnOrgelStopped;
 
@@ -19,25 +20,31 @@ public class OrgelSystem : MonoBehaviour, IInteractable
     [Tooltip("3Dサウンド設定を行ったAudioSourceをアタッチしてください")]
     public AudioSource OrgelAudioSource;
 
-    [Header("時間指定")]
-    [Tooltip("このオルゴールが抽選されてからなりだすまでの待機時間(秒)")]
-    public float WaitTime = 10.0f;
-
     [Header("レイヤー設定")]
+    /// <summary>
+    /// オルゴールが鳴っている時に変更するレイヤーの名前
+    /// </summary>
     public string HighlightLayerName = "Highlight";
 
     // プロパティによるカプセル化(外部からは読み取り専用)
+    /// <summary>
+    /// 現在音が鳴っている状態かどうか
+    /// </summary>
     public bool IsPlaying { get; private set; } = false;
     /// <summary>
-    /// 現在抽選されて出番待ちかどうか
+    /// 現在出待ち(カウントダウン中)かどうか(外部からは読み取り専用)
     /// </summary>
     public bool IsWaiting { get; private set; } = false;
 
     //--- IInteractableの実装---
     /// <summary>
-    /// 現在音が鳴っているかどうかの状態
+    /// 鳴っている時だけプレイヤーがインタラクト(調べる)可能にする
     /// </summary>
-    public bool IsInteractable => IsPlaying; // 鳴っている時だけインタラクト可能
+    public bool IsInteractable => IsPlaying;
+
+    /// <summary>
+    /// プレイヤーからインタラクトされたらTurnOff(音を止める処理)を実行する
+    /// </summary>
     public void ExecuteInteraction() => TurnOff(); // インタラクトされたらTurnOffを実行
 
     /// <summary>
