@@ -51,7 +51,6 @@ public class OrgelSystem : MonoBehaviour, IInteractable
     /// オブジェクトの色を変更するための描画コンポーネントを保持しておく変数
     /// </summary>
     private Renderer _objRenderer;
-    private float timer; // 次に鳴るまでのカウントダウンタイマー
 
     /// <summary>
     /// ゲーム開始時に1回だけ呼ばれる初期化処理
@@ -63,23 +62,28 @@ public class OrgelSystem : MonoBehaviour, IInteractable
         if (OrgelAudioSource != null) OrgelAudioSource.Stop();
         IsWaiting = false;
         IsPlaying = false;
-        UpdateColorAndLayer();
+        UpdateColorAndLayer(); // 初期状態の色とレイヤー設定
     }
 
     /// <summary>
-    ///  GameManagerから「次はお前だ」と抽選されたときに呼ばれる
+    /// OrgelSystemから順番が回ってきたときに呼ばれます
+    /// 引数として、「何秒待つか(waitTime)」をManagerから直接受け取れるようになりました
     /// </summary>
-    public void StartCountdown()
+    public void StartCountdown(float waitTime)
     {
         IsWaiting = true;
-        StartCoroutine(CountdownCoroutine());
+        StartCoroutine(CountdownCoroutine(waitTime));
     }
 
-    // コルーチン本体(IEnumeratorを返すメソッド)
-    private System.Collections.IEnumerator CountdownCoroutine()
+    /// <summary>
+    /// カウントダウンを行うコルーチン(タイマー処理)本体
+    /// </summary>
+    /// <param name="waitTime">待機する秒数</param>
+    /// <returns>コルーチンの待機処理</returns>
+    private System.Collections.IEnumerator CountdownCoroutine(float waitTime)
     {
         // 指定した時間(WaitTime)だけここで待つ
-        yield return new WaitForSeconds(WaitTime);
+        yield return new WaitForSeconds(waitTime);
 
         // 待機が終わったらTurnOnを実行
         TurnOn();
@@ -87,12 +91,12 @@ public class OrgelSystem : MonoBehaviour, IInteractable
 
     /// <summary>
     /// オルゴールが起動する際の処理
-    /// タイマーなどから呼び出され、異常状態をONにして音を鳴らします
+    /// 待機状態を解除し、音を鳴らし、色が変わり、Managerに合図を送ります
     /// </summary>
     private void TurnOn()
     {
         IsWaiting = false; // 待機状態を終了
-        IsPlaying = true;
+        IsPlaying = true; // 鳴っている状態にする
 
         // 3Dサウンドの再生開始
         if(OrgelAudioSource != null)
@@ -108,7 +112,7 @@ public class OrgelSystem : MonoBehaviour, IInteractable
     }
 
     /// <summary>
-    /// 外部から呼ばれてOFFにするメソッド
+    /// プレイヤーに調べられた時など、外部から呼ばれてオルゴールを止める処理
     /// </summary>
     public void TurnOff()
     {
