@@ -441,11 +441,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ListenSkill
   ListenCamera: {fileID: 0}
   GrayscaleVolume: {fileID: 0}
---- !u!4 &32924671 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
-  m_PrefabInstance: {fileID: 1218873415}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &39242664
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4693,7 +4688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20789c8de84512478408aa27a3bfa8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrgelManager
-  OrgelList: []
+  PhaseList: []
 --- !u!4 &443298052
 Transform:
   m_ObjectHideFlags: 0
@@ -7815,11 +7810,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   TimeLimit: 180
   MaxFear: 100
-  FearIncreaseRate: 2
+  FearIncreaseRate: 1
   FearRecoveryRate: 2
-  PlayerTransform: {fileID: 32924671}
-  ExclusionRadius: 40
-  FloorHeightDifference: 2
   TimeText: {fileID: 700215101}
   FearVignetteGroup: {fileID: 1105567415}
 --- !u!4 &695401237
@@ -23982,8 +23974,8 @@ SceneRoots:
   - {fileID: 1401957555}
   - {fileID: 46693561}
   - {fileID: 1112929444}
-  - {fileID: 2060048289}
   - {fileID: 582012142}
+  - {fileID: 2060048289}
   - {fileID: 1278315914}
   - {fileID: 602074372}
   - {fileID: 702687444}

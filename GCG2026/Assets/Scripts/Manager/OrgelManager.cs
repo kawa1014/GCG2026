@@ -3,7 +3,7 @@ using System.Linq;                // リストの中身を条件で絞り込んだ(Where)するた
 using UnityEngine;
 
 /// <summary>
-/// Managerのインスペクター上で「度のオルゴールが」「何秒後に鳴るか」をセットで設定するためのクラスです
+/// Managerのインスペクター上で「どのオルゴールが」「何秒後に鳴るか」をセットで設定するためのクラスです
 /// [System.Serializable]を付けることで、Unityのインスペクター画面にリストとして表示・編集できるようになります
 /// </summary>
 [System.Serializable]
@@ -22,6 +22,20 @@ public class OrgelSetup
 }
 
 /// <summary>
+/// 鳴る順番ごとに、複数のオルゴール候補をまとめるためのクラスです
+/// </summary>
+[System.Serializable]
+public class OrgelPhase
+{
+    /// <summary>
+    /// この順番に鳴った時に、抽選されるオルゴールの候補リスト
+    /// </summary>
+    [Tooltip("この順番の時に抽選されるオルゴールの候補リスト")]
+    public List<OrgelSetup> Candidates = new List<OrgelSetup>();
+}
+
+
+/// <summary>
 /// マップ上のすべてのオルゴールを一元管理し、
 /// 抽選や時間設定の指示を出す「オルゴール専用の司令塔」です
 /// </summary>
@@ -32,13 +46,13 @@ public class OrgelManager : MonoBehaviour
     /// </summary>
     public static OrgelManager Instance {  get; private set; }
 
-    [Header("オルゴール一覧と個別時間設定")]
+    [Header("順番ごとのオルゴール設定")]
     /// <summary>
-    /// インスペクター上でオルゴールとその待機時間をまとめて登録・管理するためのリスト
-    /// このリストの「上(0番目)から順番に」鳴っていきます
+    /// 順番のリストです。上から順に進みます
+    /// 各順番の中に複数のオルゴールを登録すると、その中からランダムで1つ抽選されます
     /// </summary>
-    [Tooltip("ここにシーン内のオルゴールを登録し、個別の待機時間を設定できます")]
-    public List<OrgelSetup> OrgelList = new List<OrgelSetup>();
+    [Tooltip("上から順に順番が進みます。各順番の中で複数のオルゴールを登録すると、その中からランダムで1つが選ばれます")]
+    public List<OrgelPhase> PhaseList = new List<OrgelPhase>();
 
     /// <summary>
     /// 現在鳴っているオルゴールの数。
@@ -47,9 +61,9 @@ public class OrgelManager : MonoBehaviour
     public int CurrentOrgelPlayingCount { get; private set; } = 0;
 
     /// <summary>
-    /// 現在リストの何番目のオルゴールを狙っているかを記憶する番号(インデックス)
+    /// 現在のリストの何番目の順番を十個すいているかを記憶する番号
     /// </summary>
-    private int _currentIndex = 0;
+    private int _currentPhaseIndex = 0;
 
     /// <summary>
     /// ゲーム開始時に1度だけ呼ばれ、OrgelManagerがシーンに1つだけ存在するように設定(シングルトン)
@@ -84,17 +98,19 @@ public class OrgelManager : MonoBehaviour
     void Start()
     {
         // もしインスペクター上でリストが空っぽのママ開始されたら、シーン内のオルゴールを自動でかき集めて登録する
-        if (OrgelList.Count == 0)
+        if (PhaseList.Count == 0)
         {
             OrgelSystem[] orgels = FindObjectsByType<OrgelSystem>(FindObjectsSortMode.None);
             foreach (var o in orgels)
             {
-                OrgelList.Add(new OrgelSetup { Orgel = o, OrgelSoundWaitTime = 10.0f });
+                OrgelPhase newPhase = new OrgelPhase();
+                newPhase.Candidates.Add(new OrgelSetup { Orgel = o, OrgelSoundWaitTime = 10.0f });
+                PhaseList.Add(newPhase);
             }
         }
 
         // リストの0番目(一番上)のオルゴールを鳴らす準備を始める
-        _currentIndex = 0;
+        _currentPhaseIndex = 0;
         ChooseNextOrgel();
     }
 
@@ -130,31 +146,39 @@ public class OrgelManager : MonoBehaviour
     private void ChooseNextOrgel()
     {
         // リストが空っぽなら何もしない
-        if (OrgelList == null || OrgelList.Count == 0) return;
+        if (PhaseList == null || PhaseList.Count == 0) return;
 
         // もしリストの最後まで鳴り終わった場合、とりあえず最初(一番上)に戻ってループするようにしています。
-        if (_currentIndex >= OrgelList.Count)
+        if (_currentPhaseIndex >= PhaseList.Count)
         {
             Debug.Log("【OrgelManager】リストのオルゴールをすべて鳴らしました。最初（一番上）からループさせます。");
-            _currentIndex = 0;
+            _currentPhaseIndex = 0;
         }
 
-        // リストの「今の順番」のオルゴール情報を取得
-        OrgelSetup nextSetup = OrgelList[_currentIndex];
+        // 現在の順番のデータを取得
+        OrgelPhase currentPhase = PhaseList[_currentPhaseIndex];
 
-        // もし登録されているオルゴールが空(None)だったり、なぜか既になっていた場合は、飛ばして次を探す
-        if (nextSetup.Orgel == null || nextSetup.Orgel.IsPlaying || nextSetup.Orgel.IsWaiting)
+        // 候補の中から、まだ鳴っていない・待機していない安全なものを絞り込む
+        List<OrgelSetup> validCandidates = currentPhase.Candidates.Where(setup => setup.Orgel != null && !setup.Orgel.IsPlaying && !setup.Orgel.IsWaiting).ToList();
+
+        // もし今の順番の候補がすべて使用不可だった場合、スキップして次の順番へ進む
+        if (validCandidates.Count == 0)
         {
-            _currentIndex++;
+            Debug.LogWarning($"【OrgelManager】フェーズ {_currentPhaseIndex} の候補に鳴らせるオルゴールがありません。次のフェーズにスキップします。");
+            _currentPhaseIndex++;
             ChooseNextOrgel(); // 再帰的に次を呼ぶ
             return;
         }
 
+        // 有効な候補の中から1つをランダムで抽選
+        OrgelSetup nextSetup = validCandidates[Random.Range(0, validCandidates.Count)];
+
         // 選ばれたオルゴールに、設定された待機時間を渡してカウントダウンをスタートさせる
-       // nextSetup.Orgel.StartCountdown(nextSetup.OrgelSoundWaitTime);
+        nextSetup.Orgel.StartCountdown(nextSetup.OrgelSoundWaitTime);
 
-        Debug.Log($"<color=green>【OrgelManager】次弾装填：{nextSetup.Orgel.gameObject.name} が {nextSetup.OrgelSoundWaitTime}秒後に鳴ります。（リストの {_currentIndex + 1} 番目）</color>");
+        Debug.Log($"<color=green>【OrgelManager】次弾装填：フェーズ {_currentPhaseIndex} から {nextSetup.Orgel.gameObject.name} が抽選されました（{nextSetup.OrgelSoundWaitTime}秒後に鳴ります）。</color>");
 
-        //次回呼ばれた時にその次のオルゴールを鳴らすため、順番を1つ進めておく
+        // 次回呼ばれたときに次のフェーズに進むため、順番を1つ進めておく
+        _currentPhaseIndex++;
     }
 }
