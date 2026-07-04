@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 2744657979559919289}
   - component: {fileID: 502744388173352644}
   - component: {fileID: 7835396356386154912}
-  - component: {fileID: 6586959179378737681}
   - component: {fileID: -401845277953131478}
   - component: {fileID: 647153767418713850}
+  - component: {fileID: 3476381937346203381}
   m_Layer: 0
   m_Name: Door
   m_TagString: Door
@@ -116,22 +116,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.2919908, y: 10, z: 40.000008}
   m_Center: {x: 0.35798997, y: 0.13999987, z: -20.5}
---- !u!114 &6586959179378737681
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769224937596637192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4219cc3ee4d2a744ad4832317b1bf83, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorSystem3
-  OpenAngle: 90
-  Smooth: 2
-  AutoClose: 1
-  CloseTime: 3
 --- !u!114 &-401845277953131478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,6 +150,22 @@ MonoBehaviour:
   m_IgnoreFromBuild: 1
   m_ApplyToChildren: 1
   m_AffectedAgents: ffffffff
+--- !u!114 &3476381937346203381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769224937596637192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4219cc3ee4d2a744ad4832317b1bf83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorSystem
+  OpenAngle: 90
+  Smooth: 2
+  AutoClose: 1
+  CloseTime: 3
 --- !u!1001 &5086258260969075132
 PrefabInstance:
   m_ObjectHideFlags: 0
