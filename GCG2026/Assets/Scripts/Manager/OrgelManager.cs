@@ -46,6 +46,15 @@ public class OrgelManager : MonoBehaviour
     /// </summary>
     public static OrgelManager Instance {  get; private set; }
 
+    // マスターボリュームのスライダー
+    [Header("全体音量設定")]
+    /// <summary>
+    /// すべてのオルゴールの基準となる音量(0.0～1.0)
+    /// </summary>
+    [Tooltip("すべてのオルゴールの基準となる音量です(0.0で無音、1.0で最大)")]
+    [Range(0.0f, 1.0f)]
+    public float MasterVolume = 1.0f;
+
     [Header("順番ごとのオルゴール設定")]
     /// <summary>
     /// 順番のリストです。上から順に進みます

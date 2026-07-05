@@ -59,9 +59,14 @@ public class GameManager : MonoBehaviour
     private bool _isGameClear = false; ///< ゲームクリアフラグ
 
     /// <summary>
-    /// 外部(他のスクリプト)
-    /// </summary>からゲームオーバーかどうかを確認するためのプロパティ
+    /// 外部(他のスクリプト)からゲームオーバーかどうかを確認するためのプロパティ
+    /// </summary>
     public bool IsGameOver => _isGameOver;
+
+    /// <summary>
+    /// 外部(他のスクリプト)からゲームオーバーかどうかを確認するためのプロパティ
+    /// </summary>
+    public bool IsGameClear => _isGameClear;
 
     /// <summary>
     /// ゲーム開始時に1度だけ呼ばれ、GameManagerがシーンに1つだけ存在するように設定(シングルトン化)します
@@ -94,7 +99,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         // 終了済みの場合は何もしない
-        if (_isGameOver) return;
+        if (_isGameOver || _isGameClear) return;
 
         // 制限時間の処理
         TimeLimit -= Time.deltaTime;
@@ -203,7 +208,7 @@ public class GameManager : MonoBehaviour
     public void MaxOutFearAndGameOver()
     {
         // 既にゲームオーバー状態なら処理を重複させないためにブロック
-        if (_isGameOver) return;
+        if (_isGameOver || _isGameClear) return;
 
         // 恐怖度を強制的に最大値（MaxFear）に上書きする
         _currentFear = MaxFear;

@@ -4688,6 +4688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20789c8de84512478408aa27a3bfa8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrgelManager
+  MasterVolume: 1
   PhaseList: []
 --- !u!4 &443298052
 Transform:

@@ -94,7 +94,7 @@ public class ListeningDirectionalAudio : MonoBehaviour
     /// <summary>
     /// 真後ろ方向を向いた時の最低音量倍率。
     /// </summary>
-    [SerializeField] private float backSideVolumeRate = 0.6f;
+    [SerializeField] private float backSideVolumeRate = 0.9f;
 
     /// <summary>
     /// 右左の横方向にある音を聞こえやすくする追加音量。
@@ -398,12 +398,6 @@ public class ListeningDirectionalAudio : MonoBehaviour
     [SerializeField] private float muffledCutoffFrequency = 300.0f;
 
     /// <summary>
-    /// 音量変化の滑らかさ。
-    /// </summary>
-    [Header("補間")]
-    [SerializeField] private float volumeLerpSpeed = 10.0f;
-
-    /// <summary>
     /// フィルター変化の滑らかさ。
     /// </summary>
     [SerializeField] private float filterLerpSpeed = 10.0f;
@@ -642,7 +636,10 @@ public class ListeningDirectionalAudio : MonoBehaviour
         bool isListening = Input.GetKey(listenKey);
         float listenRate = isListening ? 1.0f : normalVolumeRate;
 
-        float targetVolume = audioState.volume * listenRate * maxVolume;
+        // OrgelManagerのマスターボリュームを取得して掛け算する
+        float globalMasterVolume = OrgelManager.Instance != null ? OrgelManager.Instance.MasterVolume : 1.0f;
+
+        float targetVolume = audioState.volume * listenRate * maxVolume * globalMasterVolume;
 
         if (!wasPlayingLastFrame)
         {
