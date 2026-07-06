@@ -421,7 +421,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e8ca73384e1cfd41866ee7dd079e40a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
-  InteractRange: 10
+  InteractRange: 5
+  InteractRadius: 0.5
   RequiredHoldTime: 1
   PlayerCamera: {fileID: 1913414987}
   ReticleImage: {fileID: 0}
@@ -7811,7 +7812,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   TimeLimit: 180
   MaxFear: 100
-  FearIncreaseRate: 1
+  FearIncreaseRate: 0.5
   FearRecoveryRate: 2
   TimeText: {fileID: 700215101}
   FearVignetteGroup: {fileID: 1105567415}
