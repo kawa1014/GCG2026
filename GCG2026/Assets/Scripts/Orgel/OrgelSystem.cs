@@ -26,6 +26,13 @@ public class OrgelSystem : MonoBehaviour, IInteractable
     /// </summary>
     public string HighlightLayerName = "Highlight";
 
+    [Header("アニメーション設定")]
+    /// <summary>
+    /// オルゴールのモデル(プレハブ)についてるAnimatorコンポーネント
+    /// </summary>
+    [Tooltip("オルゴールのモデルについているAnimatorをアタッチしてください")]
+    public Animator OrgelAnimator;
+
     // プロパティによるカプセル化(外部からは読み取り専用)
     /// <summary>
     /// 現在音が鳴っている状態かどうか
@@ -52,6 +59,11 @@ public class OrgelSystem : MonoBehaviour, IInteractable
     /// </summary>
     private Renderer _objRenderer;
 
+    // アニメーション用のトリガー(文字列のタイポを防ぐためにハッシュ化)
+    private readonly int AnimTriggerOpen = Animator.StringToHash("Open");
+    private readonly int AnimTriggerRoll = Animator.StringToHash("Roll");
+    private readonly int AnimTriggerClose = Animator.StringToHash("Close");
+
     /// <summary>
     /// ゲーム開始時に1回だけ呼ばれる初期化処理
     /// </summary>
@@ -72,6 +84,13 @@ public class OrgelSystem : MonoBehaviour, IInteractable
     public void StartCountdown(float waitTime)
     {
         IsWaiting = true;
+
+        // 出番がきたので「開く」アニメーションの合図を送る
+        if (OrgelAnimator != null)
+        {
+            OrgelAnimator.SetTrigger(AnimTriggerOpen);
+        }
+
         StartCoroutine(CountdownCoroutine(waitTime));
     }
 
@@ -104,6 +123,12 @@ public class OrgelSystem : MonoBehaviour, IInteractable
             OrgelAudioSource.Play();
         }
 
+        // 実際に鳴り始めたので「回る」アニメーションの合図を送る
+        if (OrgelAnimator != null)
+        {
+            OrgelAnimator.SetTrigger(AnimTriggerRoll);
+        }
+
         // GameManagerを直接呼ばず、イベントを発火するだけ
         OnOrgelStarted?.Invoke(this);
 
@@ -125,6 +150,12 @@ public class OrgelSystem : MonoBehaviour, IInteractable
             if(OrgelAudioSource != null)
             {
                 OrgelAudioSource.Stop();
+            }
+
+            // プレイヤーに解除されたので「閉じる」アニメーションの合図を送る
+            if (OrgelAnimator != null)
+            {
+                OrgelAnimator.SetTrigger(AnimTriggerClose);
             }
 
             // イベントを発火するだけ
