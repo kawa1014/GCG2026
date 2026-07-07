@@ -141,7 +141,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &-880157447683776315
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,7 +159,7 @@ MonoBehaviour:
   waypoints: []
   visionRadius: 10
   visionAngle: 90
-  catchDistance: 2
+  catchDistance: 3
 --- !u!195 &4492324963278862833
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -179,7 +179,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 1
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!96 &4107056335113683123
