@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// @brief GameManager.cs
@@ -52,6 +53,17 @@ public class GameManager : MonoBehaviour
     /// </summary>
     [Tooltip("恐怖度に応じて透明度が変わる画面の縁の赤いUIグループ")]
     public CanvasGroup FearVignetteGroup;
+
+    /// <summary>
+    ///  SAN値のアニメーション
+    /// </summary>
+    [Header("SAN値UI設定")]
+    public UnityEngine.UI.Image SanImage;
+    public Sprite[] SanSprites;
+    public float SanChangeInterval = 1.0f;
+
+    private float _sanTimer = 0.0f;
+    private int _sanIndex = 0;
 
     //---内部状態を管理する変数---
     private float _currentFear = 0.0f; ///< 現在の恐怖度
@@ -131,6 +143,24 @@ public class GameManager : MonoBehaviour
         {
             GameOver("恐怖度が限界に達した");
         }
+
+        _sanTimer += Time.deltaTime;
+
+        if(_sanTimer >= SanChangeInterval)
+        {
+            _sanTimer = 0.0f;
+
+            // 次の画像へ
+            _sanIndex++;
+
+            // 範囲のチェック
+            if (_sanIndex >= SanSprites.Length)
+                _sanIndex = SanSprites.Length - 1;
+
+            // Imageに変換
+            if (SanImage != null)
+                SanImage.sprite = SanSprites[_sanIndex];
+        }
     }
 
     /// <summary>
@@ -199,6 +229,9 @@ public class GameManager : MonoBehaviour
         // 恐怖度0で完全に透明、恐怖度100で真っ赤になります
         float fearRatio = _currentFear / MaxFear;
         FearVignetteGroup.alpha = fearRatio;
+
+        // SANUI更新
+        UpdateSanUI();
     }
 
     /// <summary>
@@ -218,6 +251,24 @@ public class GameManager : MonoBehaviour
 
         // 理由を添えてゲームオーバー処理を実行
         GameOver("エネミーに捕獲されたため、恐怖度が限界を突破した");
+    }
+
+    private void UpdateSanUI()
+    {
+        if (SanImage == null || SanSprites == null || SanSprites.Length == 0)
+            return;
+
+        // 恐怖度の割合（0.0 ～ 1.0）
+        float fearRatio = _currentFear / MaxFear;
+
+        // 画像インデックスを計算（0 ～ SanSprites.Length-1）
+        int index = Mathf.FloorToInt(fearRatio * (SanSprites.Length - 1));
+
+        // 範囲チェック
+        index = Mathf.Clamp(index, 0, SanSprites.Length - 1);
+
+        // Image に反映
+        SanImage.sprite = SanSprites[index];
     }
 
     /// <summary>

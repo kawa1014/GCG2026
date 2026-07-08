@@ -116,4 +116,15 @@ public class NewMonoBehaviourScript : MonoBehaviour
         yield return FadeOut(1.0f);
         SceneManager.LoadScene("TitleScene");
     }
+
+    // タイトルからオプションへのフェード
+    public void OnClickStartButton6()
+    {
+        StartCoroutine(FadeAndLoad6());
+    }
+    private IEnumerator FadeAndLoad6()
+    {
+        yield return FadeOut(1.0f);
+        SceneManager.LoadScene("OptionScene");
+    }
 }
