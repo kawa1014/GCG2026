@@ -125,20 +125,20 @@ public class Enemy : MonoBehaviour
         switch (currentState)
         {
             case State.walk:
-                //徘徊時は緑色
-                SetColor(Color.green);
-
+                //agent.speed = 2.0f; //徘徊時の速度を設定
+                SetColor(Color.green);//徘徊時は緑色
                 PatrolRoutine();
                 CheckVision();
                 CheckDoorOnRight();
                 break;
             case State.chase:
-                SetColor(Color.red);
+                //agent.speed = 4.0f; //追跡時の速度を設定
+                SetColor(Color.red);//追跡時は赤色
                 ChaseRoutine();
                 CheckVision();
                 break;
             case State.Action:
-                SetColor(Color.yellow);
+                SetColor(Color.yellow);//扉を開ける等の特殊行動中は黄色
                 //コルーチンで処理中なので、何もしない
                 break;
         }
@@ -255,6 +255,28 @@ public class Enemy : MonoBehaviour
     //5.扉を開けるアクションのコルーチン
     private IEnumerator OpenDoorAction(GameObject door)
     {
+        //DoorSystemコンポーネントの取得
+        DoorSystem doorSystem = door.GetComponent<DoorSystem>();
+        if (doorSystem == null)
+        {
+            //親オブジェクトにDoorSystemがある場合の考慮
+            doorSystem = door.GetComponentInParent<DoorSystem>();
+        }
+        //DoorSystemが見つかったか
+        if (doorSystem == null)
+        {
+            Debug.LogError($" [エラー] {door.name}からDoorSystemコンポーネントが見つかりませんでした。");
+        }
+        else
+        {
+            Debug.Log($"[成功] {door.name}のDoorSystemを取得しました。");
+        }
+        //DoorSystemが既に開いている状態ならスルーして進む
+        if (doorSystem != null && doorSystem.IsOpen)
+        {
+            yield break; //コルーチンを終了して、徘徊や追跡に戻る
+        }
+
         //状態をActionに変更して、他の行動を停止
         currentState = State.Action;
 
@@ -267,6 +289,12 @@ public class Enemy : MonoBehaviour
         Debug.Log("扉を開けるアクション開始");
         //ここで扉を開けるアニメーションや処理を実装
         //例: door.GetComponent<Door>().Open();
+
+        //ドアが閉まっている場合は、DoorSystemのExecuteInteractionを呼び出して開ける
+        if (doorSystem != null)
+        {
+            doorSystem.ExecuteInteraction();
+        }
 
         //仮に2秒間のアクションとする
         yield return new WaitForSeconds(2f);
