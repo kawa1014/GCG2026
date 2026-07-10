@@ -20,7 +20,7 @@ MonoBehaviour:
   passIndex: 0
   bindDepthStencilAttachment: 0
   m_Version: 1
---- !u!114 &-5375424374262897905
+--- !u!114 &-3521309123530398280
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -35,7 +35,7 @@ MonoBehaviour:
   m_Active: 1
   settings:
     passTag: DrawInteractableBehind
-    Event: 400
+    Event: 600
     filterSettings:
       RenderQueueType: 0
       LayerMask:
@@ -89,9 +89,9 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: 7833122117494664109}
   - {fileID: -5734318508294265266}
-  - {fileID: 7161374782296043414}
-  - {fileID: -5375424374262897905}
-  m_RendererFeatureMap: ad6b866f10d7b46c4e262cccb29b6bb0962f32026c5062630f63150703a866b5
+  - {fileID: -3521309123530398280}
+  - {fileID: 2664355172356223496}
+  m_RendererFeatureMap: ad6b866f10d7b46c4e262cccb29b6bb0b8e5a04302cc21cf0872c4b3e9b0f924
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -120,7 +120,7 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
---- !u!114 &7161374782296043414
+--- !u!114 &2664355172356223496
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,26 +130,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
-  m_Name: Interact
+  m_Name: RenderObjects
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.RenderObjects
   m_Active: 1
   settings:
-    passTag: Interact
-    Event: 450
+    passTag: RenderObjects
+    Event: 600
     filterSettings:
       RenderQueueType: 0
       LayerMask:
         serializedVersion: 2
         m_Bits: 64
       PassNames: []
-    overrideMaterial: {fileID: 0}
-    overrideMaterialPassIndex: 0
+    overrideMaterial: {fileID: 2100000, guid: d57be7cb5895f5b4b8830118d1e42bf6, type: 2}
+    overrideMaterialPassIndex: 1
     overrideShader: {fileID: 0}
     overrideShaderPassIndex: 0
-    overrideMode: 0
-    overrideDepthState: 0
-    depthCompareFunction: 4
-    enableWrite: 1
+    overrideMode: 1
+    overrideDepthState: 1
+    depthCompareFunction: 8
+    enableWrite: 0
     stencilSettings:
       overrideStencilState: 0
       stencilReference: 0
