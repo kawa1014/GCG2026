@@ -499,6 +499,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ListenSkill
   ListenCamera: {fileID: 0}
   GrayscaleVolume: {fileID: 0}
+--- !u!4 &32924667 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
+  m_PrefabInstance: {fileID: 1218873415}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &39073119
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4542,7 +4547,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrgelManager
   MasterVolume: 1
-  PhaseList: []
+  PlayerTransform: {fileID: 32924667}
+  ExclusionRadius: 30
+  MinWaitTime: 5
+  MaxWaitTime: 15
 --- !u!4 &443298052
 Transform:
   m_ObjectHideFlags: 0

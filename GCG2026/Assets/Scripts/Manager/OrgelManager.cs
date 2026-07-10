@@ -3,41 +3,8 @@ using System.Linq;                // リストの中身を条件で絞り込んだ(Where)するた
 using UnityEngine;
 
 /// <summary>
-/// Managerのインスペクター上で「どのオルゴールが」「何秒後に鳴るか」をセットで設定するためのクラスです
-/// [System.Serializable]を付けることで、Unityのインスペクター画面にリストとして表示・編集できるようになります
-/// </summary>
-[System.Serializable]
-public class OrgelSetup
-{
-    /// <summary>
-    /// 設定対象となるオルゴール本体(シーン上のオブジェクト)
-    /// </summary>
-    public OrgelSystem Orgel;
-
-    /// <summary>
-    /// このオルゴールが抽選されてから鳴りだすまでの待機時間(秒)
-    /// </summary>
-    [Tooltip("このオルゴールが鳴りだすまでの待機時間")]
-    public float OrgelSoundWaitTime = 10.0f;
-}
-
-/// <summary>
-/// 鳴る順番ごとに、複数のオルゴール候補をまとめるためのクラスです
-/// </summary>
-[System.Serializable]
-public class OrgelPhase
-{
-    /// <summary>
-    /// この順番に鳴った時に、抽選されるオルゴールの候補リスト
-    /// </summary>
-    [Tooltip("この順番の時に抽選されるオルゴールの候補リスト")]
-    public List<OrgelSetup> Candidates = new List<OrgelSetup>();
-}
-
-
-/// <summary>
 /// マップ上のすべてのオルゴールを一元管理し、
-/// 抽選や時間設定の指示を出す「オルゴール専用の司令塔」です
+/// 完全なランダム抽選による再生指示を出す「オルゴール専用の司令塔」です。
 /// </summary>
 public class OrgelManager : MonoBehaviour
 {
@@ -55,13 +22,31 @@ public class OrgelManager : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float MasterVolume = 1.0f;
 
-    [Header("順番ごとのオルゴール設定")]
+    [Header("抽選除外設定")]
     /// <summary>
-    /// 順番のリストです。上から順に進みます
-    /// 各順番の中に複数のオルゴールを登録すると、その中からランダムで1つ抽選されます
+    /// プレイヤーの位置を特定するためのTransform
     /// </summary>
-    [Tooltip("上から順に順番が進みます。各順番の中で複数のオルゴールを登録すると、その中からランダムで1つが選ばれます")]
-    public List<OrgelPhase> PhaseList = new List<OrgelPhase>();
+    [Tooltip("プレイヤーのTransformを設定します。設定されていない場合はタグ「Player」から自動検索します")]
+    public Transform PlayerTransform;
+
+    /// <summary>
+    /// 抽選から除外するプレイヤー周辺の半径(メートル)
+    /// </summary>
+    [Tooltip("この半径(m)以内にいるオルゴールは抽選から除外され、遠くのものが鳴るようになります。")]
+    public float ExclusionRadius = 10.0f;
+
+    [Header("待機時間設定")]
+    /// <summary>
+    /// オルゴールが抽選されてから鳴るまでの最小待機時間(秒)
+    /// </summary>
+    [Tooltip("オルゴールが抽選されてから鳴るまでの最小待機時間(秒)")]
+    public float MinWaitTime = 5.0f;
+
+    /// <summary>
+    /// オルゴールが抽選されてから鳴るまでの最大待機時間(秒)
+    /// </summary>
+    [Tooltip("オルゴールが抽選されてから鳴るまでの最大待機時間(秒)")]
+    public float MaxWaitTime = 15.0f;
 
     /// <summary>
     /// 現在鳴っているオルゴールの数。
@@ -73,6 +58,11 @@ public class OrgelManager : MonoBehaviour
     /// 現在のリストの何番目の順番を十個すいているかを記憶する番号
     /// </summary>
     private int _currentPhaseIndex = 0;
+
+    /// <summary>
+    /// シーン内に存在するすべてのオルゴールのリスト
+    /// </summary>
+    private List<OrgelSystem> _allOrgels = new List<OrgelSystem>();
 
     /// <summary>
     /// ゲーム開始時に1度だけ呼ばれ、OrgelManagerがシーンに1つだけ存在するように設定(シングルトン)
@@ -106,21 +96,28 @@ public class OrgelManager : MonoBehaviour
     /// </summary>
     void Start()
     {
-        // もしインスペクター上でリストが空っぽのママ開始されたら、シーン内のオルゴールを自動でかき集めて登録する
-        if (PhaseList.Count == 0)
+        // プレイヤーがインスペクターで設定されていない場合、タグで自動検索する
+        if (PlayerTransform == null)
         {
-            OrgelSystem[] orgels = FindObjectsByType<OrgelSystem>(FindObjectsSortMode.None);
-            foreach (var o in orgels)
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
             {
-                OrgelPhase newPhase = new OrgelPhase();
-                newPhase.Candidates.Add(new OrgelSetup { Orgel = o, OrgelSoundWaitTime = 10.0f });
-                PhaseList.Add(newPhase);
+                PlayerTransform = playerObj.transform;
+            }
+            else
+            {
+                Debug.LogWarning("【OrgelManager】Playerタグを持つオブジェクトが見つかりません。距離による除外処理が機能しません。");
             }
         }
 
-        // リストの0番目(一番上)のオルゴールを鳴らす準備を始める
-        _currentPhaseIndex = 0;
-        ChooseNextOrgel();
+        // シーン内に存在するすべてのオルゴールを自動取得してリストに登録
+        _allOrgels = FindObjectsByType<OrgelSystem>(FindObjectsSortMode.None).ToList();
+
+        // 最初のオルゴールを抽選
+        if (_allOrgels.Count > 0)
+        {
+            ChooseNextOrgel();
+        }
     }
 
     /// <summary>
@@ -154,40 +151,73 @@ public class OrgelManager : MonoBehaviour
     /// </summary>
     private void ChooseNextOrgel()
     {
-        // リストが空っぽなら何もしない
-        if (PhaseList == null || PhaseList.Count == 0) return;
+        if (_allOrgels == null || _allOrgels.Count == 0) return;
 
-        // もしリストの最後まで鳴り終わった場合、とりあえず最初(一番上)に戻ってループするようにしています。
-        if (_currentPhaseIndex >= PhaseList.Count)
-        {
-            Debug.Log("【OrgelManager】リストのオルゴールをすべて鳴らしました。最初（一番上）からループさせます。");
-            _currentPhaseIndex = 0;
-        }
+        // 1. 全オルゴールの中から、まだ鳴っていない・待機していない安全なものを絞り込む
+        List<OrgelSystem> validCandidates = _allOrgels.Where(o => !o.IsPlaying && !o.IsWaiting).ToList();
 
-        // 現在の順番のデータを取得
-        OrgelPhase currentPhase = PhaseList[_currentPhaseIndex];
-
-        // 候補の中から、まだ鳴っていない・待機していない安全なものを絞り込む
-        List<OrgelSetup> validCandidates = currentPhase.Candidates.Where(setup => setup.Orgel != null && !setup.Orgel.IsPlaying && !setup.Orgel.IsWaiting).ToList();
-
-        // もし今の順番の候補がすべて使用不可だった場合、スキップして次の順番へ進む
         if (validCandidates.Count == 0)
         {
-            Debug.LogWarning($"【OrgelManager】フェーズ {_currentPhaseIndex} の候補に鳴らせるオルゴールがありません。次のフェーズにスキップします。");
-            _currentPhaseIndex++;
-            ChooseNextOrgel(); // 再帰的に次を呼ぶ
+            Debug.LogWarning("【OrgelManager】現在鳴らせるオルゴールがありません。");
             return;
         }
 
-        // 有効な候補の中から1つをランダムで抽選
-        OrgelSetup nextSetup = validCandidates[Random.Range(0, validCandidates.Count)];
+        // 2. プレイヤーとの距離を計算し、近すぎるもの(ExclusionRadius以内)を除外する
+        List<OrgelSystem> filteredCandidates = new List<OrgelSystem>();
 
-        // 選ばれたオルゴールに、設定された待機時間を渡してカウントダウンをスタートさせる
-        nextSetup.Orgel.StartCountdown(nextSetup.OrgelSoundWaitTime);
+        if (PlayerTransform != null)
+        {
+            foreach (var orgel in validCandidates)
+            {
+                // プレイヤーとオルゴールの距離を計算
+                float distanceToPlayer = Vector3.Distance(PlayerTransform.position, orgel.transform.position);
 
-        Debug.Log($"<color=green>【OrgelManager】次弾装填：フェーズ {_currentPhaseIndex} から {nextSetup.Orgel.gameObject.name} が抽選されました（{nextSetup.OrgelSoundWaitTime}秒後に鳴ります）。</color>");
+                // 設定した除外半径より遠ければ、抽選候補に入れる
+                if (distanceToPlayer > ExclusionRadius)
+                {
+                    filteredCandidates.Add(orgel);
+                }
+            }
+        }
+        else
+        {
+            filteredCandidates = validCandidates;
+        }
 
-        // 次回呼ばれたときに次のフェーズに進むため、順番を1つ進めておく
-        _currentPhaseIndex++;
+        // 【セーフティ機能】もし全てのオルゴールが近すぎて候補が0になってしまった場合は距離制限を無視する
+        if (filteredCandidates.Count == 0 && validCandidates.Count > 0)
+        {
+            Debug.LogWarning("【OrgelManager】除外範囲外(遠く)に鳴らせるオルゴールがありません。範囲制限を一時的に無視して抽選します。");
+            filteredCandidates = validCandidates;
+        }
+
+        // 3. 最終的な候補の中から1つを完全にランダムで抽選
+        OrgelSystem nextOrgel = filteredCandidates[Random.Range(0, filteredCandidates.Count)];
+
+        // 待機時間をMinとMaxの間からランダムに決定する
+        float waitTime = Random.Range(MinWaitTime, MaxWaitTime);
+
+        // 選ばれたオルゴールにカウントダウンをスタートさせる
+        nextOrgel.StartCountdown(waitTime);
+
+        Debug.Log($"<color=green>【OrgelManager】次弾装填：{nextOrgel.gameObject.name} が抽選されました（{waitTime:F1}秒後に鳴ります）。</color>");
     }
+
+    /// <summary>
+    /// Unityエディタ上で選択した際に、除外範囲を視覚的に確認するためのギズモを描画します
+    /// </summary>
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        // プレイヤーのTransformがインスペクターでセットされている場合のみ描画
+        if (PlayerTransform != null)
+        {
+            // ギズモの色を半透明の赤色に設定
+            Gizmos.color = new Color(1.0f, 0.0f, 0.0f, 0.3f);
+
+            // プレイヤーの現在位置を中心に、除外半径(ExclusionRadius)の大きさの球体を描画
+            Gizmos.DrawWireSphere(PlayerTransform.position, ExclusionRadius);
+        }
+    }
+#endif
 }
