@@ -14,12 +14,16 @@ public class HighlightTarget : MonoBehaviour
         // 有効になっていたら
         if (isEnableHighlight)
         {
-            // ハイライトにする
-            Highlight();
+            // 縁をつける
+            SetLayer(gameObject, LayerMask.NameToLayer("Outline"));
 
-
-            // 向こうに戻す
+            // 元に戻す
             isEnableHighlight = false;
+        }
+        else 
+        {
+            // 縁を消す
+            SetLayer(gameObject, LayerMask.NameToLayer("Default"));
         }
     }
 
@@ -31,10 +35,16 @@ public class HighlightTarget : MonoBehaviour
         isEnableHighlight = true;
     }
 
-
-    // 実際にハイライトにする
-    private void Highlight()
+    private void SetLayer(GameObject obj, int layer)
     {
+        if (obj == null)
+            return;
 
+        obj.layer = layer;
+
+        foreach(Transform child in obj.transform)
+        {
+            SetLayer(child.gameObject, layer);
+        }
     }
 }

@@ -40,7 +40,7 @@ public class ReticleHighlight : MonoBehaviour
             // 看板(IInteractable)を持っていて、有効なら即座に実行（ドアが開く）
             if (interactableObj != null && interactableObj.IsInteractable)
             {
-                //hit.collider.GetComponent<HighlightTarget).EnableHighlight();
+                hit.collider.GetComponent<HighlightTarget>().EnableHighlight();
                 Debug.Log("<color=yellow>【Ray】ドアを見ている</color>");
             }
         }
