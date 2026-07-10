@@ -128,8 +128,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrgelSystem
   OrgelAudioSource: {fileID: -7569058216434971726}
-  WaitTime: 10
   HighlightLayerName: Highlight
+  OrgelAnimator: {fileID: 0}
 --- !u!82 &-7569058216434971726
 AudioSource:
   m_ObjectHideFlags: 0
@@ -263,7 +263,6 @@ MonoBehaviour:
   listenKey: 101
   normalVolumeRate: 0.25
   maxVolume: 1
-  masterVolume: 1
   naturalVolumeLimit: 0.82
   closeDistanceVolumeLimit: 0.78
   directionBonusLimit: 0.22
@@ -325,5 +324,4 @@ MonoBehaviour:
   maxWallHitCount: 2
   clearCutoffFrequency: 22000
   muffledCutoffFrequency: 650
-  volumeLerpSpeed: 10
   filterLerpSpeed: 10
