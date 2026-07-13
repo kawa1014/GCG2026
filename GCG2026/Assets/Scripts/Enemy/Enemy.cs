@@ -45,6 +45,7 @@ public class Enemy : MonoBehaviour
     public GameObject dissolveEffect;
     [Tooltip("’ÇÕ‚É–Â‚ç‚·SE")]
     public AudioSource chaseAudioSource;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
