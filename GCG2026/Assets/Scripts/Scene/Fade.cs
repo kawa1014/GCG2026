@@ -144,4 +144,15 @@ public class NewMonoBehaviourScript : MonoBehaviour
         SceneManager.LoadScene("TitleScene");
     }
 
+    public void FadeAndLoadScene(string sceneName, float duration = 1.0f)
+    {
+        StartCoroutine(FadeAndLoadRoutine(sceneName, duration));
+    }
+
+    private IEnumerator FadeAndLoadRoutine(string sceneName, float duration)
+    {
+        yield return FadeOut(duration);
+        SceneManager.LoadScene(sceneName);
+    }
+
 }
