@@ -11,10 +11,6 @@ public class PlayerInteractor : MonoBehaviour
     /// </summary>
     [Tooltip("インタラクトできる距離")]
     public float InteractRange = 3.0f;
-
-    [Tooltip("レイの太さ(円柱の半径)")]
-    public float InteractRadius = 0.5f;
-
     [Tooltip("解除に必要な時間")]
     public float RequiredHoldTime = 3.0f;
 
@@ -62,13 +58,16 @@ public class PlayerInteractor : MonoBehaviour
     private void HandleHoldInteraction()
     {
         if (PlayerCamera == null) return;
-
+        
         // Rayを視点から少し右下から出す
-        Vector3 origin = PlayerCamera.transform.position;
-        Vector3 direction = PlayerCamera.transform.forward;
+        Vector3 origin = PlayerCamera.transform.position
+                         - PlayerCamera.transform.up * 0.3f
+                         + PlayerCamera.transform.right * 0.3f;
 
+        int layerMask = ~LayerMask.GetMask("Player");
 
-        if (Physics.SphereCast(origin, InteractRadius, direction, out RaycastHit hit, InteractRange))
+        Ray ray = new Ray(origin, PlayerCamera.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange, layerMask))
         {
             IInteractable interactableObj = hit.collider.GetComponent<IInteractable>();
 
@@ -103,10 +102,10 @@ public class PlayerInteractor : MonoBehaviour
     {
         if (PlayerCamera == null) return;
 
-        Vector3 origin = PlayerCamera.transform.position;
-        Vector3 direction = PlayerCamera.transform.forward;
+        int layerMask = ~LayerMask.GetMask("Player");
 
-        if (Physics.SphereCast(origin, InteractRadius, direction, out RaycastHit hit, InteractRange))
+        Ray ray = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange, layerMask))
         {
             IInteractable interactableObj = hit.collider.GetComponent<IInteractable>();
 
@@ -135,9 +134,12 @@ public class PlayerInteractor : MonoBehaviour
     {
         if (PlayerCamera == null) return;
 
+
+        int layerMask = ~LayerMask.GetMask("Player");
+
         Ray ray = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange))
+        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange, layerMask))
         {
             DoorSystem door = hit.collider.GetComponent<DoorSystem>();
 
@@ -187,18 +189,27 @@ public class PlayerInteractor : MonoBehaviour
     /// </summary>
     private void OnDrawGizmos()
     {
+        // カメラがセットされていなければ処理を中断
         if (PlayerCamera == null) return;
 
+        // ギズモの色を赤に設定
         Gizmos.color = Color.red;
 
         // カメラの現在位置と、向いている方向を取得
-        Vector3 origin = PlayerCamera.transform.position;
+        Vector3 origin = PlayerCamera.transform.position
+                         - PlayerCamera.transform.up * 0.3f
+                         + PlayerCamera.transform.right * 0.3f;
         Vector3 forward = PlayerCamera.transform.forward;
-        Vector3 endPosition = origin + forward * InteractRange;
 
-        // ★視覚的にも「円柱（SphereCast）」になっていることを分かりやすく描画する！
-        Gizmos.DrawRay(origin, forward * InteractRange); // 中心の線
-        Gizmos.DrawWireSphere(origin, InteractRadius);   // 手元の円
-        Gizmos.DrawWireSphere(endPosition, InteractRadius); // 奥の円
+        // 1本目：メインRay
+        Gizmos.DrawRay(origin, forward * InteractRange);
+
+        // 2本目：左に少し傾けたRay
+        Vector3 leftRay = Quaternion.Euler(0, -5, 0) * forward;
+        Gizmos.DrawRay(origin, leftRay * InteractRange);
+
+        // 3本目：右に少し傾けたRay（Y軸で 5度 回転させる）
+        Vector3 rightRay = Quaternion.Euler(0, 5, 0) * forward;
+        Gizmos.DrawRay(origin, rightRay * InteractRange);
     }
 }

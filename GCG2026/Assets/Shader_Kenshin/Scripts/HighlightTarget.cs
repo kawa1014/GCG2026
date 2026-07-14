@@ -12,15 +12,15 @@ public class HighlightTarget : MonoBehaviour
     void Update()
     {
         // —LŒø‚É‚È‚Á‚Ä‚¢‚½‚ç
-        if (isEnableHighlight)
+        if (isEnableHighlight && gameObject.layer != LayerMask.NameToLayer("Outline"))
         {
             // ‰‚ğ‚Â‚¯‚é
             SetLayer(gameObject, LayerMask.NameToLayer("Outline"));
 
-            // Œ³‚É–ß‚·
-            isEnableHighlight = false;
+            //// Œ³‚É–ß‚·
+            //isEnableHighlight = false;
         }
-        else 
+        else if (!isEnableHighlight && gameObject.layer != LayerMask.NameToLayer("Default"))
         {
             // ‰‚ğÁ‚·
             SetLayer(gameObject, LayerMask.NameToLayer("Default"));
@@ -33,6 +33,11 @@ public class HighlightTarget : MonoBehaviour
     public void EnableHighlight()
     {
         isEnableHighlight = true;
+    }
+
+    public void DisableHighlight()
+    {
+        isEnableHighlight = false;
     }
 
     private void SetLayer(GameObject obj, int layer)

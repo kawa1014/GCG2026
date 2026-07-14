@@ -12,6 +12,8 @@ public class ReticleHighlight : MonoBehaviour
     /// </summary>
     private Camera PlayerCamera;
 
+    private HighlightTarget currentTarget = null;
+
     void Start()
     {
         // プレイヤーインタラクタを取得
@@ -32,17 +34,47 @@ public class ReticleHighlight : MonoBehaviour
     {
         if (PlayerCamera == null) return;
 
+        //Debug.DrawRay(ray.origin, ray.direction * InteractRange, Color.green, 1, false);
+
+        // ビットで返したレイヤー番号を、~でビット反転する
+        // これで、プレイヤー以外のレイヤーを指定できる
+        int layerMask = ~LayerMask.GetMask("Player");
+
+        // プレイヤー以外のオブジェクトを対象にレイを飛ばす
         Ray ray = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange))
+        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange, layerMask))
         {
             IInteractable interactableObj = hit.collider.GetComponent<IInteractable>();
 
-            // 看板(IInteractable)を持っていて、有効なら即座に実行（ドアが開く）
+            // 看板(IInteractable)を持っていて、有効なら即座に実行
             if (interactableObj != null && interactableObj.IsInteractable)
             {
-                hit.collider.GetComponent<HighlightTarget>().EnableHighlight();
-                Debug.Log("<color=yellow>【Ray】ドアを見ている</color>");
+                HighlightTarget target = hit.collider.GetComponent<HighlightTarget>();
+
+                if (!currentTarget && target)
+                {
+                    currentTarget = target;
+                    currentTarget.EnableHighlight();
+                }
+
+                //Debug.Log("<color=yellow>【Ray】ドアを見ている</color>");
+
+                return;
             }
+
+            Debug.Log("<color=blue>【Ray】ドアを見ていない1</color>");
+
+        }
+
+        Debug.Log("<color=blue>【Ray】ドアを見ていない2</color>");
+
+
+        if (currentTarget)
+        {
+            currentTarget.DisableHighlight();
+            currentTarget = null;
+
+            return;
         }
     }
 }
