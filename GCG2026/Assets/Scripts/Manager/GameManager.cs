@@ -146,21 +146,21 @@ public class GameManager : MonoBehaviour
 
         _sanTimer += Time.deltaTime;
 
-        if(_sanTimer >= SanChangeInterval)
-        {
-            _sanTimer = 0.0f;
+        //if(_sanTimer >= SanChangeInterval)
+        //{
+        //    _sanTimer = 0.0f;
 
-            // 次の画像へ
-            _sanIndex++;
+        //    // 次の画像へ
+        //    _sanIndex++;
 
-            // 範囲のチェック
-            if (_sanIndex >= SanSprites.Length)
-                _sanIndex = SanSprites.Length - 1;
+        //    // 範囲のチェック
+        //    if (_sanIndex >= SanSprites.Length)
+        //        _sanIndex = SanSprites.Length - 1;
 
-            // Imageに変換
-            if (SanImage != null)
-                SanImage.sprite = SanSprites[_sanIndex];
-        }
+        //    // Imageに変換
+        //    if (SanImage != null)
+        //        SanImage.sprite = SanSprites[_sanIndex];
+        //}
     }
 
     /// <summary>
@@ -223,12 +223,12 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void UpdateFearUI()
     {
-        if (FearVignetteGroup == null) return;
+        //if (FearVignetteGroup == null) return;
 
         // 恐怖度の割合(0.0～1.0)を計算し、CanvasGroupのAlphaに直接セットする
         // 恐怖度0で完全に透明、恐怖度100で真っ赤になります
-        float fearRatio = _currentFear / MaxFear;
-        FearVignetteGroup.alpha = fearRatio;
+       // float fearRatio = _currentFear / MaxFear;
+       // FearVignetteGroup.alpha = fearRatio;
 
         // SANUI更新
         UpdateSanUI();

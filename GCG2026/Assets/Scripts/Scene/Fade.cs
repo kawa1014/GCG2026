@@ -58,6 +58,11 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
     void Start()
     {
+        if (fadeImage == null)
+        {
+            Debug.LogError("fadeImage が Inspector にセットされていません");
+        }
+
         StartFadeIn(1.0f);
     }
 
@@ -127,4 +132,27 @@ public class NewMonoBehaviourScript : MonoBehaviour
         yield return FadeOut(1.0f);
         SceneManager.LoadScene("OptionScene");
     }
+
+    // オプションからタイトルへのフェード
+    public void OnClickStartButton7()
+    {
+        StartCoroutine(FadeAndLoad7());
+    }
+    private IEnumerator FadeAndLoad7()
+    {
+        yield return FadeOut(1.0f);
+        SceneManager.LoadScene("TitleScene");
+    }
+
+    public void FadeAndLoadScene(string sceneName, float duration = 1.0f)
+    {
+        StartCoroutine(FadeAndLoadRoutine(sceneName, duration));
+    }
+
+    private IEnumerator FadeAndLoadRoutine(string sceneName, float duration)
+    {
+        yield return FadeOut(duration);
+        SceneManager.LoadScene(sceneName);
+    }
+
 }
