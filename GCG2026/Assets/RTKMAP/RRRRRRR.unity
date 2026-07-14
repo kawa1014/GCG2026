@@ -26035,14 +26035,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b5e06da6f7ded448594d42ac1c5b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map3DController
-  mapObject: {fileID: 0}
-  anchorCamera: {fileID: 0}
-  openPosition: {x: 0, y: 0.05, z: 1.2}
-  closePosition: {x: 0, y: 0, z: 0}
-  animationSpeed: 8
-  audioSource: {fileID: 0}
-  openSound: {fileID: 0}
-  closeSound: {fileID: 0}
+  targetCamera: {fileID: 1454398769}
+  closedOffset: {x: 0, y: -1.5, z: -2}
+  openOffset: {x: 0, y: -0.13, z: -1.6}
+  rotationOffset: {x: 0, y: 0, z: 0}
+  openSpeed: 2.5
+  closeSpeed: 3
+  disableWhenClosed: 1
+  closeThreshold: 0.001
 --- !u!1 &499955561
 GameObject:
   m_ObjectHideFlags: 0

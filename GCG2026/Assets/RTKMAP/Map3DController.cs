@@ -1,260 +1,218 @@
 ﻿using UnityEngine;
 
 /// <summary>
-/// Tabキーを押している間、3Dマップを表示します。
-/// マップはカメラの前に開き、Tabキーを離すまで画面上の同じ位置に固定されます。
+/// Tabキーを押している間、3Dマップをカメラ前方へ表示します。
+/// カメラが上下左右を向いても、マップが常に画面内へ追従します。
+/// Tabキーを離すと、マップをカメラ付近へ収納して非表示にします。
 /// </summary>
 public class Map3DController : MonoBehaviour
 {
-    [Header("Map Object")]
-    [Tooltip("移動させるマップのTransformです。未設定の場合は、このオブジェクトのTransformを使用します。")]
-    [SerializeField]
-    private Transform mapObject;
+    [Header("Camera Follow Target")]
 
-    [Header("Camera Anchor")]
-    [Tooltip("マップを開閉する位置の基準となるカメラです。未設定の場合はCamera.mainを使用します。")]
+    [Tooltip("追従するカメラです。未設定の場合はMain Cameraを自動取得します。")]
     [SerializeField]
-    private Camera anchorCamera;
+    private Camera targetCamera;
 
-    [Header("Open Position")]
-    [Tooltip("Tabキーを押したときにマップを表示する、カメラから見たローカル座標です。")]
+    [Header("Map Position")]
+
+    [Tooltip("収納時のカメラから見た相対位置です。")]
     [SerializeField]
-    private Vector3 openPosition = new Vector3(0.0f, -0.15f, 0.7f);
+    private Vector3 closedOffset =
+        new Vector3(0.0f, -0.35f, 0.05f);
 
-    [Header("Closed Position")]
-    [Tooltip("Tabキーを離しているときにマップを収納する、カメラから見たローカル座標です。")]
+    [Tooltip("表示時のカメラから見た相対位置です。Zを小さくすると近くなります。")]
     [SerializeField]
-    private Vector3 closePosition = new Vector3(0.0f, -1.2f, 0.7f);
+    private Vector3 openOffset =
+        new Vector3(0.0f, -0.15f, 0.8f);
 
-    [Header("Animation")]
-    [Tooltip("マップが開閉するときの移動速度です。")]
+    [Header("Map Rotation")]
+
+    [Tooltip("マップモデルの向きを調整します。向きが逆ならYを180にします。")]
     [SerializeField]
-    private float animationSpeed = 8.0f;
+    private Vector3 rotationOffset =
+        new Vector3(0.0f, 0.0f, 0.0f);
 
-    [Header("Sound")]
+    [Header("Move Speed")]
+
+    [Tooltip("マップが表示位置へ移動する速度です。")]
+    [Min(0.01f)]
     [SerializeField]
-    private AudioSource audioSource;
+    private float openSpeed = 2.5f;
 
-    [Tooltip("マップを開いたときに再生する効果音です。")]
+    [Tooltip("マップが収納位置へ戻る速度です。")]
+    [Min(0.01f)]
     [SerializeField]
-    private AudioClip openSound;
+    private float closeSpeed = 3.0f;
 
-    [Tooltip("マップを閉じたときに再生する効果音です。")]
+    [Header("Hidden Setting")]
+
+    [Tooltip("収納完了後にRendererとColliderを無効にします。")]
     [SerializeField]
-    private AudioClip closeSound;
+    private bool disableWhenClosed = true;
 
-    private Transform closedParent;
-    private Quaternion initialLocalRotation;
+    [Tooltip("収納完了と判定する距離です。基本的に変更不要です。")]
+    [Min(0.0001f)]
+    [SerializeField]
+    private float closeThreshold = 0.001f;
+
+    /// <summary>
+    /// 現在のカメラから見た相対位置です。
+    /// </summary>
+    private Vector3 currentOffset;
+
+    /// <summary>
+    /// マップ内にある全Rendererです。
+    /// </summary>
     private Renderer[] mapRenderers;
-    private Collider[] mapColliders;
-    private bool isOpen;
-    private bool wasOpen;
 
+    /// <summary>
+    /// マップ内にある全Colliderです。
+    /// </summary>
+    private Collider[] mapColliders;
+
+    /// <summary>
+    /// 現在マップを開いているかどうかです。
+    /// </summary>
+    private bool isOpen;
+
+    /// <summary>
+    /// 初期設定を行います。
+    /// </summary>
     private void Awake()
     {
-        if (mapObject == null)
+        // Inspectorでカメラが未設定なら、Main Cameraを自動取得します。
+        if (targetCamera == null)
         {
-            mapObject = transform;
+            targetCamera = Camera.main;
         }
 
-        closedParent = mapObject.parent;
-        initialLocalRotation = mapObject.localRotation;
-        mapRenderers = mapObject.GetComponentsInChildren<Renderer>(true);
-        mapColliders = mapObject.GetComponentsInChildren<Collider>(true);
-
-        SnapClosed();
-        SetMapVisible(false);
-    }
-    private void Update()
-    {
-        isOpen = Input.GetKey(KeyCode.Tab);
-
-        if (isOpen && !wasOpen)
+        if (targetCamera == null)
         {
-            BeginOpen();
-            SetMapVisible(true);
-            PlaySound(openSound);
-        }
-
-        if (!isOpen && wasOpen)
-        {
-            BeginClose();
-            PlaySound(closeSound);
-        }
-
-        wasOpen = isOpen;
-    }
-
-    private void LateUpdate()
-    {
-        float moveRate = 1.0f - Mathf.Exp(-animationSpeed * Time.deltaTime);
-
-        if (isOpen)
-        {
-            Camera openCamera = GetAnchorCamera();
-            if (openCamera == null)
-            {
-                MoveLocal(openPosition, initialLocalRotation, moveRate);
-                return;
-            }
-
-            MoveWorld(
-                openCamera.transform.TransformPoint(openPosition),
-                openCamera.transform.rotation * initialLocalRotation,
-                moveRate
+            Debug.LogError(
+                "Map3DController: Target Cameraが設定されておらず、" +
+                "Main Cameraも見つかりません。"
             );
+
+            enabled = false;
             return;
         }
 
-        Camera cameraToUse = GetAnchorCamera();
-        if (cameraToUse == null)
+        // プレイヤーやカメラのScaleを引き継がないよう、独立させます。
+        transform.SetParent(null, true);
+
+        mapRenderers = GetComponentsInChildren<Renderer>(true);
+        mapColliders = GetComponentsInChildren<Collider>(true);
+
+        currentOffset = closedOffset;
+        isOpen = false;
+
+        UpdateMapTransform();
+
+        if (disableWhenClosed)
         {
-            mapObject.localPosition = Vector3.Lerp(
-                mapObject.localPosition,
-                closePosition,
-                moveRate
-            );
-
-            mapObject.localRotation = initialLocalRotation;
-
-            if (Vector3.Distance(mapObject.localPosition, closePosition) < 0.01f)
-            {
-                SetMapVisible(false);
-            }
-
-            return;
-        }
-
-        Vector3 closeWorldPosition =
-            cameraToUse.transform.TransformPoint(closePosition);
-
-        Quaternion closeWorldRotation =
-            cameraToUse.transform.rotation * initialLocalRotation;
-
-        MoveWorld(closeWorldPosition, closeWorldRotation, moveRate);
-
-        if (Vector3.Distance(mapObject.position, closeWorldPosition) < 0.01f)
-        {
-            AttachClosed(cameraToUse.transform);
             SetMapVisible(false);
         }
     }
 
-    private void BeginOpen()
+    /// <summary>
+    /// Tab入力と、開閉アニメーションを更新します。
+    /// </summary>
+    private void Update()
     {
-        mapObject.SetParent(null, true);
-    }
+        isOpen = Input.GetKey(KeyCode.Tab);
 
-    private void BeginClose()
-    {
-        mapObject.SetParent(null, true);
-    }
+        Vector3 targetOffset = isOpen
+            ? openOffset
+            : closedOffset;
 
-    private void SnapClosed()
-    {
-        Camera cameraToUse = GetAnchorCamera();
+        float moveSpeed = isOpen
+            ? openSpeed
+            : closeSpeed;
 
-        if (cameraToUse != null)
+        // 開き始める瞬間に表示を有効にします。
+        if (isOpen)
         {
-            AttachClosed(cameraToUse.transform);
+            SetMapVisible(true);
+        }
+
+        currentOffset = Vector3.MoveTowards(
+            currentOffset,
+            targetOffset,
+            moveSpeed * Time.deltaTime
+        );
+
+        // 完全に収納されたら非表示にします。
+        if (!isOpen &&
+            Vector3.Distance(currentOffset, closedOffset) <= closeThreshold)
+        {
+            currentOffset = closedOffset;
+
+            if (disableWhenClosed)
+            {
+                SetMapVisible(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// カメラ移動後にマップの位置と向きを更新します。
+    /// LateUpdateを使うことで、視点移動による遅れを減らします。
+    /// </summary>
+    private void LateUpdate()
+    {
+        UpdateMapTransform();
+    }
+
+    /// <summary>
+    /// カメラの位置と回転を基準に、マップを配置します。
+    /// カメラがどこを向いても、マップは同じ画面位置へ追従します。
+    /// </summary>
+    private void UpdateMapTransform()
+    {
+        if (targetCamera == null)
+        {
             return;
         }
 
-        mapObject.localPosition = closePosition;
-        mapObject.localRotation = initialLocalRotation;
+        Transform cameraTransform = targetCamera.transform;
+
+        // カメラのScaleは使わず、位置と回転だけで相対位置を計算します。
+        transform.position =
+            cameraTransform.position +
+            cameraTransform.rotation * currentOffset;
+
+        // カメラと同じ方向を向かせ、モデル固有の角度を追加します。
+        transform.rotation =
+            cameraTransform.rotation *
+            Quaternion.Euler(rotationOffset);
     }
 
-    private void AttachClosed(Transform cameraTransform)
-    {
-        // 元の親に戻す。最初から親がなければルートに戻す
-        if (mapObject.parent != closedParent)
-        {
-            mapObject.SetParent(closedParent, true);
-        }
-
-        Vector3 closeWorldPosition =
-            cameraTransform.TransformPoint(closePosition);
-
-        Quaternion closeWorldRotation =
-            cameraTransform.rotation * initialLocalRotation;
-
-        mapObject.position = closeWorldPosition;
-        mapObject.rotation = closeWorldRotation;
-    }
-    private void MoveWorld(
-        Vector3 targetPosition,
-        Quaternion targetRotation,
-        float moveRate
-    )
-    {
-        mapObject.position = Vector3.Lerp(
-            mapObject.position,
-            targetPosition,
-            moveRate
-        );
-
-        mapObject.rotation = Quaternion.Slerp(
-            mapObject.rotation,
-            targetRotation,
-            moveRate
-        );
-    }
-
-    private void MoveLocal(
-        Vector3 targetPosition,
-        Quaternion targetRotation,
-        float moveRate
-    )
-    {
-        mapObject.localPosition = Vector3.Lerp(
-            mapObject.localPosition,
-            targetPosition,
-            moveRate
-        );
-
-        mapObject.localRotation = Quaternion.Slerp(
-            mapObject.localRotation,
-            targetRotation,
-            moveRate
-        );
-    }
-
+    /// <summary>
+    /// マップ内のRendererとColliderをまとめて切り替えます。
+    /// </summary>
+    /// <param name="visible">表示する場合はtrueです。</param>
     private void SetMapVisible(bool visible)
     {
-        foreach (Renderer mapRenderer in mapRenderers)
+        if (mapRenderers != null)
         {
-            if (mapRenderer != null)
+            foreach (Renderer mapRenderer in mapRenderers)
             {
-                mapRenderer.enabled = visible;
+                if (mapRenderer != null)
+                {
+                    mapRenderer.enabled = visible;
+                }
             }
         }
 
-        foreach (Collider mapCollider in mapColliders)
+        if (mapColliders != null)
         {
-            if (mapCollider != null)
+            foreach (Collider mapCollider in mapColliders)
             {
-                mapCollider.enabled = visible;
+                if (mapCollider != null)
+                {
+                    mapCollider.enabled = visible;
+                }
             }
         }
-    }
-
-    private Camera GetAnchorCamera()
-    {
-        if (anchorCamera != null)
-        {
-            return anchorCamera;
-        }
-
-        return Camera.main;
-    }
-
-    private void PlaySound(AudioClip clip)
-    {
-        if (audioSource == null || clip == null)
-        {
-            return;
-        }
-
-        audioSource.PlayOneShot(clip);
     }
 }
