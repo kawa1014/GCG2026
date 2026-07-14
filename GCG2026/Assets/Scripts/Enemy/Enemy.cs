@@ -36,6 +36,16 @@ public class Enemy : MonoBehaviour
     [Tooltip("プレイヤーとの距離がこの値以下になったらゲームオーバー(捕獲)")]
     public float catchDistance = 1.5f;
 
+    [Header("エフェクト・サウンド")]
+    [Tooltip("常に足元に出る煙のエフェクト")]
+    public ParticleSystem smokeEffect;
+    [Tooltip("追跡時に火の粉が出るエフェクト")]
+    public ParticleSystem fireEffect;
+    [Tooltip("燃えるエフェクト")]
+    public GameObject dissolveEffect;
+    [Tooltip("追跡時に鳴らすSE")]
+    public AudioSource chaseAudioSource;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -81,6 +91,11 @@ public class Enemy : MonoBehaviour
         {
             agent.SetDestination(waypoints[currentWaypointIndex].position);
         }
+
+        //ゲーム開始時煙だしっぱ
+        if(smokeEffect != null) smokeEffect.Play();
+        //火の粉は止める
+        if(fireEffect != null) fireEffect.Stop();
     }
 
     void Update()
@@ -125,6 +140,10 @@ public class Enemy : MonoBehaviour
         switch (currentState)
         {
             case State.walk:
+                //エフェクト火の粉を止める
+                if (fireEffect != null && fireEffect.isPlaying) fireEffect.Stop();
+                if (chaseAudioSource != null && chaseAudioSource.isPlaying) chaseAudioSource.Stop();
+
                 //agent.speed = 2.0f; //徘徊時の速度を設定
                 SetColor(Color.green);//徘徊時は緑色
                 PatrolRoutine();
@@ -132,12 +151,22 @@ public class Enemy : MonoBehaviour
                 CheckDoorOnRight();
                 break;
             case State.chase:
+                //エフェクト火の粉と音を出す
+                if (fireEffect != null && !fireEffect.isPlaying) fireEffect.Play();
+                if (chaseAudioSource != null && !chaseAudioSource.isPlaying) chaseAudioSource.Play();
+                if (dissolveEffect != null && !dissolveEffect.activeSelf) dissolveEffect.SetActive(true);
+
                 //agent.speed = 4.0f; //追跡時の速度を設定
                 SetColor(Color.red);//追跡時は赤色
                 ChaseRoutine();
                 CheckVision();
                 break;
             case State.Action:
+                //エフェクト火の粉と音を止める
+                if (fireEffect != null && fireEffect.isPlaying) fireEffect.Stop();
+                if (chaseAudioSource != null && chaseAudioSource.isPlaying) chaseAudioSource.Stop();
+                if (dissolveEffect != null && dissolveEffect.activeSelf) dissolveEffect.SetActive(false);
+
                 SetColor(Color.yellow);//扉を開ける等の特殊行動中は黄色
                 //コルーチンで処理中なので、何もしない
                 break;
