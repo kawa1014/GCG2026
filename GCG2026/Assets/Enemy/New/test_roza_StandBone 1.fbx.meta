@@ -3,7 +3,22 @@ guid: e4389266c1f627c46a87cd7edf2f17c6
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: aiStandardSurface1
+    second: {fileID: 2100000, guid: 84de8ffd0b3adf34cbfcf02fc340a8f5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: aiStandardSurface2
+    second: {fileID: 2100000, guid: 8f4cb105931064e4d8dfd694a5b04fea, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: aiStandardSurface3
+    second: {fileID: 2100000, guid: 81c613c0ccbb22345ac09a03235a2e88, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -113,28 +128,28 @@ ModelImporter:
     serializedVersion: 3
     human: []
     skeleton:
-    - name: test_roza_StandBone(Clone)
+    - name: test_roza_StandBone 1(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Roza_dress
-      parentName: test_roza_StandBone(Clone)
+      parentName: test_roza_StandBone 1(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Roza_body
-      parentName: test_roza_StandBone(Clone)
+      parentName: test_roza_StandBone 1(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Roza_hair
-      parentName: test_roza_StandBone(Clone)
+      parentName: test_roza_StandBone 1(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: rig
-      parentName: test_roza_StandBone(Clone)
+      parentName: test_roza_StandBone 1(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}

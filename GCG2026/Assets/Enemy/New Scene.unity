@@ -2510,7 +2510,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   InteractRange: 10
-  InteractRadius: 0.5
   RequiredHoldTime: 1
   PlayerCamera: {fileID: 1642986129}
   ReticleImage: {fileID: 0}
