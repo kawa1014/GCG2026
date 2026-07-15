@@ -49,15 +49,31 @@ public class GenericFader : MonoBehaviour
     }
 
     // フェードアウト開始
+    public void StartFadeInAndLoad(float duration, string sceneName)
+    {
+        StartCoroutine(FadeInAndLoad(duration , sceneName));
+    }
+    // フェードイン開始
     public void StartFadeOutAndLoad(float duration, string sceneName)
     {
-        StartCoroutine(FadeOutAndLoad(duration , sceneName));
+        StartCoroutine(FadeOutAndLoad(duration, sceneName));
     }
 
+
+    // ルーチン
+    private IEnumerator FadeInAndLoad(float duration, string sceneName)
+    {
+        yield return FadeIn(duration);
+
+        if (sceneName != "")
+            SceneManager.LoadScene(sceneName);
+    }
     // ルーチン
     private IEnumerator FadeOutAndLoad(float duration, string sceneName)
     {
         yield return FadeOut(duration);
-        SceneManager.LoadScene(sceneName);
+
+        if (sceneName != "")
+            SceneManager.LoadScene(sceneName);
     }
 }
