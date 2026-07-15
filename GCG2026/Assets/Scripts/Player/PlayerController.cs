@@ -1,3 +1,4 @@
+using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -36,6 +37,9 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private bool canMove = true;
 
+    // 全ての操作を停止するフラグ
+    public bool _isStop { get; set; } = false;
+
     /// <summary>
     /// 開始時に必要なコンポーネント取得とマウスカーソル設定を行う
     /// </summary>
@@ -52,6 +56,9 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        // 停止状態だったら動かさない
+        if (_isStop) return;
+
         Move();
         Look();
     }
