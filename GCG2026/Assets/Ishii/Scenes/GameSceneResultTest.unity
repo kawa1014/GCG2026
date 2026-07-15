@@ -8794,7 +8794,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameJudgement
   _genericFader: {fileID: 398776178}
   _gameClearSceneName: GameclearScene
+  _gameClearTransitionDelay: 1
+  _gameClearFadeOutDuration: 1
   _gameOverSceneName: GameOverScene
+  _gameOverTransitionDelay: 3
+  _gameOverFadeOutDuration: 1
+  _stopTargetPlayer: {fileID: 32924659}
+  _isGameClearPlayerStop: 0
+  _isGameOverPlayerStop: 1
 --- !u!1001 &696816907
 PrefabInstance:
   m_ObjectHideFlags: 0
