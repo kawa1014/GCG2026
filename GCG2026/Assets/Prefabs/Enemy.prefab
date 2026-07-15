@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 523959026174964411}
   - component: {fileID: 4776918461792714905}
   - component: {fileID: 1928492327529869354}
+  - component: {fileID: 4738650102888399327}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -244,6 +245,28 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!95 &4738650102888399327
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789708083455014685}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 94bb0887b15f63041ad6247825146517, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &121416320771630160
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -312,6 +335,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: roza_UVok3
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 864f3b94cf13df6419b3eabbfb9d329e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 864f3b94cf13df6419b3eabbfb9d329e, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 94bb0887b15f63041ad6247825146517, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
