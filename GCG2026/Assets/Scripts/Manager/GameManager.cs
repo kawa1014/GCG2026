@@ -173,13 +173,13 @@ public class GameManager : MonoBehaviour
 
         Debug.Log($"<color=red>【Game Over】{reason}</color>");
 
-        if (TimeText != null)
-        {
-            TimeText.text = "GAME OVER";
-        }
+        //if (TimeText != null)
+        //{
+        //    TimeText.text = "GAME OVER";
+        //}
 
         // 3秒後にQuitGameメソッドを実行してゲームを閉じる
-        Invoke(nameof(QuitGame), 3.0f);
+        //Invoke(nameof(QuitGame), 3.0f);
 
         // 今後ここでリトライ画面を表示する処理を作る
     }
@@ -192,13 +192,13 @@ public class GameManager : MonoBehaviour
         _isGameClear = true;
         Debug.Log("<color=cyan>【Game Clear】朝まで生き延びた！</color>");
 
-        if (TimeText != null)
-        {
-            TimeText.text = "SURVIVED";
-        }
+        //if (TimeText != null)
+        //{
+        //    TimeText.text = "SURVIVED";
+        //}
 
         // 3秒後にQuitGameメソッドを実行してゲームを閉じる
-        Invoke(nameof(QuitGame), 3.0f);
+        //Invoke(nameof(QuitGame), 3.0f);
 
         // 今後ここでクリア画面を表示する処理を作る
     }
