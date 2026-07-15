@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2744657979559919289}
   - component: {fileID: 502744388173352644}
   - component: {fileID: 7835396356386154912}
-  - component: {fileID: -401845277953131478}
   - component: {fileID: 647153767418713850}
   - component: {fileID: 3476381937346203381}
   m_Layer: 0
@@ -114,22 +113,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.2919908, y: 10, z: 40.000008}
-  m_Center: {x: 0.35798997, y: 0.13999987, z: -20.5}
---- !u!114 &-401845277953131478
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769224937596637192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d80632f4c0063843b98969d34706b5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpawnSensor
-  spawnPoints: []
-  cooldownTime: 5
+  m_Size: {x: 4.2919908, y: 13, z: 14}
+  m_Center: {x: 0.35798997, y: 0.13999987, z: -8}
 --- !u!114 &647153767418713850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,8 +218,32 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1741479420558474197, guid: 344935bf8ed443e498728fa6f7605fc4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1591512200643710478}
   m_SourcePrefab: {fileID: 100100000, guid: 344935bf8ed443e498728fa6f7605fc4, type: 3}
+--- !u!1 &8250651758068747517 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1741479420558474197, guid: 344935bf8ed443e498728fa6f7605fc4, type: 3}
+  m_PrefabInstance: {fileID: 7686182492682434344}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1591512200643710478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8250651758068747517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4219cc3ee4d2a744ad4832317b1bf83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorSystem
+  OpenAngle: 90
+  Smooth: 2
+  AutoClose: 1
+  CloseTime: 3
 --- !u!4 &8776359691880207943 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1396444513852596591, guid: 344935bf8ed443e498728fa6f7605fc4, type: 3}
