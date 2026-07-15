@@ -1371,7 +1371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GenericFaderTrue
   fadeImage: {fileID: 1781393844}
   _duration: 1
-  _sceneName: GameSceneResultTest
+  _sceneName: GameScene
 --- !u!1 &1781393842
 GameObject:
   m_ObjectHideFlags: 0
