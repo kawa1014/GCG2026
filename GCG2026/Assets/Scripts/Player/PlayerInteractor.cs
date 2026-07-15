@@ -11,6 +11,16 @@ public class PlayerInteractor : MonoBehaviour
     /// </summary>
     [Tooltip("インタラクトできる距離")]
     public float InteractRange = 3.0f;
+
+    /// <summary>
+    /// 極太レーザーの半径(円柱の太さ)
+    /// </summary>
+    [Tooltip("レイの太さ(円柱の半径)")]
+    public float InteractRadius = 0.5f;
+
+    /// <summary>
+    /// 長押し解除に必要な時間
+    /// </summary>
     [Tooltip("解除に必要な時間")]
     public float RequiredHoldTime = 3.0f;
 
@@ -58,22 +68,20 @@ public class PlayerInteractor : MonoBehaviour
     private void HandleHoldInteraction()
     {
         if (PlayerCamera == null) return;
-        
-        // Rayを視点から少し右下から出す
-        Vector3 origin = PlayerCamera.transform.position
-                         - PlayerCamera.transform.up * 0.3f
-                         + PlayerCamera.transform.right * 0.3f;
+
+        // カメラの中央から真っすぐ飛ばす
+        Vector2 origin = PlayerCamera.transform.position;
+        Vector3 direction = PlayerCamera.transform.forward;
 
         int layerMask = ~LayerMask.GetMask("Player");
 
-        Ray ray = new Ray(origin, PlayerCamera.transform.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange, layerMask))
+        if (Physics.SphereCast(origin, InteractRadius, direction, out RaycastHit hit, InteractRange, layerMask))
         {
             IInteractable interactableObj = hit.collider.GetComponent<IInteractable>();
 
             if (interactableObj != null && interactableObj.IsInteractable)
             {
-                // ★修正点：対象が『ドア（DoorSystem）』を持っていたら、長押し処理をスルー（中断）する
+                // 対象が『ドア（DoorSystem）』を持っていたら、長押し処理をスルー（中断）する
                 if (hit.collider.GetComponent<DoorSystem>() != null)
                 {
                     ResetHoldInteraction(); // ゲージをリセットして何もしない
@@ -102,14 +110,15 @@ public class PlayerInteractor : MonoBehaviour
     {
         if (PlayerCamera == null) return;
 
+        Vector3 origin = PlayerCamera.transform.position;
+        Vector3 direction = PlayerCamera.transform.forward;
         int layerMask = ~LayerMask.GetMask("Player");
 
-        Ray ray = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange, layerMask))
+        // ★SphereCastに変更
+        if (Physics.SphereCast(origin, InteractRadius, direction, out RaycastHit hit, InteractRange, layerMask))
         {
             IInteractable interactableObj = hit.collider.GetComponent<IInteractable>();
 
-            // 看板(IInteractable)を持っていて、有効なら即座に実行（ドアが開く）
             if (interactableObj != null && interactableObj.IsInteractable)
             {
                 interactableObj.ExecuteInteraction();
@@ -135,11 +144,12 @@ public class PlayerInteractor : MonoBehaviour
         if (PlayerCamera == null) return;
 
 
+        Vector3 origin = PlayerCamera.transform.position;
+        Vector3 direction = PlayerCamera.transform.forward;
         int layerMask = ~LayerMask.GetMask("Player");
 
-        Ray ray = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
-
-        if (Physics.Raycast(ray, out RaycastHit hit, InteractRange, layerMask))
+        // ★SphereCastに変更
+        if (Physics.SphereCast(origin, InteractRadius, direction, out RaycastHit hit, InteractRange, layerMask))
         {
             DoorSystem door = hit.collider.GetComponent<DoorSystem>();
 
@@ -162,7 +172,7 @@ public class PlayerInteractor : MonoBehaviour
                         r.material.color = Color.red;
                     }
 
-                    // ★レティクルを赤に変更
+                    // レティクルを赤に変更
                     if (ReticleImage != null)
                         ReticleImage.color = HighlightReticleColor;
 
@@ -178,7 +188,7 @@ public class PlayerInteractor : MonoBehaviour
             _lastRenderer = null;
         }
 
-        // ★レティクルを通常色に戻す
+        // レティクルを通常色に戻す
         if (ReticleImage != null)
             ReticleImage.color = NormalReticleColor;
     }
@@ -192,24 +202,16 @@ public class PlayerInteractor : MonoBehaviour
         // カメラがセットされていなければ処理を中断
         if (PlayerCamera == null) return;
 
-        // ギズモの色を赤に設定
         Gizmos.color = Color.red;
 
         // カメラの現在位置と、向いている方向を取得
-        Vector3 origin = PlayerCamera.transform.position
-                         - PlayerCamera.transform.up * 0.3f
-                         + PlayerCamera.transform.right * 0.3f;
+        Vector3 origin = PlayerCamera.transform.position;
         Vector3 forward = PlayerCamera.transform.forward;
+        Vector3 endPosition = origin + forward * InteractRange;
 
-        // 1本目：メインRay
-        Gizmos.DrawRay(origin, forward * InteractRange);
-
-        // 2本目：左に少し傾けたRay
-        Vector3 leftRay = Quaternion.Euler(0, -5, 0) * forward;
-        Gizmos.DrawRay(origin, leftRay * InteractRange);
-
-        // 3本目：右に少し傾けたRay（Y軸で 5度 回転させる）
-        Vector3 rightRay = Quaternion.Euler(0, 5, 0) * forward;
-        Gizmos.DrawRay(origin, rightRay * InteractRange);
+        // ★視覚的にも「円柱（SphereCast）」になっていることを分かりやすく描画する
+        Gizmos.DrawRay(origin, forward * InteractRange); // 中心の線
+        Gizmos.DrawWireSphere(origin, InteractRadius);   // 手元の円
+        Gizmos.DrawWireSphere(endPosition, InteractRadius); // 奥の円
     }
 }
