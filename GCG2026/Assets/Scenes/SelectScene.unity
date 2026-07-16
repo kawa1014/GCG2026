@@ -24,7 +24,7 @@ RenderSettings:
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 3
+  m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
@@ -232,87 +232,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5761448}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
-<<<<<<< HEAD
---- !u!1001 &258708872
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 772454398}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 249.99998
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 250
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1.6
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.2013092
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.024186477
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.02515933
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.7204682
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.69260925
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 94.59302
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 299.487
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 119.408005
-      objectReference: {fileID: 0}
-    - target: {fileID: -7511558181221131132, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 3568f27832909824bae179afd2026298, type: 2}
-    - target: {fileID: 919132149155446097, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-      propertyPath: m_Name
-      value: map_select_clear
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-=======
 --- !u!4 &192222448 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c36ae573dc2a27d42bebc0303bc50f14, type: 3}
   m_PrefabInstance: {fileID: 2038946077}
   m_PrefabAsset: {fileID: 0}
->>>>>>> IsiiMoritaKawatani/Morita
 --- !u!1 &271023664
 GameObject:
   m_ObjectHideFlags: 0
@@ -343,11 +267,7 @@ Transform:
   m_GameObject: {fileID: 271023664}
   serializedVersion: 2
   m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-<<<<<<< HEAD
-  m_LocalPosition: {x: -12.341494, y: 1.1694009, z: -1.12}
-=======
   m_LocalPosition: {x: -15.673813, y: -0.52355766, z: -5.02}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.35, y: 1, z: 0.35}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -497,11 +417,7 @@ Transform:
   m_GameObject: {fileID: 292855282}
   serializedVersion: 2
   m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-<<<<<<< HEAD
-  m_LocalPosition: {x: -11.21, y: -7.5, z: -1.2999992}
-=======
   m_LocalPosition: {x: -14.557617, y: -8.999282, z: -4.5}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.5, y: 1, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -616,11 +532,7 @@ Transform:
   m_GameObject: {fileID: 384458656}
   serializedVersion: 2
   m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-<<<<<<< HEAD
-  m_LocalPosition: {x: -11.62, y: -7.37, z: -1.31}
-=======
   m_LocalPosition: {x: -14.940277, y: -9.22215, z: -5.0200005}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.35, y: 1, z: 0.35}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -771,13 +683,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 418581960}
   serializedVersion: 2
-<<<<<<< HEAD
-  m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-  m_LocalPosition: {x: -2.9911847, y: -24.085585, z: -1.6199989}
-=======
   m_LocalRotation: {x: -0.020298958, y: 0.70681536, z: -0.70681536, w: 0.02029895}
   m_LocalPosition: {x: -7.0612745, y: -26.553085, z: -6.1800003}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.25, y: 1, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1071,7 +978,6 @@ Transform:
   - {fileID: 1090002681}
   - {fileID: 1765083183}
   - {fileID: 1623123199}
-  - {fileID: 1473806083}
   - {fileID: 1119701761}
   - {fileID: 192222448}
   m_Father: {fileID: 0}
@@ -1292,11 +1198,7 @@ Transform:
   m_GameObject: {fileID: 884192824}
   serializedVersion: 2
   m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-<<<<<<< HEAD
-  m_LocalPosition: {x: -10.88, y: -15.96, z: -1.32}
-=======
   m_LocalPosition: {x: -14.240277, y: -17.822153, z: -4.8999996}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.35, y: 1, z: 0.35}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1446,11 +1348,7 @@ Transform:
   m_GameObject: {fileID: 906670823}
   serializedVersion: 2
   m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-<<<<<<< HEAD
-  m_LocalPosition: {x: -10.52, y: -15.7, z: -1.2999992}
-=======
   m_LocalPosition: {x: -13.8333025, y: -17.888266, z: -3.8999996}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.5, y: 1, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1564,13 +1462,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008098452}
   serializedVersion: 2
-<<<<<<< HEAD
-  m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-  m_LocalPosition: {x: 11.228573, y: -22.889181, z: -1.6199989}
-=======
   m_LocalRotation: {x: -0.020298958, y: 0.70681536, z: -0.70681536, w: 0.02029895}
   m_LocalPosition: {x: 8.060469, y: -26.276798, z: -4.5300007}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.25, y: 1, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1720,13 +1613,8 @@ Transform:
   m_GameObject: {fileID: 1013531328}
   serializedVersion: 2
   m_LocalRotation: {x: -0.5205384, y: 0.47858107, z: -0.47858107, w: 0.5205384}
-<<<<<<< HEAD
-  m_LocalPosition: {x: 0.8384048, y: -9.46479, z: -1.4}
-  m_LocalScale: {x: 0.01, y: 1, z: 3}
-=======
   m_LocalPosition: {x: -2.5, y: -11.7, z: -4.8999996}
   m_LocalScale: {x: 0.019, y: 1, z: 3}
->>>>>>> IsiiMoritaKawatani/Morita
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 772454398}
@@ -1837,13 +1725,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1090002680}
   serializedVersion: 2
-<<<<<<< HEAD
-  m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-  m_LocalPosition: {x: -2.5, y: -23.7, z: -1.4}
-=======
   m_LocalRotation: {x: -0.020298958, y: 0.70681536, z: -0.70681536, w: 0.02029895}
   m_LocalPosition: {x: -6.56427, y: -26.427675, z: -6.08}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.4, y: 1, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1956,11 +1839,7 @@ Transform:
   m_GameObject: {fileID: 1106302776}
   serializedVersion: 2
   m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-<<<<<<< HEAD
-  m_LocalPosition: {x: 0.6, y: -6.7, z: -1}
-=======
   m_LocalPosition: {x: -2.8, y: -8.6, z: -4.8999996}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 1, y: 1, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2073,11 +1952,7 @@ Transform:
   m_GameObject: {fileID: 1115341401}
   serializedVersion: 2
   m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-<<<<<<< HEAD
-  m_LocalPosition: {x: -11.970572, y: 1.531775, z: -0.98}
-=======
   m_LocalPosition: {x: -15.302891, y: -0.20000005, z: -5}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.5, y: 1, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2195,13 +2070,8 @@ Transform:
   m_GameObject: {fileID: 1171751124}
   serializedVersion: 2
   m_LocalRotation: {x: -0.5205384, y: 0.47858107, z: -0.47858107, w: 0.5205384}
-<<<<<<< HEAD
-  m_LocalPosition: {x: 1.5091285, y: -17.936625, z: -1.4}
-  m_LocalScale: {x: 0.01, y: 1, z: 3}
-=======
   m_LocalPosition: {x: -1.8, y: -20.2, z: -4.8999996}
   m_LocalScale: {x: 0.019, y: 1, z: 3}
->>>>>>> IsiiMoritaKawatani/Morita
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 772454398}
@@ -2312,13 +2182,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1185153634}
   serializedVersion: 2
-<<<<<<< HEAD
-  m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-  m_LocalPosition: {x: 3.186986, y: -23.565771, z: -1.4}
-=======
   m_LocalRotation: {x: -0.020298958, y: 0.70681536, z: -0.70681536, w: 0.02029895}
   m_LocalPosition: {x: -0.1, y: -26.4, z: -6.2}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.8, y: 1, z: 0.35}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2624,11 +2489,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1473806083 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ee8e1ca736ec71c41a6f315776cc9514, type: 3}
-  m_PrefabInstance: {fileID: 258708872}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1477839092
 GameObject:
   m_ObjectHideFlags: 0
@@ -2793,13 +2653,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1516457248}
   serializedVersion: 2
-<<<<<<< HEAD
-  m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-  m_LocalPosition: {x: 15.5, y: -22, z: -2.7}
-=======
   m_LocalRotation: {x: -0.020298958, y: 0.70681536, z: -0.70681536, w: 0.02029895}
   m_LocalPosition: {x: 12.410501, y: -25.607435, z: -5.299999}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.4, y: 0.5, z: 0.35}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2925,7 +2780,7 @@ Light:
     m_Strength: 1
     m_Bias: 0.05
     m_NormalBias: 0.4
-    m_NearPlane: 0.1
+    m_NearPlane: 0.2
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -3039,13 +2894,8 @@ Transform:
   m_GameObject: {fileID: 1605329571}
   serializedVersion: 2
   m_LocalRotation: {x: -0.5205384, y: 0.47858107, z: -0.47858107, w: 0.5205384}
-<<<<<<< HEAD
-  m_LocalPosition: {x: 0.083840534, y: -1, z: -1.4}
-  m_LocalScale: {x: 0.01, y: 1, z: 3}
-=======
   m_LocalPosition: {x: -3.2484784, y: -2.6894383, z: -4.8999996}
   m_LocalScale: {x: 0.019, y: 1, z: 3}
->>>>>>> IsiiMoritaKawatani/Morita
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 772454398}
@@ -3163,11 +3013,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4533244822680247426, guid: d5bcd89ef5d45a74dac088836994b871, type: 3}
       propertyPath: m_LocalPosition.x
-<<<<<<< HEAD
-      value: 5.34
-=======
       value: 8.4
->>>>>>> IsiiMoritaKawatani/Morita
       objectReference: {fileID: 0}
     - target: {fileID: 4533244822680247426, guid: d5bcd89ef5d45a74dac088836994b871, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3175,7 +3021,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4533244822680247426, guid: d5bcd89ef5d45a74dac088836994b871, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.5
+      value: 1.6
       objectReference: {fileID: 0}
     - target: {fileID: 4533244822680247426, guid: d5bcd89ef5d45a74dac088836994b871, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3247,11 +3093,7 @@ Transform:
   m_GameObject: {fileID: 1696469579}
   serializedVersion: 2
   m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-<<<<<<< HEAD
-  m_LocalPosition: {x: 1.5, y: -15.2, z: -1}
-=======
   m_LocalPosition: {x: -2.1, y: -17, z: -4.8999996}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 1, y: 1, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3363,13 +3205,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765083182}
   serializedVersion: 2
-<<<<<<< HEAD
-  m_LocalRotation: {x: -0.029668203, y: 0.70648414, z: -0.70648414, w: 0.029668193}
-  m_LocalPosition: {x: 11.6, y: -22.7, z: -1.4}
-=======
   m_LocalRotation: {x: -0.020298958, y: 0.70681536, z: -0.70681536, w: 0.02029895}
   m_LocalPosition: {x: 8.5, y: -26.1, z: -4.4300003}
->>>>>>> IsiiMoritaKawatani/Morita
   m_LocalScale: {x: 0.4, y: 1, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
