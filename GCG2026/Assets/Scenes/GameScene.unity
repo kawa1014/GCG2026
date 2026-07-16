@@ -8022,6 +8022,7 @@ GameObject:
   m_Component:
   - component: {fileID: 695401237}
   - component: {fileID: 695401236}
+  - component: {fileID: 695401238}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -8041,7 +8042,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37a9661be68fd894a9e3bb294f39add7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  TimeLimit: 180
+  TimeLimit: 1
   MaxFear: 100
   FearIncreaseRate: 10
   FearRecoveryRate: 2
@@ -8665,6 +8666,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &695401238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695401235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e09ea122a8ca8146acf155c4047bb8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameJudgement
+  _genericFader: {fileID: 989546839}
+  _gameClearSceneName: GameclearScene
+  _gameClearTransitionDelay: 1
+  _gameClearFadeOutDuration: 1
+  _gameOverSceneName: GameOverScene
+  _gameOverTransitionDelay: 3
+  _gameOverFadeOutDuration: 1
+  _stopTargetPlayer: {fileID: 32924659}
+  _isGameClearPlayerStop: 1
+  _isGameOverPlayerStop: 1
 --- !u!1001 &696816907
 PrefabInstance:
   m_ObjectHideFlags: 0
