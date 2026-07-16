@@ -15,13 +15,13 @@ public class Pause : MonoBehaviour
     void Update()
     {
 
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (isPaused)
-                PauseGame();
-            else
-                ResumeGame();
-        }
+        //if(Input.GetKeyDown(KeyCode.Escape))
+        //{
+        //    if (isPaused)
+        //        PauseGame();
+        //    else
+        //        ResumeGame();
+        //}
     }
 
     public void ResumeGame()

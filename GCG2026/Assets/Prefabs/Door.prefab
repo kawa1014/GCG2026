@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7835396356386154912}
   - component: {fileID: 647153767418713850}
   - component: {fileID: 3476381937346203381}
+  - component: {fileID: 5625380145504174786}
   m_Layer: 0
   m_Name: Door
   m_TagString: Door
@@ -151,6 +152,18 @@ MonoBehaviour:
   Smooth: 2
   AutoClose: 1
   CloseTime: 3
+--- !u!114 &5625380145504174786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769224937596637192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 660d27a5a55f05e4b9dbc32c9c22f038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HighlightTarget
 --- !u!1001 &7686182492682434344
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -42,20 +42,23 @@ public class PlayerInteractor : MonoBehaviour
     private void Update()
     {
 
-        // 1.左クリック長押しによるインタラクト（オルゴール解除など）
-        if (Mouse.current != null && Mouse.current.leftButton.isPressed)
+        if (Mouse.current != null)
         {
-            HandleHoldInteraction();
-        }
-        else
-        {
-            ResetHoldInteraction();
-        }
+            // 1. 左クリックを押した瞬間（ドアなどの即時インタラクト）
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                HandleQuickInteraction();
+            }
 
-        // 2.スペースキーによる即時インタラクト（ドアの開閉のみ）
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            HandleQuickInteraction();
+            // 2. 左クリックを押し続けている間（オルゴールなどの長押しインタラクト）
+            if (Mouse.current.leftButton.isPressed)
+            {
+                HandleHoldInteraction();
+            }
+            else
+            {
+                ResetHoldInteraction();
+            }
         }
 
         // 3.見ているオブジェクトのハイライト処理
