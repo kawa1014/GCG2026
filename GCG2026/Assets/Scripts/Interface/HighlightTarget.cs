@@ -1,30 +1,15 @@
+using Unity.Jobs.LowLevel.Unsafe;
 using UnityEngine;
 
 public class HighlightTarget : MonoBehaviour
 {
-    bool isEnableHighlight = false;
-
     void Start()
     {
-        
+
     }
 
     void Update()
     {
-        // —LŒø‚É‚È‚Á‚Ä‚¢‚½‚ç
-        if (isEnableHighlight && gameObject.layer != LayerMask.NameToLayer("Outline"))
-        {
-            // ‰‚ğ‚Â‚¯‚é
-            SetLayer(gameObject, LayerMask.NameToLayer("Outline"));
-
-            //// Œ³‚É–ß‚·
-            //isEnableHighlight = false;
-        }
-        else if (!isEnableHighlight && gameObject.layer != LayerMask.NameToLayer("Default"))
-        {
-            // ‰‚ğÁ‚·
-            SetLayer(gameObject, LayerMask.NameToLayer("Default"));
-        }
     }
 
 
@@ -32,12 +17,24 @@ public class HighlightTarget : MonoBehaviour
     // ŠO‚©‚çŒÄ‚Ño‚·
     public void EnableHighlight()
     {
-        isEnableHighlight = true;
+        // ‰‚ğ‚Â‚¯‚é
+        SetLayer(gameObject, LayerMask.NameToLayer("Outline"));
+        //if (gameObject.layer != LayerMask.NameToLayer("Outline"))
+        //{
+        //    // ‰‚ğ‚Â‚¯‚é
+        //    SetLayer(gameObject, LayerMask.NameToLayer("Outline"));
+        //}
     }
 
     public void DisableHighlight()
     {
-        isEnableHighlight = false;
+        // ‰‚ğÁ‚·
+        SetLayer(gameObject, LayerMask.NameToLayer("Default"));
+        //if (gameObject.layer != LayerMask.NameToLayer("Default"))
+        //{
+        //    // ‰‚ğÁ‚·
+        //    SetLayer(gameObject, LayerMask.NameToLayer("Default"));
+        //}
     }
 
     private void SetLayer(GameObject obj, int layer)
@@ -47,7 +44,7 @@ public class HighlightTarget : MonoBehaviour
 
         obj.layer = layer;
 
-        foreach(Transform child in obj.transform)
+        foreach (Transform child in obj.transform)
         {
             SetLayer(child.gameObject, layer);
         }

@@ -570,6 +570,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1417832456629240476, guid: d3644fe5963f64e448532e81b209cc8e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2975838834029750422, guid: d3644fe5963f64e448532e81b209cc8e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -70
+      objectReference: {fileID: 0}
     - target: {fileID: 3622284550431824950, guid: d3644fe5963f64e448532e81b209cc8e, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -650,6 +658,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4168419272758141548, guid: d3644fe5963f64e448532e81b209cc8e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -140
+      objectReference: {fileID: 0}
     - target: {fileID: 5964696957328382614, guid: d3644fe5963f64e448532e81b209cc8e, type: 3}
       propertyPath: m_Name
       value: TitleCanvas
@@ -680,6 +692,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7315582754868356335, guid: d3644fe5963f64e448532e81b209cc8e, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7458597544269612756, guid: d3644fe5963f64e448532e81b209cc8e, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8341105281667104742, guid: d3644fe5963f64e448532e81b209cc8e, type: 3}
