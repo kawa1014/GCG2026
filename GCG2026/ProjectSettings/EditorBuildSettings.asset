@@ -26,7 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GameOverScene.unity
     guid: df283cb4867601544941cc16e6a0260f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Ishii/Scenes/GameSceneResultTest.unity
     guid: 442758bb628d2194da943143afdf855f
   m_configObjects: {}
