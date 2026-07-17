@@ -924,7 +924,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ListenSkill
   ListenCamera: {fileID: 0}
-  GrayscaleVolume: {fileID: 0}
+  BlurVolume: {fileID: 0}
 --- !u!4 &32924667 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8000320840813753147, guid: 05a4b958850006246b27d72b94e449da, type: 3}
