@@ -62,11 +62,11 @@ public class ReticleHighlight : MonoBehaviour
                 return;
             }
 
-            Debug.Log("<color=blue>yRayzƒhƒA‚ğŒ©‚Ä‚¢‚È‚¢1</color>");
+            //Debug.Log("<color=blue>yRayzƒhƒA‚ğŒ©‚Ä‚¢‚È‚¢1</color>");
 
         }
 
-        Debug.Log("<color=blue>yRayzƒhƒA‚ğŒ©‚Ä‚¢‚È‚¢2</color>");
+        //Debug.Log("<color=blue>yRayzƒhƒA‚ğŒ©‚Ä‚¢‚È‚¢2</color>");
 
 
         if (currentTarget)
