@@ -47664,6 +47664,8 @@ GameObject:
   - component: {fileID: 1966764895}
   - component: {fileID: 1966764894}
   - component: {fileID: 1966764893}
+  - component: {fileID: 1966764897}
+  - component: {fileID: 1966764896}
   m_Layer: 5
   m_Name: FadeImage
   m_TagString: Untagged
@@ -47728,6 +47730,36 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 480, y: 510}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1966764896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1966764892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73aa63885f5cb4247afca31af045a7d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GenericFader
+  fadeImage: {fileID: 1966764893}
+--- !u!114 &1966764897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1966764892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e59b54a8e22e08459f17fa1a98427d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AutoFade
+  _genericFader: {fileID: 1966764896}
+  _executeDelay: 0
+  _duration: 2
+  _sceneName: 
+  _fadeIn: 1
 --- !u!1001 &1967405092
 PrefabInstance:
   m_ObjectHideFlags: 0
