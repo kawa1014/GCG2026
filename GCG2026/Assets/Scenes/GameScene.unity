@@ -40030,7 +40030,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Map3DController
   targetCamera: {fileID: 1913414987}
   closedOffset: {x: 0, y: -1.5, z: -2}
-  openOffset: {x: 0, y: 0.8, z: 0.05}
+  openOffset: {x: 0, y: -0.13, z: 1.6}
   rotationOffset: {x: 0, y: 0, z: 0}
   openSpeed: 2.5
   closeSpeed: 3
