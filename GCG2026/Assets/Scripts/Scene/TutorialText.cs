@@ -6,28 +6,26 @@ using System.Collections;
 public class TutorialText : MonoBehaviour
 {
     public CanvasGroup bubbleGroup;
-    public Transform imageParent;      // ← 画像を並べる親オブジェクト
-    public Image imagePrefab;          // ← 1文字分の画像プレハブ
-    public Sprite[] sprites;            // 表示したい画像を全部入れる
+    public TextMeshProUGUI tutorialText; // 追加(川谷)画像の代わりにテキストボックスを登録する
     public float interval = 0.1f;       // 画像を切り替える間隔
 
-
-    public void StartTypewriter()
+    // 修正(川谷)外部から「この文章を表示してね」と文字列(string)を受け取る
+    public void StartTypewriter(string fullText)
     {
         StopAllCoroutines();
-        StartCoroutine(TypeRoutine());
+        StartCoroutine(TypeRoutine(fullText));
     }
 
-    private IEnumerator TypeRoutine()
+    // 修正(川谷)
+    private IEnumerator TypeRoutine(string fullText)
     {
         bubbleGroup.alpha = 1;
+        tutorialText.text = ""; // 最初にテキストを空っぽにする
 
-        foreach (Sprite s in sprites)
+        // 受け取った文章を1文字ずつ(char c)取り出して追加していく
+        foreach (char c in fullText)
         {
-            // ★ 画像を複製して横に並べる
-            Image img = Instantiate(imagePrefab, imageParent);
-            img.sprite = s;
-
+            tutorialText.text += c; // 文字を後ろにくっつける
             yield return new WaitForSeconds(interval);
         }
     }
