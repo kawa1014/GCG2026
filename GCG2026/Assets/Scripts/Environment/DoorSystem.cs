@@ -20,6 +20,9 @@ public class DoorSystem : MonoBehaviour, IInteractable
     // 時間を測るためのタイマー変数
     private float _timer = 0f;
 
+    // 追加(川谷)ドアが現在動いているかどうかを判定するフラグ
+    private bool _isMoving = false;
+
     void Start()
     {
         _defaultRotation = transform.localRotation;
@@ -27,6 +30,9 @@ public class DoorSystem : MonoBehaviour, IInteractable
 
     public void ExecuteInteraction()
     {
+        // 念のため、動いている最中は処理をはじく(連打対策)
+        if (_isMoving) return;
+
         IsOpen = !IsOpen;
 
         if (IsOpen)
@@ -46,8 +52,13 @@ public class DoorSystem : MonoBehaviour, IInteractable
 
     void Update()
     {
-        // 1. ドアを滑らかに回転させる処理（今まで通り）
+        // 目標の回転値を計算
         Quaternion targetRot = _defaultRotation * Quaternion.Euler(0, _targetAngle, 0);
+
+        // 現在の角度と目標の角度の差を計算し、0.1度以上離れていたら「動いている」と判定
+        _isMoving = Quaternion.Angle(transform.localRotation, targetRot) > 0.1f;
+
+        // 1. ドアを滑らかに回転させる処理
         transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRot, Time.deltaTime * Smooth);
 
         // 2. 自動で閉まるタイマー処理
