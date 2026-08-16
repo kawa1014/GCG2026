@@ -120,13 +120,13 @@ public class ListeningHintUI : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (Input.GetKeyDown(listenKey))
-        {
-            isListening = !isListening;
-        }
+        // Eキーを「押している間」だけtrueにする
+        isListening = Input.GetKey(listenKey);
 
         if (!isListening)
         {
+            // 聞き耳をしていない時はUIの反応を最小にしておく
+            ApplyUI(0.0f, false);
             return;
         }
 
@@ -139,6 +139,8 @@ public class ListeningHintUI : MonoBehaviour
 
         if (playingOrgel == null)
         {
+            // オルゴールが鳴っていない時もUIの反応を最小にする
+            ApplyUI(0.0f, false);
             return;
         }
 
