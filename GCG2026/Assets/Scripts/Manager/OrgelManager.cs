@@ -55,6 +55,11 @@ public class OrgelManager : MonoBehaviour
     public int CurrentOrgelPlayingCount { get; private set; } = 0;
 
     /// <summary>
+    /// 現在抽選されて待機中、もしくは鳴っている最新のオルゴールを取得するためのプロパティ
+    /// </summary>
+    public OrgelSystem CurrentTargetOrgel { get; private set; }
+
+    /// <summary>
     /// 現在のリストの何番目の順番を十個すいているかを記憶する番号
     /// </summary>
     private int _currentPhaseIndex = 0;
@@ -199,6 +204,9 @@ public class OrgelManager : MonoBehaviour
 
         // 選ばれたオルゴールにカウントダウンをスタートさせる
         nextOrgel.StartCountdown(waitTime);
+ 
+        // 選ばれたオルゴールを記録する
+        CurrentTargetOrgel = nextOrgel;
 
         Debug.Log($"<color=green>【OrgelManager】次弾装填：{nextOrgel.gameObject.name} が抽選されました（{waitTime:F1}秒後に鳴ります）。</color>");
     }
