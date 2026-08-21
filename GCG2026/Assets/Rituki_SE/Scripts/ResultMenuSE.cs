@@ -2,24 +2,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// リザルト画面を管理するクラス
+/// リザルト画面のSEを管理するクラス
 /// </summary>
-public class ResulrScene : MonoBehaviour
+public class ResultMenuSE : MonoBehaviour
 {
-    [Header("Result UI")]
-
-    [SerializeField]
-    private GameObject resultPanel;
-
-    [SerializeField]
-    private GameObject gameOverText;
-
-    [SerializeField]
-    private GameObject gameClearText;
-
-
-    [Header("SE")]
-
     /// <summary>
     /// SE再生用AudioSource
     /// </summary>
@@ -31,61 +17,30 @@ public class ResulrScene : MonoBehaviour
     /// カーソル移動SE
     /// </summary>
     [SerializeField]
-    [Tooltip("カーソルを移動したときのSE")]
+    [Tooltip("左右にカーソルを移動したときのSE")]
     private AudioClip cursorMoveSE;
 
     /// <summary>
     /// 決定SE
     /// </summary>
     [SerializeField]
-    [Tooltip("Restartを決定したときのSE")]
+    [Tooltip("Selectを決定したときのSE")]
     private AudioClip decisionSE;
 
     /// <summary>
     /// 戻るSE
     /// </summary>
     [SerializeField]
-    [Tooltip("Select画面へ戻るときのSE")]
+    [Tooltip("Titleを決定したときのSE")]
     private AudioClip backSE;
 
     /// <summary>
-    /// ゲームパッドのスティック入力中か
+    /// スティック入力中か
     /// </summary>
     private bool stickMoved;
 
-
     /// <summary>
-    /// ゲームオーバー表示
-    /// </summary>
-    public void ShowGameOver()
-    {
-        resultPanel.SetActive(true);
-        gameOverText.SetActive(true);
-        gameClearText.SetActive(false);
-    }
-
-    /// <summary>
-    /// ゲームクリア表示
-    /// </summary>
-    public void ShowGameClear()
-    {
-        resultPanel.SetActive(true);
-        gameOverText.SetActive(false);
-        gameClearText.SetActive(true);
-    }
-
-    /// <summary>
-    /// 初期化
-    /// </summary>
-    private void Start()
-    {
-        resultPanel.SetActive(false);
-        gameOverText.SetActive(false);
-        gameClearText.SetActive(false);
-    }
-
-    /// <summary>
-    /// カーソル移動入力を確認する
+    /// 毎フレーム入力を確認
     /// </summary>
     private void Update()
     {
@@ -94,7 +49,7 @@ public class ResulrScene : MonoBehaviour
     }
 
     /// <summary>
-    /// キーボード入力を確認
+    /// キーボードの左右入力を確認
     /// </summary>
     private void CheckKeyboard()
     {
@@ -103,7 +58,6 @@ public class ResulrScene : MonoBehaviour
             return;
         }
 
-        // ← → または A D を押した瞬間
         if (Keyboard.current.leftArrowKey.wasPressedThisFrame ||
             Keyboard.current.rightArrowKey.wasPressedThisFrame ||
             Keyboard.current.aKey.wasPressedThisFrame ||
@@ -112,8 +66,9 @@ public class ResulrScene : MonoBehaviour
             PlayMoveSE();
         }
     }
+
     /// <summary>
-    /// ゲームパッド入力を確認
+    /// ゲームパッドの左右入力を確認
     /// </summary>
     private void CheckGamepad()
     {
@@ -144,7 +99,7 @@ public class ResulrScene : MonoBehaviour
     }
 
     /// <summary>
-    /// カーソル移動SEを再生
+    /// カーソル移動SE
     /// </summary>
     private void PlayMoveSE()
     {
@@ -157,7 +112,7 @@ public class ResulrScene : MonoBehaviour
     }
 
     /// <summary>
-    /// Restart決定SEを再生
+    /// Select決定SE
     /// </summary>
     public void PlayDecisionSE()
     {
@@ -170,7 +125,7 @@ public class ResulrScene : MonoBehaviour
     }
 
     /// <summary>
-    /// Selectへ戻るSEを再生
+    /// Titleへ戻るSE
     /// </summary>
     public void PlayBackSE()
     {

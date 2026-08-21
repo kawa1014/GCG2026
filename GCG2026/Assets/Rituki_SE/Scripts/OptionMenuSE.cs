@@ -2,24 +2,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// リザルト画面を管理するクラス
+/// Option画面のSEを管理するクラス
 /// </summary>
-public class ResulrScene : MonoBehaviour
+public class OptionMenuSE : MonoBehaviour
 {
-    [Header("Result UI")]
-
-    [SerializeField]
-    private GameObject resultPanel;
-
-    [SerializeField]
-    private GameObject gameOverText;
-
-    [SerializeField]
-    private GameObject gameClearText;
-
-
-    [Header("SE")]
-
     /// <summary>
     /// SE再生用AudioSource
     /// </summary>
@@ -31,61 +17,30 @@ public class ResulrScene : MonoBehaviour
     /// カーソル移動SE
     /// </summary>
     [SerializeField]
-    [Tooltip("カーソルを移動したときのSE")]
+    [Tooltip("項目を上下に移動したときのSE")]
     private AudioClip cursorMoveSE;
 
     /// <summary>
     /// 決定SE
     /// </summary>
     [SerializeField]
-    [Tooltip("Restartを決定したときのSE")]
+    [Tooltip("項目を決定したときのSE")]
     private AudioClip decisionSE;
 
     /// <summary>
     /// 戻るSE
     /// </summary>
     [SerializeField]
-    [Tooltip("Select画面へ戻るときのSE")]
+    [Tooltip("Option画面から戻るときのSE")]
     private AudioClip backSE;
 
     /// <summary>
-    /// ゲームパッドのスティック入力中か
+    /// スティック入力中か
     /// </summary>
     private bool stickMoved;
 
-
     /// <summary>
-    /// ゲームオーバー表示
-    /// </summary>
-    public void ShowGameOver()
-    {
-        resultPanel.SetActive(true);
-        gameOverText.SetActive(true);
-        gameClearText.SetActive(false);
-    }
-
-    /// <summary>
-    /// ゲームクリア表示
-    /// </summary>
-    public void ShowGameClear()
-    {
-        resultPanel.SetActive(true);
-        gameOverText.SetActive(false);
-        gameClearText.SetActive(true);
-    }
-
-    /// <summary>
-    /// 初期化
-    /// </summary>
-    private void Start()
-    {
-        resultPanel.SetActive(false);
-        gameOverText.SetActive(false);
-        gameClearText.SetActive(false);
-    }
-
-    /// <summary>
-    /// カーソル移動入力を確認する
+    /// 毎フレーム入力を確認
     /// </summary>
     private void Update()
     {
@@ -103,15 +58,15 @@ public class ResulrScene : MonoBehaviour
             return;
         }
 
-        // ← → または A D を押した瞬間
-        if (Keyboard.current.leftArrowKey.wasPressedThisFrame ||
-            Keyboard.current.rightArrowKey.wasPressedThisFrame ||
-            Keyboard.current.aKey.wasPressedThisFrame ||
-            Keyboard.current.dKey.wasPressedThisFrame)
+        if (Keyboard.current.upArrowKey.wasPressedThisFrame ||
+            Keyboard.current.downArrowKey.wasPressedThisFrame ||
+            Keyboard.current.wKey.wasPressedThisFrame ||
+            Keyboard.current.sKey.wasPressedThisFrame)
         {
             PlayMoveSE();
         }
     }
+
     /// <summary>
     /// ゲームパッド入力を確認
     /// </summary>
@@ -122,21 +77,21 @@ public class ResulrScene : MonoBehaviour
             return;
         }
 
-        // 十字キー左右
-        if (Gamepad.current.dpad.left.wasPressedThisFrame ||
-            Gamepad.current.dpad.right.wasPressedThisFrame)
+        // 十字キー
+        if (Gamepad.current.dpad.up.wasPressedThisFrame ||
+            Gamepad.current.dpad.down.wasPressedThisFrame)
         {
             PlayMoveSE();
         }
 
-        // 左スティック左右
-        float horizontal = Gamepad.current.leftStick.x.ReadValue();
+        // 左スティック
+        float vertical = Gamepad.current.leftStick.y.ReadValue();
 
-        if (Mathf.Abs(horizontal) < 0.3f)
+        if (Mathf.Abs(vertical) < 0.3f)
         {
             stickMoved = false;
         }
-        else if (Mathf.Abs(horizontal) >= 0.7f && !stickMoved)
+        else if (Mathf.Abs(vertical) >= 0.7f && !stickMoved)
         {
             PlayMoveSE();
             stickMoved = true;
@@ -144,7 +99,7 @@ public class ResulrScene : MonoBehaviour
     }
 
     /// <summary>
-    /// カーソル移動SEを再生
+    /// カーソル移動SE
     /// </summary>
     private void PlayMoveSE()
     {
@@ -157,7 +112,7 @@ public class ResulrScene : MonoBehaviour
     }
 
     /// <summary>
-    /// Restart決定SEを再生
+    /// 決定SE
     /// </summary>
     public void PlayDecisionSE()
     {
@@ -170,7 +125,7 @@ public class ResulrScene : MonoBehaviour
     }
 
     /// <summary>
-    /// Selectへ戻るSEを再生
+    /// 戻るSE
     /// </summary>
     public void PlayBackSE()
     {
