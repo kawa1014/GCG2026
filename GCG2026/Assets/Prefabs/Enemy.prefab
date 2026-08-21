@@ -60,7 +60,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.5
+  m_Radius: 1
   m_Height: 5
   m_Direction: 1
   m_Center: {x: 0, y: 1.5, z: 0}
@@ -81,6 +81,7 @@ MonoBehaviour:
   waypoints: []
   visionRadius: 10
   visionAngle: 90
+  lostSightGracePeriod: 1.5
   catchDistance: 2
   smokeEffect: {fileID: 1204822065085756830}
   fireEffect: {fileID: 2251676283028754007}
@@ -277,15 +278,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2825641551385598035, guid: 9b6186990216d6a48b2517b0928f185a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.498
+      value: -5.344
       objectReference: {fileID: 0}
     - target: {fileID: 2825641551385598035, guid: 9b6186990216d6a48b2517b0928f185a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.67
+      value: -3.089
       objectReference: {fileID: 0}
     - target: {fileID: 2825641551385598035, guid: 9b6186990216d6a48b2517b0928f185a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.392
+      value: -5.899
       objectReference: {fileID: 0}
     - target: {fileID: 2991634436508794952, guid: 9b6186990216d6a48b2517b0928f185a, type: 3}
       propertyPath: m_RenderAlignment
