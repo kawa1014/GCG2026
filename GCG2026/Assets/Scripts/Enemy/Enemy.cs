@@ -32,6 +32,11 @@ public class Enemy : MonoBehaviour
     //色を変える為のRenderer
     private Renderer enemyRenderer;
 
+    [Header("索敵設定")]
+    [Tooltip("視線が切れてから完全に追跡を諦めるまでの時間(秒)")]
+    public float lostSightGracePeriod = 1.5f;
+    private float lostSightTimer = 0f; //視線が切れてからの経過時間を計測するタイマー
+
     [Header("捕獲設定")]
     [Tooltip("プレイヤーとの距離がこの値以下になったらゲームオーバー(捕獲)")]
     public float catchDistance = 1.5f;
@@ -201,8 +206,62 @@ public class Enemy : MonoBehaviour
     }
 
     //3.視界のチェック判定
+    //private void CheckVision()
+    //{
+    //    if (player == null)
+    //    {
+    //        Debug.LogWarning("[索敵エラー] player変数が設定されていません！");
+    //        return;
+    //    }
+
+    //    //プレイヤーとの距離を測定
+    //    float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+    //    //距離が視界の半径内か
+    //    if (distanceToPlayer <= visionRadius)
+    //    {
+    //        Vector3 rayOrigin = transform.position + Vector3.up * 1.0f + transform.forward * 0.5f;
+    //        Vector3 targetPos = player.position + Vector3.up * 1.0f; // プレイヤーの胸の高さ
+
+    //        //プレイヤーへの方向ベクトルを計算
+    //        Vector3 dirToPlayer = (targetPos - rayOrigin).normalized;
+    //        //自分の正面とプレイヤーへの方向の角度を計算
+    //        float angle = Vector3.Angle(transform.forward, dirToPlayer);
+    //        //角度が視界の半分以内か
+    //        if (angle <= visionAngle / 2f)
+    //        {
+    //            //壁越しに見えないようにレイキャストで確認
+    //            RaycastHit hit;
+    //            if (Physics.Raycast(rayOrigin, dirToPlayer, out hit, visionRadius))
+    //            {
+    //                Debug.Log($"[索敵デバッグ] Rayが当たった物: {hit.collider.gameObject.name} (Tag: {hit.collider.tag})");
+
+    //                if (hit.collider.CompareTag("Player"))
+    //                {
+    //                    //プレイヤーを見つけたら追跡状態に遷移
+    //                    if (currentState != State.chase)
+    //                    {
+    //                        Debug.Log("プレイヤーを発見！追跡開始！");
+    //                        currentState = State.chase;
+    //                    }
+    //                    return; //プレイヤーを見つけたら終了
+
+    //                }
+    //            }
+    //        }
+    //    }
+    //    //プレイヤーが見えない場合は徘徊状態に戻る
+    //    if (currentState == State.chase && distanceToPlayer > visionRadius)
+    //    {
+    //        Debug.Log($"[距離デバッグ] 距離が{distanceToPlayer:F1}mのため、プレイヤーを見失った。徘徊に戻る。");
+    //        Debug.Log("プレイヤーを見失った。徘徊に戻る。");
+    //        currentState = State.walk;
+    //        //目指していた徘徊ポイントへ戻る
+    //        agent.SetDestination(waypoints[currentWaypointIndex].position);
+    //    }
+    //}
     private void CheckVision()
-    {
+    { 
         if (player == null)
         {
             Debug.LogWarning("[索敵エラー] player変数が設定されていません！");
@@ -212,47 +271,69 @@ public class Enemy : MonoBehaviour
         //プレイヤーとの距離を測定
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        //距離が視界の半径内か
+        Vector3 rayOrigin = transform.position + Vector3.up * 1.3f + transform.forward * 0.5f;
+        Vector3 targetPos = player.position + Vector3.up * 1.3f; // プレイヤーの胸の高さ
+        Vector3 dirToPlayer = (targetPos - rayOrigin).normalized;
+
+        //プレイヤーにRay（視線）が直接通っているかを管理するフラグ
+        bool hasLineOfSight = false;
+
+        //距離が視界の半径内の場合のみ、Rayを飛ばして壁などの障害物がないか確認
         if (distanceToPlayer <= visionRadius)
         {
-            Vector3 rayOrigin = transform.position + Vector3.up * 1.0f + transform.forward * 0.5f;
-            Vector3 targetPos = player.position + Vector3.up * 1.0f; // プレイヤーの胸の高さ
-
-            //プレイヤーへの方向ベクトルを計算
-            Vector3 dirToPlayer = (targetPos - rayOrigin).normalized;
-            //自分の正面とプレイヤーへの方向の角度を計算
-            float angle = Vector3.Angle(transform.forward, dirToPlayer);
-            //角度が視界の半分以内か
-            if (angle <= visionAngle / 2f)
+            RaycastHit hit;
+            if (Physics.Raycast(rayOrigin, dirToPlayer, out hit, visionRadius))
             {
-                //壁越しに見えないようにレイキャストで確認
-                RaycastHit hit;
-                if (Physics.Raycast(rayOrigin, dirToPlayer, out hit, visionRadius))
+                //Rayが当たったのがプレイヤーなら、視線が通っていると判定
+                if (hit.collider.CompareTag("Player"))
                 {
-                    Debug.Log($"[索敵デバッグ] Rayが当たった物: {hit.collider.gameObject.name} (Tag: {hit.collider.tag})");
-
-                    if (hit.collider.CompareTag("Player"))
-                    {
-                        //プレイヤーを見つけたら追跡状態に遷移
-                        if (currentState != State.chase)
-                        {
-                            Debug.Log("プレイヤーを発見！追跡開始！");
-                            currentState = State.chase;
-                        }
-                        return; //プレイヤーを見つけたら終了
-
-                    }
+                    hasLineOfSight = true;
                 }
             }
         }
-        //プレイヤーが見えない場合は徘徊状態に戻る
-        if (currentState == State.chase && distanceToPlayer > visionRadius)
+
+        //---状態に応じた処理（発見と見失う処理の分離）---
+        if (currentState != State.chase)
         {
-            Debug.Log($"[距離デバッグ] 距離が{distanceToPlayer:F1}mのため、プレイヤーを見失った。徘徊に戻る。");
-            Debug.Log("プレイヤーを見失った。徘徊に戻る。");
-            currentState = State.walk;
-            //目指していた徘徊ポイントへ戻る
-            agent.SetDestination(waypoints[currentWaypointIndex].position);
+            //[徘徊中（未発見）の時] -> 発見する処理
+            //視線が通っていて、かつ角度内であれば発見！
+            if (hasLineOfSight)
+            {
+                float angle = Vector3.Angle(transform.forward,dirToPlayer);
+                if (angle <= visionAngle / 2f)
+                {
+                    Debug.Log("プレイヤーを発見！追跡開始！");
+                    currentState = State.chase;
+                    lostSightTimer = 0f; //追跡開始時にタイマーをリセット
+                }
+            }
+        }
+        else
+        {
+            //[追跡中の時] -> 見失う処理（タイマー付き）
+            //視線が通らなくなった（壁に隠れた、または距離が離れすぎた）場合に見失ったと判定
+            if (hasLineOfSight)
+            {
+                //見え続けている場合はタイマーを常に0にリセット
+                lostSightTimer = 0f;
+            }
+            else
+            {
+                //視線が切れたらタイマーを増やす
+                lostSightTimer += Time.deltaTime;
+
+                //視線が切れた状態が「設定した時間（1.5秒）」以上続いたら、本当に見失う
+                if (lostSightTimer >= lostSightGracePeriod)
+                {
+                    Debug.Log($"[視界] {lostSightGracePeriod}秒間 視線が切れたため、完全にプレイヤーを見失った。徘徊に戻る。");
+                    currentState = State.walk;
+                    lostSightTimer = 0f; //タイマーをリセット
+
+                    //目指していた徘徊ポイントへ戻る
+                    agent.SetDestination(waypoints[currentWaypointIndex].position);
+                }
+                
+            }
         }
     }
 
