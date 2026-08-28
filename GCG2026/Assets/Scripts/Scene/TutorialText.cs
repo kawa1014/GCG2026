@@ -5,28 +5,91 @@ using System.Collections;
 
 public class TutorialText : MonoBehaviour
 {
-    public CanvasGroup bubbleGroup;
-    public TextMeshProUGUI tutorialText; // 追加(川谷)画像の代わりにテキストボックスを登録する
-    public float interval = 0.1f;       // 画像を切り替える間隔
+    [Header("UI")]
+    [SerializeField]
+    private CanvasGroup bubbleGroup;
 
-    // 修正(川谷)外部から「この文章を表示してね」と文字列(string)を受け取る
+    [SerializeField]
+    private TextMeshProUGUI tutorialText;
+
+    [Header("文字送り")]
+    [SerializeField]
+    private float interval = 0.05f;
+
+    private Coroutine typewriterCoroutine;
+
+    public bool IsTyping { get; private set; }
+
+    /// <summary>
+    /// 指定した文章を1文字ずつ表示する
+    /// </summary>
     public void StartTypewriter(string fullText)
     {
-        StopAllCoroutines();
-        StartCoroutine(TypeRoutine(fullText));
+        if (typewriterCoroutine != null)
+        {
+            StopCoroutine(typewriterCoroutine);
+        }
+
+        typewriterCoroutine = StartCoroutine(TypeRoutine(fullText));
     }
 
-    // 修正(川谷)
     private IEnumerator TypeRoutine(string fullText)
     {
-        bubbleGroup.alpha = 1;
-        tutorialText.text = ""; // 最初にテキストを空っぽにする
+        IsTyping = true;
 
-        // 受け取った文章を1文字ずつ(char c)取り出して追加していく
-        foreach (char c in fullText)
+        bubbleGroup.alpha = 1f;
+        bubbleGroup.interactable = false;
+        bubbleGroup.blocksRaycasts = false;
+
+        tutorialText.text = fullText;
+        tutorialText.maxVisibleCharacters = 0;
+
+        // TextMeshProに文章の文字数を計算させる
+        tutorialText.ForceMeshUpdate();
+
+        int characterCount = tutorialText.textInfo.characterCount;
+
+        for (int i = 0; i <= characterCount; i++)
         {
-            tutorialText.text += c; // 文字を後ろにくっつける
-            yield return new WaitForSeconds(interval);
+            tutorialText.maxVisibleCharacters = i;
+
+            if (interval > 0f)
+            {
+                yield return new WaitForSecondsRealtime(interval);
+            }
         }
+
+        IsTyping = false;
+        typewriterCoroutine = null;
+    }
+
+    /// <summary>
+    /// 文字送り中の文章をすべて表示する
+    /// </summary>
+    public void CompleteTypewriter()
+    {
+        if (typewriterCoroutine != null)
+        {
+            StopCoroutine(typewriterCoroutine);
+            typewriterCoroutine = null;
+        }
+
+        tutorialText.maxVisibleCharacters = int.MaxValue;
+        IsTyping = false;
+    }
+
+    /// <summary>
+    /// 吹き出しを非表示にする
+    /// </summary>
+    public void Hide()
+    {
+        if (typewriterCoroutine != null)
+        {
+            StopCoroutine(typewriterCoroutine);
+            typewriterCoroutine = null;
+        }
+
+        IsTyping = false;
+        bubbleGroup.alpha = 0f;
     }
 }

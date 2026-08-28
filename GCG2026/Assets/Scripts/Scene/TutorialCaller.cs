@@ -1,47 +1,132 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 // 修正(川谷)
 public class TutorialCaller : MonoBehaviour
 {
-    public TutorialText tutorial;
+    [Header("吹き出し")]
+    [SerializeField]
+    private TutorialText tutorial;
 
+    [Header("各ページの文章")]
     [Tooltip("ここに各ページの文章を入力します")]
-    [TextArea(3, 5)] // インスペクターで文章を改行して入力しやすくする便利機能
-    public string[] pages;
+    [TextArea(3, 5)]
+    [SerializeField]
+    private string[] pages;
 
-    // 追加(川谷)現在何ページ目を表示しているかを記憶する変数
-    private int currentPageIndex = 0;
+    [Header("各ページで表示するUI")]
+    [Tooltip("文章と同じ番号のUIが表示されます")]
+    [SerializeField]
+    private GameObject[] pageUIs;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private int currentPageIndex;
+
+    private bool tutorialFinished;
+
+    private void Start()
     {
-        // ページが1つ以上設定されていれば、最初のページを表示
-        if (pages.Length > 0)
+        currentPageIndex = 0;
+        tutorialFinished = false;
+
+        HideAllPageUI();
+
+        if (tutorial == null)
         {
-            tutorial.StartTypewriter(pages[0]);
+            Debug.LogError("TutorialTextが登録されていません", this);
+
+            return;
+        }
+
+        if (pages == null || pages.Length == 0)
+        {
+            tutorial.Hide();
+            return;
+        }
+
+        ShowPage(0);
+    }
+
+    private void Update()
+    {
+        if (tutorialFinished)
+        {
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            OnClick();
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnClick()
     {
-        // 左クリックで次のページへ
-        if (Input.GetMouseButtonDown(0))
+        // 文字送り中なら、次ページには進まず全文表示する
+        if (tutorial.IsTyping)
         {
-            currentPageIndex++;
-
-            if (currentPageIndex < pages.Length)
-            {
-                // 次のページの文章を渡す
-                tutorial.StartTypewriter(pages[currentPageIndex]);
-            }
-            else
-            {
-                // 全ページ終わった時の処理(吹き出しを見えなくする)
-                tutorial.bubbleGroup.alpha = 0;
-            }
-
+            tutorial.CompleteTypewriter();
+            return;
         }
 
+        // 全文表示済みなら次ページへ進む
+        int nextPageIndex = currentPageIndex + 1;
+
+        if (nextPageIndex < pages.Length)
+        {
+            ShowPage(nextPageIndex);
+        }
+        else
+        {
+            FinishTutorial();
+        }
+    }
+
+    private void ShowPage(int pageIndex)
+    {
+        currentPageIndex = pageIndex;
+
+        HideAllPageUI();
+
+        if (pageUIs != null && pageIndex < pageUIs.Length && pageUIs[pageIndex] != null)
+        {
+            GameObject currentUI = pageUIs[pageIndex];
+
+            // 最初にUIを表示
+            currentUI.SetActive(true);
+
+            // SAN値UIならアニメーションを開始
+            SanTutorialPreview sanPreview = currentUI.GetComponent<SanTutorialPreview>();
+
+            if (sanPreview != null)
+            {
+                sanPreview.PlayPreview();
+            }
+        }
+
+        tutorial.StartTypewriter(pages[pageIndex]);
+    }
+
+    private void HideAllPageUI()
+    {
+        if (pageUIs == null)
+        {
+            return;
+        }
+
+        foreach (GameObject pageUI in pageUIs)
+        {
+            if (pageUI != null)
+            {
+                pageUI.SetActive(false);
+            }
+        }
+    }
+
+    private void FinishTutorial()
+    {
+        tutorialFinished = true;
+
+        HideAllPageUI();
+        tutorial.Hide();
     }
 }
