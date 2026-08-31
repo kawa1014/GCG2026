@@ -1,12 +1,24 @@
-using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
-using UnityEngine.SceneManagement;
 using Unity.VectorGraphics;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class NewMonoBehaviourScript : MonoBehaviour
 {
     [SerializeField] private Image fadeImage;
+    [SerializeField]
+    [Tooltip("SEを再生するAudioSource")]
+    private AudioSource audioSource;
+
+    [SerializeField]
+    [Tooltip("決定したときに鳴らすSE")]
+    private AudioClip decisionSE;
+
+    [SerializeField]
+    [Tooltip("ゲームを終了するときに鳴らすSE")]
+    private AudioClip exitSE;
 
     public IEnumerator FadeIn(float duration)
     {
@@ -69,6 +81,10 @@ public class NewMonoBehaviourScript : MonoBehaviour
     // タイトルからセレクトへのフェード
     public void OnClickStartButton1()
     {
+        // 決定SEを再生
+        audioSource.PlayOneShot(decisionSE);
+
+        // フェードしてシーン移動
         StartCoroutine(FadeAndLoad1());
     }
 
@@ -125,6 +141,10 @@ public class NewMonoBehaviourScript : MonoBehaviour
     // タイトルからオプションへのフェード
     public void OnClickStartButton6()
     {
+        // 決定SEを再生
+        audioSource.PlayOneShot(decisionSE);
+
+        // フェードしてOptionSceneへ移動
         StartCoroutine(FadeAndLoad6());
     }
     private IEnumerator FadeAndLoad6()
@@ -155,4 +175,32 @@ public class NewMonoBehaviourScript : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
+
+    /// <summary>
+    /// Exitボタンを押したとき
+    /// </summary>
+    public void OnClickExitButton()
+    {
+        StartCoroutine(FadeAndQuit());
+    }
+
+    /// <summary>
+    /// Exit用SEを鳴らし、フェード後にゲームを終了する
+    /// </summary>
+    private IEnumerator FadeAndQuit()
+    {
+        // Exit専用SEを再生
+        audioSource.PlayOneShot(exitSE);
+
+        // フェードアウト
+        yield return FadeOut(1.0f);
+
+        // Unity Editor上での終了処理
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+    // ビルドしたゲームを終了
+    Application.Quit();
+#endif
+    }
 }
