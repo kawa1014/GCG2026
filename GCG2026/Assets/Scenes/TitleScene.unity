@@ -392,6 +392,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &934569392 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5613027554724686033, guid: d3644fe5963f64e448532e81b209cc8e, type: 3}
+  m_PrefabInstance: {fileID: 6144092604751877177}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &1511631341 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7978857506746702516, guid: d3644fe5963f64e448532e81b209cc8e, type: 3}
@@ -430,6 +441,7 @@ MonoBehaviour:
   audioSource: {fileID: 1937863202}
   decisionSE: {fileID: 8300000, guid: 3fd78639ab0166242a522065e8c37eb5, type: 3}
   exitSE: {fileID: 8300000, guid: ab9f0c2798c4fb645ab36c84d990adf1, type: 3}
+  girlAfterImage: {fileID: 934569392}
 --- !u!4 &1590702805
 Transform:
   m_ObjectHideFlags: 0
