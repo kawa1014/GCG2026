@@ -186,12 +186,16 @@ public class ListeningDirectionalAudio : MonoBehaviour
 
         // --- 聞き耳の連携と音量バランスの適用 ---
         float listenRate = normalVolumeRate;
+        float listenClarityRate = 1.0f; // 【追加】聞き耳用の明瞭度補正
 
         // ListenSkillでEキーが押されているかチェック
         if (ListenSkill.IsListening)
         {
             // 向いている度合い(0.0: 向いていない 〜 1.0: 向いている)に応じて音量倍率を変化させる
             listenRate = Mathf.Lerp(listenNotFacingVolumeRate, listenFacingVolumeRate, audioState.facingScore);
+
+            // 【追加】向いている時は音を非常に鮮明に、向いていない時は通常より極端にこもらせる
+            listenClarityRate = Mathf.Lerp(0.2f, 2.0f, audioState.facingScore);
         }
 
         float globalMasterVolume = OrgelManager.Instance != null ? OrgelManager.Instance.MasterVolume : 1.0f;
@@ -208,7 +212,9 @@ public class ListeningDirectionalAudio : MonoBehaviour
             targetAudioSource.volume = Mathf.MoveTowards(targetAudioSource.volume, targetVolume, volumeChangeSpeed * Time.deltaTime);
         }
 
-        float targetCutoff = Mathf.Lerp(muffledCutoffFrequency, clearCutoffFrequency, audioState.clarity);
+        // 【変更】明瞭度(Clarity)に聞き耳の補正を掛け合わせる
+        float finalClarity = Mathf.Clamp01(audioState.clarity * listenClarityRate);
+        float targetCutoff = Mathf.Lerp(muffledCutoffFrequency, clearCutoffFrequency, finalClarity);
         lowPassFilter.cutoffFrequency = Mathf.Lerp(lowPassFilter.cutoffFrequency, targetCutoff, Time.deltaTime * filterLerpSpeed);
 
         float targetPan = useStereoPanAssist ? audioState.pan : 0.0f;
