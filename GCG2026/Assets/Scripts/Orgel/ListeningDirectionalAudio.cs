@@ -152,6 +152,10 @@ public class ListeningDirectionalAudio : MonoBehaviour
         targetAudioSource.spatialBlend = spatialBlend;
         targetAudioSource.dopplerLevel = 0.0f;
         targetAudioSource.spread = 0.0f;
+        // 【追加】Unity標準の3D距離減衰を無効化し、スクリプトの音量計算を100%反映させる
+        targetAudioSource.rolloffMode = AudioRolloffMode.Custom;
+        targetAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, AnimationCurve.Linear(0f, 1f, 1f, 1f));
+
         targetAudioSource.minDistance = Mathf.Max(targetAudioSource.minDistance, 1.0f);
         targetAudioSource.maxDistance = Mathf.Max(targetAudioSource.maxDistance, distanceFalloffRange);
     }
@@ -367,15 +371,29 @@ public class ListeningDirectionalAudio : MonoBehaviour
             }
         }
 
-        return new AudioState
+        // 【追加】上下の聞き分けを強調する処理
+        // Y軸の方向を判定。方向ベクトルがマイナスなら下、プラスなら上
+        if (directionToSound.y < -0.1f)
         {
-            volume = finalVolume,
-            clarity = finalClarity,
-            pan = pan,
-            spatialBlend = dynamicSpatialBlend,
-            spread = dynamicSpread,
-            facingScore = facingScore // 計算した向いている度合いを渡す
-        };
+            // 音が足元・階下にある場合は床に遮断されていると仮定し、よりくぐもらせる
+            finalClarity *= 0.5f;
+        }
+        else if(directionToSound.y > 0.1f)
+        {
+            // 音が頭上・階上にある場合は遮蔽物がないと仮定し。少し音量と明瞭度をあげる
+            finalVolume = Mathf.Min(finalVolume * 1.1f, naturalVolumeLimit);
+            finalClarity = Mathf.Clamp01(finalClarity * 1.2f);
+        }
+
+            return new AudioState
+            {
+                volume = finalVolume,
+                clarity = finalClarity,
+                pan = pan,
+                spatialBlend = dynamicSpatialBlend,
+                spread = dynamicSpread,
+                facingScore = facingScore // 計算した向いている度合いを渡す
+            };
     }
 
     private WallOcclusionState CalculateWallOcclusionState(Vector3 listenerPosition, Vector3 directionToSound, float distance)
