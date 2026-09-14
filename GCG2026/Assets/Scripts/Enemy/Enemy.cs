@@ -41,6 +41,28 @@ public class Enemy : MonoBehaviour
     [Tooltip("プレイヤーとの距離がこの値以下になったらゲームオーバー(捕獲)")]
     public float catchDistance = 1.5f;
 
+    // ==========================================
+    // 【追加】出現・消滅に関する設定項目(川谷)
+    // ==========================================
+    [Header("出現・消滅設定")]
+    [Tooltip("出現判定を行う間隔(秒)")]
+    public float spawnCheckInterval = 2.0f;
+    private float spawnCheckTimer = 0.0f;
+    [Tooltip("ゲーム時間が半分を過ぎた初期の出現確率(％)")]
+    public float bassSpawnChance = 10.0f;
+    [Tooltip("時間が経過するにつれて1秒あたりに上がる確率の増加量")]
+    public float spawnChanceIncreaseRate = 2.0f;
+    private float currentSpawnChance;
+    private bool hasSpawned = false; // フィールドに出現したか
+
+    [Tooltip("フィールドに出現してから確実に存在する時間(秒)")]
+    public float guaranteadAliveTime = 10.0f;
+    private float aliveTimer = 0.0f;
+    [Tooltip("消滅判定を行う間隔(秒)")]
+    public float disappearanceCheckInterval = 1.0f;
+    private float disappearranceTimer = 0.0f;
+    // ==========================================    
+
     [Header("エフェクト・サウンド")]
     [Tooltip("常に足元に出る煙のエフェクト")]
     public ParticleSystem smokeEffect;
@@ -51,13 +73,21 @@ public class Enemy : MonoBehaviour
     [Tooltip("追跡時に鳴らすSE")]
     public AudioSource chaseAudioSource;
 
-    void Start()
+    // 【追加】コンポーネントの事前取得を分離(川谷)
+    private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-
-        //エネミーの見た目
         enemyRenderer = GetComponentInChildren<Renderer>();
+    }
 
+    //  【追加】オブジェクトが有効化されるたびに呼ばれる(直立不動対策)
+    private void OnEnable()
+    {
+        InitializeEnemy();
+    }
+
+    void Start()
+    {
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -73,7 +103,6 @@ public class Enemy : MonoBehaviour
 
         if (waypoints == null || waypoints.Length == 0)
         {
-            // "Waypoint"タグを持つ全オブジェクトを取得
             GameObject[] wpObjs = GameObject.FindGameObjectsWithTag("Waypoint");
 
             if (wpObjs.Length > 0)
@@ -83,24 +112,8 @@ public class Enemy : MonoBehaviour
                 {
                     waypoints[i] = wpObjs[i].transform;
                 }
-                Debug.Log($"[システム] Waypointを自動で {wpObjs.Length} 個取得しました。");
-            }
-            else
-            {
-                Debug.LogWarning("[システム] Waypointが一つも設定されておらず、タグからも見つかりませんでした。");
             }
         }
-
-        //最初の目的地を設定
-        if (waypoints != null && waypoints.Length > 0)
-        {
-            agent.SetDestination(waypoints[currentWaypointIndex].position);
-        }
-
-        //ゲーム開始時煙だしっぱ
-        if(smokeEffect != null) smokeEffect.Play();
-        //火の粉は止める
-        if(fireEffect != null) fireEffect.Stop();
     }
 
     void Update()
