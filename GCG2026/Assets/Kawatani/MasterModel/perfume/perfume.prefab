@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &2416597104912219509
+--- !u!1001 &7741616808092591158
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4798e5dceb01e11499cc1969bfb1a221, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5010.1626
+      value: -5009.5234
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4798e5dceb01e11499cc1969bfb1a221, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 14.552
+      value: 14.612
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4798e5dceb01e11499cc1969bfb1a221, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2896.861
+      value: 2896.181
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4798e5dceb01e11499cc1969bfb1a221, type: 3}
       propertyPath: m_LocalRotation.w
@@ -60,10 +60,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -2682167134973850427, guid: 4798e5dceb01e11499cc1969bfb1a221, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 9ef420333dc517d45ace95abfe71c794, type: 2}
     - target: {fileID: 919132149155446097, guid: 4798e5dceb01e11499cc1969bfb1a221, type: 3}
       propertyPath: m_Name
       value: perfume

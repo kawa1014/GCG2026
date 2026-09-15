@@ -116,6 +116,12 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // 【追加】エネミーの初期化と出現位置ワープ処理(川谷)
+    private void InitializeEnemy()
+    {
+
+    }
+
     void Update()
     {
         //ゲームオーバー状態なら最優先でエネミーの動きを止める処理
