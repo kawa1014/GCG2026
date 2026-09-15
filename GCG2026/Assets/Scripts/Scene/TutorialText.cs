@@ -28,7 +28,20 @@ public class TutorialText : MonoBehaviour
         if (typewriterCoroutine != null)
         {
             StopCoroutine(typewriterCoroutine);
+            typewriterCoroutine = null;
         }
+
+        // 文章前後の不要な空白や改行を除去
+        fullText = fullText.Trim();
+
+        // ページが変わっても必ず中央揃えに戻す
+        tutorialText.alignment = TMPro.TextAlignmentOptions.Center;
+
+        tutorialText.enableAutoSizing = true;
+        tutorialText.fontSizeMin = 14f;
+        tutorialText.fontSizeMax = 28f;
+        tutorialText.enableWordWrapping = true;
+        tutorialText.overflowMode = TMPro.TextOverflowModes.Truncate;
 
         typewriterCoroutine = StartCoroutine(TypeRoutine(fullText));
     }
@@ -38,26 +51,24 @@ public class TutorialText : MonoBehaviour
         IsTyping = true;
 
         bubbleGroup.alpha = 1f;
-        bubbleGroup.interactable = false;
-        bubbleGroup.blocksRaycasts = false;
-
         tutorialText.text = fullText;
         tutorialText.maxVisibleCharacters = 0;
+        tutorialText.alignment =
+            TMPro.TextAlignmentOptions.Center;
 
-        // TextMeshProに文章の文字数を計算させる
         tutorialText.ForceMeshUpdate();
 
-        int characterCount = tutorialText.textInfo.characterCount;
+        int characterCount =
+            tutorialText.textInfo.characterCount;
 
         for (int i = 0; i <= characterCount; i++)
         {
             tutorialText.maxVisibleCharacters = i;
-
-            if (interval > 0f)
-            {
-                yield return new WaitForSecondsRealtime(interval);
-            }
+            yield return new WaitForSecondsRealtime(interval);
         }
+
+        tutorialText.maxVisibleCharacters = characterCount;
+        tutorialText.ForceMeshUpdate();
 
         IsTyping = false;
         typewriterCoroutine = null;

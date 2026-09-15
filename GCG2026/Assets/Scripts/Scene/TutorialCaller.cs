@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 // 修正(川谷)
 public class TutorialCaller : MonoBehaviour
@@ -22,6 +23,8 @@ public class TutorialCaller : MonoBehaviour
     private int currentPageIndex;
 
     private bool tutorialFinished;
+    private Coroutine delayedUICoroutine;
+    private const int Phase4PageIndex = 3;
 
     private void Start()
     {
@@ -85,25 +88,28 @@ public class TutorialCaller : MonoBehaviour
     {
         currentPageIndex = pageIndex;
 
-        HideAllPageUI();
-
-        if (pageUIs != null && pageIndex < pageUIs.Length && pageUIs[pageIndex] != null)
+        if (delayedUICoroutine != null)
         {
-            GameObject currentUI = pageUIs[pageIndex];
-
-            // 最初にUIを表示
-            currentUI.SetActive(true);
-
-            // SAN値UIならアニメーションを開始
-            SanTutorialPreview sanPreview = currentUI.GetComponent<SanTutorialPreview>();
-
-            if (sanPreview != null)
-            {
-                sanPreview.PlayPreview();
-            }
+            StopCoroutine(delayedUICoroutine);
+            delayedUICoroutine = null;
         }
 
+
+        HideAllPageUI();
+
         tutorial.StartTypewriter(pages[pageIndex]);
+
+        if (pageIndex == Phase4PageIndex)
+        {
+            // フェーズ4だけ、全文表示後に画像を表示
+            delayedUICoroutine =
+                StartCoroutine(ShowUIAfterTyping(pageIndex));
+        }
+        else
+        {
+            // ほかのページは文章と同時にUIを表示
+            ShowPageUI(pageIndex);
+        }
     }
 
     private void HideAllPageUI()
@@ -128,5 +134,43 @@ public class TutorialCaller : MonoBehaviour
 
         HideAllPageUI();
         tutorial.Hide();
+    }
+
+    private IEnumerator ShowUIAfterTyping(int pageIndex)
+    {
+        // 文字送りが終了するまで待つ
+        while (tutorial.IsTyping)
+        {
+            yield return null;
+        }
+
+        // 待っている間に別ページへ移動していたら表示しない
+        if (currentPageIndex != pageIndex)
+        {
+            yield break;
+        }
+
+        ShowPageUI(pageIndex);
+        delayedUICoroutine = null;
+    }
+
+    private void ShowPageUI(int pageIndex)
+    {
+        if (pageUIs == null || pageIndex < 0 || pageIndex >= pageUIs.Length ||
+            pageUIs[pageIndex] == null)
+        {
+            return;
+        }
+
+        GameObject currentUI = pageUIs[pageIndex];
+        currentUI.SetActive(true);
+
+        // SAN値UIの場合はプレビューを開始
+        SanTutorialPreview sanPreview = currentUI.GetComponent<SanTutorialPreview>();
+
+        if (sanPreview != null)
+        {
+            sanPreview.PlayPreview();
+        }
     }
 }
