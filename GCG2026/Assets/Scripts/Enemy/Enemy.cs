@@ -74,20 +74,13 @@ public class Enemy : MonoBehaviour
     public AudioSource chaseAudioSource;
 
     // 【追加】アニメーション制御用(川谷)
-    private Animator animator;
-
-    // 【追加】コンポーネントの事前取得を分離(川谷)
+    [Header("アニメーション制御")]
+    public Animator animator;
+    
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         enemyRenderer = GetComponentInChildren<Renderer>();
-
-        // 【追加】Animatorの取得(川谷)
-        //animator = GetComponent<Animator>();
-        if (animator == null)
-        {
-            animator = GetComponentInChildren<Animator>();
-        }
     }
 
     //  【追加】オブジェクトが有効化されるたびに呼ばれる(直立不動対策)
@@ -282,11 +275,7 @@ public class Enemy : MonoBehaviour
                     lostSightTimer = 0f; //追跡開始時にタイマーをリセット
 
                     // 【追加】チェイス開始時の遷移アニメ―ションを再生
-                    if (animator != null)
-                    {
-                        animator.SetBool("IsChasing", true); // 追跡中フラグをON
-                        //animator.Play("chaseAnim");          // 遷移アニメーションを直接再生
-                    }
+                    animator.SetBool("IsChasing", true); // 追跡中フラグをON
                 }
             }
         }
@@ -315,10 +304,7 @@ public class Enemy : MonoBehaviour
                     agent.SetDestination(waypoints[currentWaypointIndex].position);
 
                     // 【追加】追跡終了、徘徊状態に戻る
-                    if (animator != null)
-                    {
-                        animator.SetBool("IsChasing", false); // 追跡中フラグOFF
-                    }
+                    animator.SetBool("IsChasing", false); // 追跡中フラグOFF
                 }
                 
             }
