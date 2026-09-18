@@ -31,7 +31,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EMISSION_COLOR_MAP:
-        m_Texture: {fileID: 2800000, guid: 5d0df1fdf2029304c8c860e04129a94e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 23580b3c1c8bb4747bed772f4cecbf17, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _METALNESS_MAP:

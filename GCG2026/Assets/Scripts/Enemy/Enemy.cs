@@ -167,9 +167,17 @@ public class Enemy : MonoBehaviour
         switch (currentState)
         {
             case State.walk:
-                //エフェクト火の粉を止める
-                if (fireEffect != null && fireEffect.isPlaying) fireEffect.Stop();
+                // エフェクト火の粉を止める（すでに発生したパーティクルも即座に消す場合は引数を追加）
+                if (fireEffect != null && fireEffect.isPlaying)
+                    fireEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
                 if (chaseAudioSource != null && chaseAudioSource.isPlaying) chaseAudioSource.Stop();
+
+                // 【修正】燃えるエフェクトを非表示にする処理を追加
+                if (dissolveEffect != null && dissolveEffect.activeSelf) dissolveEffect.SetActive(false);
+
+                // 【修正】徘徊中は煙エフェクトを再生する
+                if (smokeEffect != null && !smokeEffect.isPlaying) smokeEffect.Play();
 
                 //agent.speed = 2.0f; //徘徊時の速度を設定
                 SetColor(Color.green);//徘徊時は緑色
