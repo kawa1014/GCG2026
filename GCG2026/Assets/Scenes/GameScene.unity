@@ -1553,7 +1553,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  Spawn100: 0
+  Spawn100: 1
 --- !u!4 &81587926
 Transform:
   m_ObjectHideFlags: 0
