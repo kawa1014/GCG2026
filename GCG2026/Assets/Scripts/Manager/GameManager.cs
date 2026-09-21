@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -14,6 +15,9 @@ public class GameManager : MonoBehaviour
     /// 他のスクリプトからGameManager.Instanceでアクセスできるようにする変数
     /// </summary>
     public static GameManager Instance { get; private set; }
+
+    // ゲームオーバー時に発火するイベント
+    public event Action OnGameOverEvent;
 
     [Header("ゲームルール設定")]
     /// <summary>
@@ -172,6 +176,9 @@ public class GameManager : MonoBehaviour
         _isGameOver = true;
 
         Debug.Log($"<color=red>【Game Over】{reason}</color>");
+
+        // 【追加】ゲームオーバー家bンとを発火して、登録しているほかのスクリプトに通知する
+        OnGameOverEvent?.Invoke();
 
         //if (TimeText != null)
         //{
