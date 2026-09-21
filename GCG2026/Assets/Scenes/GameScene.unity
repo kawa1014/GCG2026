@@ -9106,7 +9106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   TimeLimit: 180
   MaxFear: 100
-  FearIncreaseRate: 0.7
+  FearIncreaseRate: 10
   FearRecoveryRate: 2
   TimeText: {fileID: 700215101}
   FearVignetteGroup: {fileID: 1105567415}

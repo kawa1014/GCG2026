@@ -46,10 +46,15 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// ゲームオーバーのイベントを受け取って実行されるメソッド
     /// </summary>
-    private void PlayGameOverEffect()
+    private void PlayGameOverEffect(GameManager.GameOverCause cause)
     {
-        Debug.Log("<color=yellow>UIManager: イベント受信！アニメーション開始します</color>");
+        if (cause != GameManager.GameOverCause.SanityMax)
+        {
+            Debug.Log("<color=yellow>UIManager: 敵に捕まったためアニメーションは再生しません</color>");
+            return;
+        }
 
+        Debug.Log("<color=yellow>UIManager: SAN値MAXによるゲームオーバー！アニメーション開始します</color>");
         StartCoroutine(PlaySequentialAnimationCoroutine());
     }
 

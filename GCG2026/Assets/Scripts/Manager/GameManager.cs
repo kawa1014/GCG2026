@@ -10,14 +10,21 @@ using UnityEngine.UIElements;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    // 【追加】ゲームオーバーの原因を定義する列挙型
+    public enum GameOverCause
+    {
+        SanityMax, // SAN値が限界に達した
+        EnemyCaught // エネミー捕まった
+    }
+
     //---シングルトン---
     /// <summary>
     /// 他のスクリプトからGameManager.Instanceでアクセスできるようにする変数
     /// </summary>
     public static GameManager Instance { get; private set; }
 
-    // ゲームオーバー時に発火するイベント
-    public event Action OnGameOverEvent;
+    // ゲームオーバー時に発火するイベント(死因も渡せる)
+    public event Action<GameOverCause> OnGameOverEvent;
 
     [Header("ゲームルール設定")]
     /// <summary>
@@ -145,7 +152,7 @@ public class GameManager : MonoBehaviour
 
         if (_currentFear >= MaxFear)
         {
-            GameOver("恐怖度が限界に達した");
+            GameOver("恐怖度が限界に達した", GameOverCause.SanityMax);
         }
 
         _sanTimer += Time.deltaTime;
@@ -171,14 +178,14 @@ public class GameManager : MonoBehaviour
     /// @brief ゲームーバーの処理
     /// @brief reason ゲームオーバーの理由(コンソール表示用)
     /// </summary>
-    public void GameOver(string reason)
+    public void GameOver(string reason, GameOverCause cause)
     {
         _isGameOver = true;
 
         Debug.Log($"<color=red>【Game Over】{reason}</color>");
 
         // 【追加】ゲームオーバー家bンとを発火して、登録しているほかのスクリプトに通知する
-        OnGameOverEvent?.Invoke();
+        OnGameOverEvent?.Invoke(cause);
 
         //if (TimeText != null)
         //{
@@ -250,14 +257,8 @@ public class GameManager : MonoBehaviour
         // 既にゲームオーバー状態なら処理を重複させないためにブロック
         if (_isGameOver || _isGameClear) return;
 
-        // 恐怖度を強制的に最大値（MaxFear）に上書きする
-        _currentFear = MaxFear;
-
-        // 画面の赤いエフェクト（Vignette）を最大にするためにUIを更新
-        UpdateFearUI();
-
         // 理由を添えてゲームオーバー処理を実行
-        GameOver("エネミーに捕獲されたため、恐怖度が限界を突破した");
+        GameOver("エネミーに捕獲されたため、恐怖度が限界を突破した", GameOverCause.EnemyCaught);
     }
 
     private void UpdateSanUI()
