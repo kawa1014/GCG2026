@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 
 /// <summary>
 /// UIや画面演出を専門に管理するクラス
@@ -17,6 +18,17 @@ public class UIManager : MonoBehaviour
     [Tooltip("1秒間に何故の画像を切り替えるか")]
     public float AnimationFPS = 30.0f;
 
+    [Header("聞き耳スキル演出設定")]
+    [Tooltip("聞き耳中に表示するUI")]
+    public Volume ListenBlurVolume;
+
+    // インスペクターでフェードにかかる秒数を調整できるようにする
+    [Tooltip("フィルターが完全に表示/消滅するまでの秒数")]
+    public float ListenFilterFadeDuration = 0.5f;
+
+    // 内部計算用の変数
+    private float _currentBlurWeight = 0.0f;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -24,6 +36,12 @@ public class UIManager : MonoBehaviour
         if (GameOverImage != null)
         {
             GameOverImage.enabled = false;
+        }
+
+        // フィルターも最初は非表示にしておく
+        if (ListenBlurVolume != null)
+        {
+            ListenBlurVolume.weight = 0.0f;
         }
 
         // GameManagerのイベントを購読
@@ -82,9 +100,27 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    // 毎フレーム聞き耳の状態をチェックして画像を切り替える
     void Update()
     {
-        
+        if (ListenBlurVolume != null)
+        {
+            // 聞き耳中ならWeightを1、違うなら0にする
+            float targetWeight = ListenSkill.IsListening ? 1.0f : 0.0f;
+
+            // フェード速度を計算
+            if (ListenFilterFadeDuration > 0.0f)
+            {
+                float speed = 1.0f / ListenFilterFadeDuration;
+                _currentBlurWeight = Mathf.MoveTowards(_currentBlurWeight, targetWeight, speed * Time.deltaTime);
+            }
+            else
+            {
+                _currentBlurWeight = targetWeight;
+            }
+
+            // Volumeのエフェクト強度に数値を反映する
+            ListenBlurVolume.weight = _currentBlurWeight;
+        }
     }
 }
