@@ -6,6 +6,7 @@ public enum TutorialState
 {
     WaitCameraMove,   // 視点移動の入力待ち
     WaitPlayerMove,   // WASD移動の入力待ち
+    WaitOrgelSound,   // オルゴールが鳴るまで待機
     ForcedLook,       // オルゴールへ強制的に視点を向ける状態（行き）
     KeepLooking,      // 【追加】オルゴールを向いたまま待機する状態（停止）
     ReturnLook,       // 元の視点に戻る状態（帰り）
@@ -32,21 +33,27 @@ public class TutorialManager : MonoBehaviour
     [Tooltip("オルゴールへ振り向くまでの時間（秒）")]
     [SerializeField] private float lookAtDuration = 0.5f;
     [Tooltip("オルゴールを向いたまま止まる時間（秒）")] // 【追加】
-    [SerializeField] private float keepLookDuration = 1.0f;
-    [Tooltip("振り向いてから元の視点に戻るまでの時間（秒）")]
     [SerializeField] private float returnDuration = 0.8f;
 
+    [Header("チュートリアルUI")]
+    [SerializeField]
+    private TutorialCaller tutorialCaller;
     private TutorialState currentState = TutorialState.WaitCameraMove;
 
     private float accumulatedCameraMove = 0f;
     private float accumulatedMoveTime = 0f;
-
     private float lookAtTimer = 0f;
+    [Header("フェーズ7：オルゴール接近判定")]
+    [SerializeField]
+    private float phase7Distance = 8f;
+    private bool phase7DistanceTriggered = false;
 
     private Quaternion originalCameraRot;
     private Quaternion originalPlayerRot;
     private Quaternion targetCameraRot;
     private Quaternion targetPlayerRot;
+    private Quaternion returnStartPlayerRot;
+    private Quaternion returnStartCameraRot;
 
     private void Start()
     {
@@ -60,6 +67,7 @@ public class TutorialManager : MonoBehaviour
 
     private void Update()
     {
+        CheckPhase7Distance();
         switch (currentState)
         {
             case TutorialState.WaitCameraMove:
@@ -70,6 +78,9 @@ public class TutorialManager : MonoBehaviour
                 CheckPlayerMovement();
                 break;
 
+            case TutorialState.WaitOrgelSound:
+                CheckOrgelSound();
+                break;
             case TutorialState.ForcedLook:
                 HandleForcedLook(); // 行き
                 break;
@@ -113,44 +124,58 @@ public class TutorialManager : MonoBehaviour
 
         if (accumulatedMoveTime >= requiredPlayerMoveTime)
         {
-            StartForcedLook();
+            currentState = TutorialState.WaitOrgelSound;
             OnPlayerMoveClear?.Invoke();
         }
     }
 
-    private void StartForcedLook()
+    private void StartForcedLook(OrgelSystem targetOrgel)
     {
-        OrgelSystem targetOrgel = null;
-        if (OrgelManager.Instance != null)
-        {
-            targetOrgel = OrgelManager.Instance.CurrentTargetOrgel;
-        }
-
         if (targetOrgel == null || playerCamera == null || playerController == null)
         {
-            currentState = TutorialState.WaitListening;
+            // 参照がない場合は視線誘導せず待ち続ける
+            currentState = TutorialState.WaitOrgelSound;
             return;
         }
 
         currentState = TutorialState.ForcedLook;
+        // 視線誘導中だけプレイヤー操作を止める
         playerController._isStop = true;
         lookAtTimer = 0f;
 
+        if (tutorialCaller != null)
+        {
+            tutorialCaller.ShowPhase2();
+        }
+
+        // 元の向きを保存
         originalPlayerRot = playerController.transform.rotation;
         originalCameraRot = playerCamera.transform.localRotation;
 
         Vector3 directionToOrgel = targetOrgel.transform.position - playerCamera.transform.position;
 
-        Vector3 flatDirection = new Vector3(directionToOrgel.x, 0, directionToOrgel.z).normalized;
-        if (flatDirection != Vector3.zero)
-            targetPlayerRot = Quaternion.LookRotation(flatDirection);
-        else
-            targetPlayerRot = originalPlayerRot;
+        // プレイヤー本体は横方向だけ回転
+        Vector3 flatDirection = new Vector3(directionToOrgel.x, 0f, directionToOrgel.z).normalized;
 
-        Vector3 localDir = playerController.transform.InverseTransformDirection(directionToOrgel);
-        float pitchAngle = Mathf.Atan2(-localDir.y, new Vector2(localDir.x, localDir.z).magnitude) * Mathf.Rad2Deg;
+        if (flatDirection.sqrMagnitude > 0.001f)
+        {
+            targetPlayerRot = Quaternion.LookRotation(flatDirection);
+        }
+        else
+        {
+            targetPlayerRot = originalPlayerRot;
+        }
+
+        // カメラは上下方向だけ回転
+        Vector3 localDirection = playerController.transform.InverseTransformDirection(directionToOrgel);
+
+        float horizontalDistance = new Vector2(localDirection.x, localDirection.z).magnitude;
+
+        float pitchAngle = Mathf.Atan2(-localDirection.y, horizontalDistance) * Mathf.Rad2Deg;
+
         pitchAngle = Mathf.Clamp(pitchAngle, -80f, 80f);
-        targetCameraRot = Quaternion.Euler(pitchAngle, 0, 0);
+
+        targetCameraRot = Quaternion.Euler(pitchAngle, 0f, 0f);
     }
 
     private void HandleForcedLook()
@@ -173,14 +198,7 @@ public class TutorialManager : MonoBehaviour
     // --- 【追加】向いたまま停止する処理 ---
     private void HandleKeepLooking()
     {
-        lookAtTimer += Time.deltaTime;
-
-        // 指定した時間（keepLookDuration）が経過したら
-        if (lookAtTimer >= keepLookDuration)
-        {
-            currentState = TutorialState.ReturnLook; // 帰りステートへ
-            lookAtTimer = 0f; // 帰り時間の計測用にタイマーをリセット
-        }
+       
     }
 
     private void HandleReturnLook()
@@ -194,6 +212,8 @@ public class TutorialManager : MonoBehaviour
 
         if (t >= 1.0f)
         {
+            playerController.transform.rotation = originalPlayerRot;
+            playerCamera.transform.localRotation = originalCameraRot;
             currentState = TutorialState.WaitListening;
             playerController._isStop = false;
         }
@@ -205,6 +225,108 @@ public class TutorialManager : MonoBehaviour
         {
             currentState = TutorialState.Completed;
             OnTutorialComplete?.Invoke();
+        }
+    }
+    private void CheckOrgelSound()
+    {
+        if (OrgelManager.Instance == null)
+        {
+            return;
+        }
+
+        // 鳴っているオルゴールがない場合は待ち続ける
+        if (OrgelManager.Instance.CurrentOrgelPlayingCount <= 0)
+        {
+            return;
+        }
+
+        // 現在鳴っている対象オルゴールを取得
+        OrgelSystem targetOrgel = OrgelManager.Instance.CurrentTargetOrgel;
+
+        if (targetOrgel == null)
+        {
+            return;
+        }
+
+        // オルゴールが鳴ったので視線誘導開始
+        StartForcedLook(targetOrgel);
+    }
+
+    private void OnEnable()
+    {
+        OrgelSystem.OnOrgelStarted += HandleTutorialOrgelStarted;
+    }
+
+    private void OnDisable()
+    {
+        OrgelSystem.OnOrgelStarted -= HandleTutorialOrgelStarted;
+    }
+
+    private void HandleTutorialOrgelStarted(OrgelSystem startedOrgel)
+    {
+        if (startedOrgel == null)
+        {
+            return;
+        }
+
+        // 視線誘導中や完了後の重複実行を防ぐ
+        if (currentState != TutorialState.WaitOrgelSound)
+        {
+            return;
+        }
+
+        Debug.Log($"【Tutorial】{startedOrgel.name}が鳴ったので視線誘導します");
+
+        StartForcedLook(startedOrgel);
+    }
+
+    public void ReturnLookFromTutorialClick()
+    {
+        // 視線誘導中またはオルゴールを向いている時だけ実行
+        if (currentState != TutorialState.ForcedLook && currentState != TutorialState.KeepLooking)
+        {
+            return;
+        }
+
+        // クリックされた瞬間の向きを保存
+        returnStartPlayerRot = playerController.transform.rotation;
+        returnStartCameraRot = playerCamera.transform.localRotation;
+
+        currentState = TutorialState.ReturnLook;
+        lookAtTimer = 0f;
+    }
+    private void CheckPhase7Distance()
+    {
+        if (phase7DistanceTriggered)
+        {
+            return;
+        }
+
+        if (playerController == null || tutorialCaller == null || OrgelManager.Instance == null)
+        {
+            return;
+        }
+
+        // ランダムで選ばれた現在のオルゴール
+        OrgelSystem playingOrgel = OrgelManager.Instance.CurrentTargetOrgel;
+
+        if (playingOrgel == null)
+        {
+            return;
+        }
+
+        // 実際に鳴っている間だけ判定
+        if (!playingOrgel.IsPlaying)
+        {
+            return;
+        }
+
+        float distance = Vector3.Distance(playerController.transform.position, playingOrgel.transform.position);
+
+        if (distance <= phase7Distance)
+        {
+            tutorialCaller.ShowPhase7();
+            phase7DistanceTriggered = true;
         }
     }
 }

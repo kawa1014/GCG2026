@@ -39,9 +39,10 @@ public class SanTutorialPreview : MonoBehaviour
         if (previewCoroutine != null)
         {
             StopCoroutine(previewCoroutine);
+            previewCoroutine = null;
         }
 
-        gameObject.SetActive(true);
+        sanGaugeUI.ResetGauge();
         previewCoroutine = StartCoroutine(PreviewRoutine());
     }
 

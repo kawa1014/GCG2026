@@ -531,12 +531,16 @@ MonoBehaviour:
   pageUIs:
   - {fileID: 1382748412}
   - {fileID: 0}
-  - {fileID: 1382748411}
+  - {fileID: 0}
   - {fileID: 355123204}
   - {fileID: 0}
   - {fileID: 1700199309}
   - {fileID: 0}
   - {fileID: 1862559405}
+  tutorialManager: {fileID: 743571160}
+  sanTutorialUI: {fileID: 1382748411}
+  sanTutorialPreview: {fileID: 1382748415}
+  sanUI: {fileID: 1382748411}
 --- !u!4 &19502340 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8807760598023800296, guid: 7d37534ce415d5646b70ff7ce82bca7f, type: 3}
@@ -19630,8 +19634,9 @@ MonoBehaviour:
   requiredCameraMoveAmount: 300
   requiredPlayerMoveTime: 2
   lookAtDuration: 1
-  keepLookDuration: 1
   returnDuration: 0.8
+  tutorialCaller: {fileID: 11681703}
+  phase7Distance: 15
 --- !u!4 &743571161
 Transform:
   m_ObjectHideFlags: 0
@@ -30205,6 +30210,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7ad8a9d7c214fef409842b8ac25ea6bd, type: 3}
   - {fileID: 21300000, guid: f856c3fb16477e846a50eaef608ebd83, type: 3}
   SanChangeInterval: 1
+  sanUIRoot: {fileID: 0}
 --- !u!4 &1192026669
 Transform:
   m_ObjectHideFlags: 0
@@ -35302,6 +35308,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 11681702}
     m_Modifications:
     - target: {fileID: 2229893542302982363, guid: da4906d79249dd5479c50e400f064b26, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2229893542302982363, guid: da4906d79249dd5479c50e400f064b26, type: 3}
       propertyPath: previewFearRatio
       value: 0
       objectReference: {fileID: 0}
@@ -35405,6 +35415,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TutorialUIRoot
       objectReference: {fileID: 0}
+    - target: {fileID: 4724529269807929050, guid: da4906d79249dd5479c50e400f064b26, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6797976263061350261, guid: da4906d79249dd5479c50e400f064b26, type: 3}
       propertyPath: m_SizeDelta.x
       value: 700
@@ -35429,6 +35443,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5780594303883534197, guid: da4906d79249dd5479c50e400f064b26, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1862559408}
+    - targetCorrespondingSourceObject: {fileID: 5780594303883534197, guid: da4906d79249dd5479c50e400f064b26, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2025567102}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: da4906d79249dd5479c50e400f064b26, type: 3}
 --- !u!114 &1382748410 stripped
@@ -35452,6 +35469,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6840371428151803837, guid: da4906d79249dd5479c50e400f064b26, type: 3}
   m_PrefabInstance: {fileID: 1382748409}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1382748415 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2229893542302982363, guid: da4906d79249dd5479c50e400f064b26, type: 3}
+  m_PrefabInstance: {fileID: 1382748409}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1382748411}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3099bf929a06ff34cb4076ee399aca9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SanTutorialPreview
 --- !u!1001 &1389132681
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52714,6 +52742,54 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 05963696f7a225b44b5444007470904b, type: 3}
+--- !u!1 &2025567101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2025567102}
+  - component: {fileID: 2025567103}
+  m_Layer: 5
+  m_Name: UI_Fase7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2025567102
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025567101}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 186999119}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2025567103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025567101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54c489519601ca749b5505456b9df31e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialRoomEntranceTrigger
 --- !u!1001 &2030746060
 PrefabInstance:
   m_ObjectHideFlags: 0

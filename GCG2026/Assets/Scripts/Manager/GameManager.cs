@@ -64,6 +64,12 @@ public class GameManager : MonoBehaviour
 
     private float _sanTimer = 0.0f;
     private int _sanIndex = 0;
+    [Header("SAN値UI表示設定")]
+    [SerializeField]
+    private GameObject sanUIRoot;
+
+    // フェーズ3から通常SAN処理を動かすか
+    private bool _sanSystemStarted = false;
 
     //---内部状態を管理する変数---
     private float _currentFear = 0.0f; ///< 現在の恐怖度
@@ -102,7 +108,27 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         UpdateTimerUI();
-        UpdateFearUI();
+        if (TutorialCaller.IsTutorialActive)
+        {
+            // フェーズ3までは非表示
+            _sanSystemStarted = false;
+
+            if (sanUIRoot != null)
+            {
+                sanUIRoot.SetActive(false);
+            }
+        }
+        else
+        {
+            // チュートリアルがない場合は通常どおり開始
+            _sanSystemStarted = true;
+
+            if (sanUIRoot != null)
+            {
+                sanUIRoot.SetActive(true);
+            }
+            UpdateFearUI();
+        }
     }
 
     /// <summary>
@@ -112,55 +138,45 @@ public class GameManager : MonoBehaviour
     {
         // 終了済みの場合は何もしない
         if (_isGameOver || _isGameClear) return;
-
-        // 制限時間の処理
-        TimeLimit -= Time.deltaTime;
-        UpdateTimerUI();
-
-        if (TimeLimit <= 0.0f)
+        if (!TutorialCaller.IsTutorialActive)
         {
-            GameClear();
+            TimeLimit -= Time.deltaTime;
+            UpdateTimerUI();
+
+            if (TimeLimit <= 0f)
+            {
+                GameClear();
+                return;
+            }
+        }
+
+        // 通常ゲーム中、またはチュートリアルの
+        // フェーズ3以降ならSAN値を進める
+        bool canUpdateFear = !TutorialCaller.IsTutorialActive || _sanSystemStarted;
+
+        if (!canUpdateFear)
+        {
             return;
         }
 
-        // OrgelManagerに「今何個なってる？」と直接聞きに行くようにしました
         if (OrgelManager.Instance != null && OrgelManager.Instance.CurrentOrgelPlayingCount > 0)
         {
-            // 1個でも鳴っていれば、一定速度で上昇
             _currentFear += FearIncreaseRate * Time.deltaTime;
         }
         else
         {
-            // 全て止まっていれば徐々に回復
             _currentFear -= FearRecoveryRate * Time.deltaTime;
         }
 
-        _currentFear = Mathf.Clamp(_currentFear, 0.0f, MaxFear);
-        // 恐怖度のUIを更新
+        _currentFear = Mathf.Clamp(_currentFear, 0f, MaxFear);
+
         UpdateFearUI();
 
-        if (_currentFear >= MaxFear)
+        // チュートリアル中はSAN最大でもゲームオーバーにしない
+        if (!TutorialCaller.IsTutorialActive && _currentFear >= MaxFear)
         {
-            GameOver("恐怖度が限界に達した");
+            GameOver("恐怖度が限界に達した" );
         }
-
-        _sanTimer += Time.deltaTime;
-
-        //if(_sanTimer >= SanChangeInterval)
-        //{
-        //    _sanTimer = 0.0f;
-
-        //    // 次の画像へ
-        //    _sanIndex++;
-
-        //    // 範囲のチェック
-        //    if (_sanIndex >= SanSprites.Length)
-        //        _sanIndex = SanSprites.Length - 1;
-
-        //    // Imageに変換
-        //    if (SanImage != null)
-        //        SanImage.sprite = SanSprites[_sanIndex];
-        //}
     }
 
     /// <summary>
@@ -255,6 +271,10 @@ public class GameManager : MonoBehaviour
 
     private void UpdateSanUI()
     {
+        if (TutorialCaller.IsTutorialActive && !_sanSystemStarted)
+        {
+            return;
+        }
         if (SanImage == null || SanSprites == null || SanSprites.Length == 0)
             return;
 
@@ -271,6 +291,58 @@ public class GameManager : MonoBehaviour
         SanImage.sprite = SanSprites[index];
     }
 
+    public void ResetFearAfterTutorial()
+    {
+        _currentFear = 0f;
+
+        _sanTimer = 0f;
+        _sanIndex = 0;
+
+        // SAN画像を最初の画像へ戻す
+        if (SanImage != null && SanSprites != null && SanSprites.Length > 0)
+        {
+            SanImage.sprite = SanSprites[0];
+        }
+
+        // 赤い画面演出も初期化
+        if (FearVignetteGroup != null)
+        {
+            FearVignetteGroup.alpha = 0f;
+        }
+
+        Debug.Log(
+            "チュートリアル終了：恐怖度を0に戻しました"
+        );
+    }
+
+    public void StartSanSystemFromPhase3()
+    {
+        if (_sanSystemStarted)
+        {
+            return;
+        }
+
+        _sanSystemStarted = true;
+
+        // フェーズ3開始時は恐怖度0から開始
+        _currentFear = 0f;
+
+        if (SanImage != null && SanSprites != null && SanSprites.Length > 0)
+        {
+            SanImage.sprite = SanSprites[0];
+        }
+
+        if (sanUIRoot != null)
+        {
+            sanUIRoot.SetActive(true);
+        }
+        int playingCount = 0;
+
+        if (OrgelManager.Instance != null)
+        {
+            playingCount = OrgelManager.Instance.CurrentOrgelPlayingCount;
+        }
+    }
     /// <summary>
     /// @brief ゲームアプリケーション自体を終了する処理
     /// @details Unityエディター上でのプレイ停止と、ビルド後のアプリ終了の両方に対応します

@@ -44,6 +44,7 @@ public class TutorialText : MonoBehaviour
         tutorialText.overflowMode = TMPro.TextOverflowModes.Truncate;
 
         typewriterCoroutine = StartCoroutine(TypeRoutine(fullText));
+        bubbleGroup.alpha = 1f;
     }
 
     private IEnumerator TypeRoutine(string fullText)
