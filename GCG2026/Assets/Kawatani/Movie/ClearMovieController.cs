@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -56,6 +57,7 @@ public class ClearMovieController : MonoBehaviour
     /// </summary>
     public void StartClearMovie()
     {
+        Debug.Log("<color=yellow>ムービー開始メソッドが呼ばれました</color>");
         StartCoroutine(MovieRoutine());
     }
 
@@ -65,10 +67,19 @@ public class ClearMovieController : MonoBehaviour
         if (TargetPlayerController != null)
         {
             TargetPlayerController._isStop = true; // WASDやマウス操作を無効
+            Debug.Log("1. プレイヤーの操作を停止しました");
         }
 
-        // 黒色フェード処理
-        yield return FadeImageRoutine(Color.black, 0.0f, 1.0f, 0.5f);
+        // 黒色のフェード処理
+        if (FadeImage != null)
+        {
+            yield return FadeImageRoutine(Color.black, 0f, 1f, 0.5f);
+            Debug.Log("2. 黒フェードアウト完了");
+        }
+        else
+        {
+            Debug.LogWarning(" FadeImageが未設定のためフェードをスキップしました");
+        }
 
         // 画面があっくろの間に、特定の場所にワープ
         if (MoviewStartPosition != null)
@@ -82,18 +93,34 @@ public class ClearMovieController : MonoBehaviour
             PlayerTransform.rotation = MoviewStartPosition.rotation;
 
             if (characterController != null) characterController.enabled = true;
+            Debug.Log("3. 初期位置へのワープ完了");
+        }
+        else
+        {
+            Debug.LogWarning(" MovieStartPositionが未設定のためワープをスキップしました");
         }
 
-        // 黒色フェードを明けて画面を表示(
-        yield return FadeImageRoutine(Color.black, 1.0f, 0.0f, 0.5f);
+        // 黒フェード明け
+        if (FadeImage != null)
+        {
+            yield return FadeImageRoutine(Color.black, 1f, 0f, 0.5f);
+            Debug.Log("4. 黒フェードイン（画面表示）完了");
+        }
 
         // 扉に向かって歩く
         if (DoorStandPosition != null)
         {
-            yield return AutoWalkTo(DoorStandPosition.position);
+            Debug.Log("5. 扉の前へ移動開始");
+            yield return AutoWalkTo(DoorStandPosition.position, 5.0f);
+            Debug.Log("5. 扉の前へ移動完了");
+        }
+        else
+        {
+            Debug.LogWarning("DoorStandPositionが未設定のため扉前への移動をスキップしました");
         }
 
         // 扉の前に来たら、登録されている全ての扉を開く
+        Debug.Log($"6. 扉を開ける処理を開始します（対象: {TargetDoors.Count}個）");
         foreach (DoorConfig doorConfig in TargetDoors)
         {
             if (doorConfig != null)
@@ -138,25 +165,59 @@ public class ClearMovieController : MonoBehaviour
         // 扉を開けながら外に出る
         if (OutsidePosition != null)
         {
-            yield return AutoWalkTo(OutsidePosition.position);
+            Debug.Log("7. 外へ移動開始");
+            yield return AutoWalkTo(OutsidePosition.position, 10.0f);
+            Debug.Log("7. 外へ移動完了");
         }
-        
+        else
+        {
+            Debug.LogWarning("OutsidePositionが未設定のため外への移動をスキップしました");
+        }
+
 
         // 白色のフェード処理
-        yield return FadeImageRoutine(Color.white, 0.0f, 1.0f, 0.5f);
+        if (FadeImage != null)
+        {
+            yield return FadeImageRoutine(Color.white, 0f, 1f, 0.5f);
+            Debug.Log("8. 白フェード完了");
+        }
 
         // リザルトシーンへ遷移
+        Debug.Log("<color=yellow>9. リザルトシーンへ遷移します</color>");
         SceneManager.LoadScene("ResultScene");
     }
 
     /// <summary>
     /// 目的地点まで自動で歩く処理
     /// </summary>
-    private IEnumerator AutoWalkTo(Vector3 targetPosition)
+    /// <param name="targetPosition">目標地点</param>
+    /// <param name="timeout">何秒経ったら諦めて次の処理に進むか</param>
+    private IEnumerator AutoWalkTo(Vector3 targetPosition, float timeout)
     {
-        // 目的地との距離が0.1以上あるなら、近づき続ける
-        while (Vector3.Distance(PlayerTransform.position, targetPosition) > 0.1f)
+        if (PlayerTransform == null || TargetPlayerController == null)
         {
+            Debug.LogError("PlayerTransform または TargetPlayerController が未設定のため、歩行処理をスキップします。");
+            yield break; // エラーで止まらずにすぐ次の処理（扉開け）へ行く
+        }
+
+        Vector3 playerPosNoY = new Vector3(PlayerTransform.position.x, 0, PlayerTransform.position.z);
+        Vector3 targetPosNoY = new Vector3(targetPosition.x, 0, targetPosition.z);
+
+        float timer = 0.0f;
+
+        // 目的地との距離が0.3以上あるなら、近づき続ける
+        while (Vector3.Distance(playerPosNoY, targetPosNoY) > 0.3f)
+        {
+            // 経過時間をカウント
+            timer += Time.deltaTime;
+
+            // タイムアウト時間を超えたら強制的にループを抜けて次へ進む
+            if (timer > timeout)
+            {
+                Debug.LogWarning("目的地に辿り着けなかったため、移動を強制終了して次へ進みます。");
+                break;
+            }
+
             // CharacterControllerを使って移動
             CharacterController characterController = TargetPlayerController.GetComponent<CharacterController>();
             if (characterController != null)
@@ -185,7 +246,7 @@ public class ClearMovieController : MonoBehaviour
     /// </summary>
     private IEnumerator FadeImageRoutine(Color baseColor, float startAlpha, float targetAlpha, float duration)
     {
-        if (FadeImage != null) yield break;
+        if (FadeImage == null) yield break;
 
         FadeImage.gameObject.SetActive(true);
         baseColor.a = startAlpha;

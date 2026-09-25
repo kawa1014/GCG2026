@@ -7676,7 +7676,6 @@ GameObject:
   - component: {fileID: 576125925}
   - component: {fileID: 576125924}
   - component: {fileID: 576125921}
-  - component: {fileID: 576125923}
   - component: {fileID: 576125922}
   m_Layer: 5
   m_Name: FadeImage
@@ -7728,23 +7727,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenericFader
   fadeImage: {fileID: 576125921}
---- !u!114 &576125923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 576125920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e59b54a8e22e08459f17fa1a98427d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AutoFade
-  _genericFader: {fileID: 576125922}
-  _executeDelay: 0
-  _duration: 2
-  _sceneName: 
-  _fadeIn: 1
 --- !u!222 &576125924
 CanvasRenderer:
   m_ObjectHideFlags: 0

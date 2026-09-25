@@ -139,10 +139,10 @@ public class NewMonoBehaviourScript : MonoBehaviour
     }
 
     // ゲームからリザルトへのフェード
-    public void OnClickStartButton3()
-    {
-        StartCoroutine(FadeAndLoadRoutine("ResultScene", 1.0f));
-    }
+    //public void OnClickStartButton3()
+    //{
+    //    StartCoroutine(FadeAndLoadRoutine("ResultScene", 1.0f));
+    //}
 
     // リザルトからセレクトへのフェード
     public void OnClickStartButton4()
