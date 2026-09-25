@@ -43,6 +43,7 @@ public class TutorialManager : MonoBehaviour
     private float accumulatedCameraMove = 0f;
     private float accumulatedMoveTime = 0f;
     private float lookAtTimer = 0f;
+    private bool firstOrgelLookStarted = false;
     [Header("フェーズ7：オルゴール接近判定")]
     [SerializeField]
     private float phase7Distance = 8f;
@@ -269,11 +270,13 @@ public class TutorialManager : MonoBehaviour
             return;
         }
 
-        // 視線誘導中や完了後の重複実行を防ぐ
-        if (currentState != TutorialState.WaitOrgelSound)
+        if (firstOrgelLookStarted)
         {
             return;
         }
+
+        firstOrgelLookStarted = true;
+
 
         Debug.Log($"【Tutorial】{startedOrgel.name}が鳴ったので視線誘導します");
 

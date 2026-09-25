@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
-
+using UnityEngine.SceneManagement;
 // 修正(川谷)
 public class TutorialCaller : MonoBehaviour
 {
@@ -48,6 +48,26 @@ public class TutorialCaller : MonoBehaviour
     private const int Phase9PageIndex = 8;
     private bool waitingForPhase9Sound = false;
     private bool phase9Shown = false;
+
+    [Header("吹き出しの枠画像")]
+    [SerializeField]
+    private UnityEngine.UI.Image bubbleFrameImage;
+
+    [Header("ページ切り替え")]
+    [SerializeField]
+    private float pageChangeInterval = 0.1f;
+
+    [Header("チュートリアル終了時のシーン遷移")]
+    [SerializeField]
+    private CanvasGroup fadeCanvasGroup;
+    [SerializeField]
+    private float fadeOutDuration = 1f;
+    [SerializeField]
+    private string gameSceneName = "GameScene";
+    private Coroutine finishTutorialCoroutine;
+
+    private bool isChangingPage = false;
+    private Coroutine pageChangeCoroutine;
     public static bool CanUpdateSan
     {
         get;
@@ -56,6 +76,14 @@ public class TutorialCaller : MonoBehaviour
 
     private void Start()
     {
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.gameObject.SetActive(true);
+            fadeCanvasGroup.alpha = 0f;
+            fadeCanvasGroup.blocksRaycasts = false;
+            fadeCanvasGroup.interactable = false;
+        }
+
         IsTutorialActive = true;
         CanUpdateSan = false;
         currentPageIndex = 0;
@@ -102,6 +130,10 @@ public class TutorialCaller : MonoBehaviour
         // フェーズ1の処理
         if (currentPageIndex == 0 && !canAdvancePage)
         {
+            if (isChangingPage)
+            {
+                return;
+            }
             // 文字送り中なら、最初のクリックで全文表示
             if (tutorial.IsTyping)
             {
@@ -115,6 +147,10 @@ public class TutorialCaller : MonoBehaviour
 
                 tutorial.Hide();
                 HideAllPageUI();
+                if (OrgelManager.Instance != null)
+                {
+                    OrgelManager.Instance.StartOrgelSequence();
+                }
             }
             return;
         }
@@ -158,11 +194,11 @@ public class TutorialCaller : MonoBehaviour
             {
                 tutorialManager.ReturnLookFromTutorialClick();
             }
-            ShowPage(nextPageIndex);
+            StartPageChange(nextPageIndex);
         }
         else
         {
-            FinishTutorial();
+            StartFinishInterval();
         }
     }
 
@@ -178,6 +214,8 @@ public class TutorialCaller : MonoBehaviour
 
         HideAllPageUI();
 
+        
+        UpdateBubbleFrame(pageIndex);
         tutorial.StartTypewriter(pages[pageIndex]);
         if (pageIndex == Phase8PageIndex)
         {
@@ -231,8 +269,19 @@ public class TutorialCaller : MonoBehaviour
 
     private void FinishTutorial()
     {
-        tutorialFinished = true;
+        if (tutorialFinished)
+        {
+            return;
+        }
 
+        tutorialFinished = true;
+        isChangingPage = false;
+
+        if (pageChangeCoroutine != null)
+        {
+            StopCoroutine(pageChangeCoroutine);
+            pageChangeCoroutine = null;
+        }
         if (delayedUICoroutine != null)
         {
             StopCoroutine(delayedUICoroutine);
@@ -240,8 +289,12 @@ public class TutorialCaller : MonoBehaviour
         }
         HideAllPageUI();
         tutorial.Hide();
-        // 最後に通常ゲームへ切り替える
-        IsTutorialActive = false;
+        if (finishTutorialCoroutine != null)
+        {
+            StopCoroutine(finishTutorialCoroutine);
+        }
+
+        finishTutorialCoroutine = StartCoroutine(FadeOutAndLoadGameScene());
     }
 
     private IEnumerator ShowUIAfterTyping(int pageIndex)
@@ -386,6 +439,121 @@ public class TutorialCaller : MonoBehaviour
         phase9Shown = true;
 
         ShowPage(Phase9PageIndex);
+    }
+
+    private void StartPageChange(int nextPageIndex)
+    {
+        if (isChangingPage)
+        {
+            return;
+        }
+
+        if (pageChangeCoroutine != null)
+        {
+            StopCoroutine(pageChangeCoroutine);
+        }
+
+        pageChangeCoroutine = StartCoroutine(PageChangeRoutine(nextPageIndex));
+    }
+
+    private IEnumerator PageChangeRoutine(int nextPageIndex)
+    {
+        isChangingPage = true;
+
+        // 現在の吹き出しとページUIを一度消す
+        tutorial.Hide();
+        HideAllPageUI();
+
+        // ゲームが一時停止していても進む1秒待機
+        yield return new WaitForSecondsRealtime(pageChangeInterval);
+
+        ShowPage(nextPageIndex);
+
+        isChangingPage = false;
+        pageChangeCoroutine = null;
+    }
+
+    private void StartFinishInterval()
+    {
+        if (isChangingPage)
+        {
+            return;
+        }
+
+        if (pageChangeCoroutine != null)
+        {
+            StopCoroutine(pageChangeCoroutine);
+        }
+
+        pageChangeCoroutine =
+            StartCoroutine(FinishIntervalRoutine());
+    }
+
+    private IEnumerator FinishIntervalRoutine()
+    {
+        isChangingPage = true;
+
+        tutorial.Hide();
+        HideAllPageUI();
+
+        yield return new WaitForSecondsRealtime(pageChangeInterval);
+
+        pageChangeCoroutine = null;
+        isChangingPage = false;
+
+        FinishTutorial();
+    }
+
+    private void UpdateBubbleFrame(int pageIndex)
+    {
+        if (bubbleFrameImage == null)
+        {
+            return;
+        }
+
+        // フェーズ4・6・8では枠を非表示
+        bool hideFrame = pageIndex == 3 || pageIndex == 5 || pageIndex == 7;
+
+        bubbleFrameImage.enabled = !hideFrame;
+    }
+
+    private IEnumerator FadeOutAndLoadGameScene()
+    {
+        if (string.IsNullOrWhiteSpace(gameSceneName))
+        {
+            yield break;
+        }
+
+        if (fadeCanvasGroup == null)
+        {
+            IsTutorialActive = false;
+            SceneManager.LoadScene(gameSceneName);
+            yield break;
+        }
+
+        fadeCanvasGroup.gameObject.SetActive(true);
+        fadeCanvasGroup.blocksRaycasts = true;
+        fadeCanvasGroup.interactable = true;
+        fadeCanvasGroup.alpha = 0f;
+
+        float timer = 0f;
+
+        while (timer < fadeOutDuration)
+        {
+            timer += Time.unscaledDeltaTime;
+
+            float progress = Mathf.Clamp01(timer / Mathf.Max(0.01f, fadeOutDuration));
+
+            fadeCanvasGroup.alpha = progress;
+
+            yield return null;
+        }
+
+        fadeCanvasGroup.alpha = 1f;
+
+        IsTutorialActive = false;
+
+        SceneManager.LoadScene(gameSceneName);
     }
     private void Awake()
     {
