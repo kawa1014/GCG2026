@@ -24969,13 +24969,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map3DController
   targetCamera: {fileID: 1913414987}
-  closedOffset: {x: 0, y: -1.5, z: -2}
+  closedOffset: {x: 0, y: -1.5, z: 1.4}
   openOffset: {x: 0, y: -0.13, z: 1.6}
   rotationOffset: {x: 0, y: 0, z: 0}
   openSpeed: 5
   closeSpeed: 3
   disableWhenClosed: 1
   closeThreshold: 0.001
+  rotateKey: 114
+  verticalRotationOffset: {x: 0, y: 0, z: 90}
 --- !u!4 &1614021216
 Transform:
   m_ObjectHideFlags: 0
