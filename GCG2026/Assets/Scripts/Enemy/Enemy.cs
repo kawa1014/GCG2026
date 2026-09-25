@@ -41,6 +41,28 @@ public class Enemy : MonoBehaviour
     [Tooltip("プレイヤーとの距離がこの値以下になったらゲームオーバー(捕獲)")]
     public float catchDistance = 1.5f;
 
+    // ==========================================
+    // 【追加】出現・消滅に関する設定項目(川谷)
+    // ==========================================
+    [Header("出現・消滅設定")]
+    [Tooltip("出現判定を行う間隔(秒)")]
+    public float spawnCheckInterval = 2.0f;
+    private float spawnCheckTimer = 0.0f;
+    [Tooltip("ゲーム時間が半分を過ぎた初期の出現確率(％)")]
+    public float bassSpawnChance = 10.0f;
+    [Tooltip("時間が経過するにつれて1秒あたりに上がる確率の増加量")]
+    public float spawnChanceIncreaseRate = 2.0f;
+    private float currentSpawnChance;
+    private bool hasSpawned = false; // フィールドに出現したか
+
+    [Tooltip("フィールドに出現してから確実に存在する時間(秒)")]
+    public float guaranteadAliveTime = 10.0f;
+    private float aliveTimer = 0.0f;
+    [Tooltip("消滅判定を行う間隔(秒)")]
+    public float disappearanceCheckInterval = 1.0f;
+    private float disappearranceTimer = 0.0f;
+    // ==========================================    
+
     [Header("エフェクト・サウンド")]
     [Tooltip("常に足元に出る煙のエフェクト")]
     public ParticleSystem smokeEffect;
@@ -51,13 +73,24 @@ public class Enemy : MonoBehaviour
     [Tooltip("追跡時に鳴らすSE")]
     public AudioSource chaseAudioSource;
 
-    void Start()
+    // 【追加】アニメーション制御用(川谷)
+    [Header("アニメーション制御")]
+    public Animator animator;
+    
+    private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-
-        //エネミーの見た目
         enemyRenderer = GetComponentInChildren<Renderer>();
+    }
 
+    //  【追加】オブジェクトが有効化されるたびに呼ばれる(直立不動対策)
+    private void OnEnable()
+    {
+        InitializeEnemy();
+    }
+
+    void Start()
+    {
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -73,7 +106,6 @@ public class Enemy : MonoBehaviour
 
         if (waypoints == null || waypoints.Length == 0)
         {
-            // "Waypoint"タグを持つ全オブジェクトを取得
             GameObject[] wpObjs = GameObject.FindGameObjectsWithTag("Waypoint");
 
             if (wpObjs.Length > 0)
@@ -83,24 +115,14 @@ public class Enemy : MonoBehaviour
                 {
                     waypoints[i] = wpObjs[i].transform;
                 }
-                Debug.Log($"[システム] Waypointを自動で {wpObjs.Length} 個取得しました。");
-            }
-            else
-            {
-                Debug.LogWarning("[システム] Waypointが一つも設定されておらず、タグからも見つかりませんでした。");
             }
         }
+    }
 
-        //最初の目的地を設定
-        if (waypoints != null && waypoints.Length > 0)
-        {
-            agent.SetDestination(waypoints[currentWaypointIndex].position);
-        }
+    // 【追加】エネミーの初期化と出現位置ワープ処理(川谷)
+    private void InitializeEnemy()
+    {
 
-        //ゲーム開始時煙だしっぱ
-        if(smokeEffect != null) smokeEffect.Play();
-        //火の粉は止める
-        if(fireEffect != null) fireEffect.Stop();
     }
 
     void Update()
@@ -145,9 +167,17 @@ public class Enemy : MonoBehaviour
         switch (currentState)
         {
             case State.walk:
-                //エフェクト火の粉を止める
-                if (fireEffect != null && fireEffect.isPlaying) fireEffect.Stop();
+                // エフェクト火の粉を止める（すでに発生したパーティクルも即座に消す場合は引数を追加）
+                if (fireEffect != null && fireEffect.isPlaying)
+                    fireEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
                 if (chaseAudioSource != null && chaseAudioSource.isPlaying) chaseAudioSource.Stop();
+
+                // 【修正】燃えるエフェクトを非表示にする処理を追加
+                if (dissolveEffect != null && dissolveEffect.activeSelf) dissolveEffect.SetActive(false);
+
+                // 【修正】徘徊中は煙エフェクトを再生する
+                if (smokeEffect != null && !smokeEffect.isPlaying) smokeEffect.Play();
 
                 //agent.speed = 2.0f; //徘徊時の速度を設定
                 SetColor(Color.green);//徘徊時は緑色
@@ -205,61 +235,7 @@ public class Enemy : MonoBehaviour
         agent.SetDestination(player.position);
     }
 
-    //3.視界のチェック判定
-    //private void CheckVision()
-    //{
-    //    if (player == null)
-    //    {
-    //        Debug.LogWarning("[索敵エラー] player変数が設定されていません！");
-    //        return;
-    //    }
-
-    //    //プレイヤーとの距離を測定
-    //    float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-    //    //距離が視界の半径内か
-    //    if (distanceToPlayer <= visionRadius)
-    //    {
-    //        Vector3 rayOrigin = transform.position + Vector3.up * 1.0f + transform.forward * 0.5f;
-    //        Vector3 targetPos = player.position + Vector3.up * 1.0f; // プレイヤーの胸の高さ
-
-    //        //プレイヤーへの方向ベクトルを計算
-    //        Vector3 dirToPlayer = (targetPos - rayOrigin).normalized;
-    //        //自分の正面とプレイヤーへの方向の角度を計算
-    //        float angle = Vector3.Angle(transform.forward, dirToPlayer);
-    //        //角度が視界の半分以内か
-    //        if (angle <= visionAngle / 2f)
-    //        {
-    //            //壁越しに見えないようにレイキャストで確認
-    //            RaycastHit hit;
-    //            if (Physics.Raycast(rayOrigin, dirToPlayer, out hit, visionRadius))
-    //            {
-    //                Debug.Log($"[索敵デバッグ] Rayが当たった物: {hit.collider.gameObject.name} (Tag: {hit.collider.tag})");
-
-    //                if (hit.collider.CompareTag("Player"))
-    //                {
-    //                    //プレイヤーを見つけたら追跡状態に遷移
-    //                    if (currentState != State.chase)
-    //                    {
-    //                        Debug.Log("プレイヤーを発見！追跡開始！");
-    //                        currentState = State.chase;
-    //                    }
-    //                    return; //プレイヤーを見つけたら終了
-
-    //                }
-    //            }
-    //        }
-    //    }
-    //    //プレイヤーが見えない場合は徘徊状態に戻る
-    //    if (currentState == State.chase && distanceToPlayer > visionRadius)
-    //    {
-    //        Debug.Log($"[距離デバッグ] 距離が{distanceToPlayer:F1}mのため、プレイヤーを見失った。徘徊に戻る。");
-    //        Debug.Log("プレイヤーを見失った。徘徊に戻る。");
-    //        currentState = State.walk;
-    //        //目指していた徘徊ポイントへ戻る
-    //        agent.SetDestination(waypoints[currentWaypointIndex].position);
-    //    }
-    //}
+   
     private void CheckVision()
     { 
         if (player == null)
@@ -305,6 +281,9 @@ public class Enemy : MonoBehaviour
                     Debug.Log("プレイヤーを発見！追跡開始！");
                     currentState = State.chase;
                     lostSightTimer = 0f; //追跡開始時にタイマーをリセット
+
+                    // 【追加】チェイス開始時の遷移アニメ―ションを再生
+                    animator.SetBool("IsChasing", true); // 追跡中フラグをON
                 }
             }
         }
@@ -331,6 +310,9 @@ public class Enemy : MonoBehaviour
 
                     //目指していた徘徊ポイントへ戻る
                     agent.SetDestination(waypoints[currentWaypointIndex].position);
+
+                    // 【追加】追跡終了、徘徊状態に戻る
+                    animator.SetBool("IsChasing", false); // 追跡中フラグOFF
                 }
                 
             }

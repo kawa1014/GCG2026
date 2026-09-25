@@ -75,6 +75,17 @@ public class Map3DController : MonoBehaviour
     /// </summary>
     private bool isOpen;
 
+    [Tooltip("マップ表示中に、横長・縦長を切り替えるキーです。")]
+    [SerializeField]
+    private KeyCode rotateKey = KeyCode.R;
+
+    [Tooltip("縦長表示の角度です。基本はX=0、Y=0、Z=90に設定します。")]
+    [SerializeField]
+    private Vector3 verticalRotationOffset = new Vector3(0f, 0f, 90f);
+
+    // マップを縦長で表示しているかどうかです。
+    private bool isVertical;
+
     /// <summary>
     /// 初期設定を行います。
     /// </summary>
@@ -119,8 +130,14 @@ public class Map3DController : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        // Tabを押している間、マップを表示します。
         isOpen = Input.GetKey(KeyCode.Tab);
 
+        // 表示中にRを押すたび、横長・縦長を切り替えます。
+        if (isOpen && Input.GetKeyDown(rotateKey))
+        {
+            isVertical = !isVertical;
+        }
         Vector3 targetOffset = isOpen
             ? openOffset
             : closedOffset;
@@ -183,8 +200,10 @@ public class Map3DController : MonoBehaviour
 
         // カメラと同じ方向を向かせ、モデル固有の角度を追加します。
         transform.rotation =
-            cameraTransform.rotation *
-            Quaternion.Euler(rotationOffset);
+      cameraTransform.rotation *
+      Quaternion.Euler(
+          isVertical ? verticalRotationOffset : rotationOffset
+      );
     }
 
     /// <summary>

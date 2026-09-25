@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 1035b97b14672bb40862c9889ff0625a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 30
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1035b97b14672bb40862c9889ff0625a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 30
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1035b97b14672bb40862c9889ff0625a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 20
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1035b97b14672bb40862c9889ff0625a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -140,6 +140,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClockController
   hourHand: {fileID: 1912844259633271108}
   minuteHand: {fileID: 6111969735628758525}
+  startHourAngle: 270
+  minuteRotations: 3
 --- !u!1 &8349885478644304303 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1980595251299706172, guid: 1035b97b14672bb40862c9889ff0625a, type: 3}
