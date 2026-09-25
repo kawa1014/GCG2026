@@ -81,6 +81,10 @@ public class GameManager : MonoBehaviour
     private bool _isGameOver = false; ///< ゲームオーバーフラグ
     private bool _isGameClear = false; ///< ゲームクリアフラグ
 
+    [Header("クリア演出")]
+    [Tooltip("クリアムービーを制御するスクリプト")]
+    public ClearMovieController MovieController;
+
     /// <summary>
     /// 外部(他のスクリプト)からゲームオーバーかどうかを確認するためのプロパティ
     /// </summary>
@@ -206,15 +210,16 @@ public class GameManager : MonoBehaviour
         _isGameClear = true;
         Debug.Log("<color=cyan>【Game Clear】朝まで生き延びた！</color>");
 
-        //if (TimeText != null)
-        //{
-        //    TimeText.text = "SURVIVED";
-        //}
-
-        // 3秒後にQuitGameメソッドを実行してゲームを閉じる
-        //Invoke(nameof(QuitGame), 3.0f);
-
-        // 今後ここでクリア画面を表示する処理を作る
+        // ムービー演出を開始する
+        if (MovieController != null)
+        {
+            MovieController.StartClearMovie();
+        }
+        else
+        {
+            // コントローラーが設定されていない場合は保険でリザルトへ
+            UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
+        }
     }
 
     /// <summary>
