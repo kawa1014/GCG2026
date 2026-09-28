@@ -47,7 +47,9 @@ public class OrgelManager : MonoBehaviour
     /// </summary>
     [Tooltip("オルゴールが抽選されてから鳴るまでの最大待機時間(秒)")]
     public float MaxWaitTime = 15.0f;
-
+    [Header("チュートリアル設定")]
+    [SerializeField]private bool waitForTutorialPhase1 = true;
+    private bool _orgelSequenceStarted = false;
     /// <summary>
     /// 現在鳴っているオルゴールの数。
     /// GameManagerが恐怖度を計算するためにここを読み取ります。
@@ -119,9 +121,9 @@ public class OrgelManager : MonoBehaviour
         _allOrgels = FindObjectsByType<OrgelSystem>(FindObjectsSortMode.None).ToList();
 
         // 最初のオルゴールを抽選
-        if (_allOrgels.Count > 0)
+        if (_allOrgels.Count > 0 && !waitForTutorialPhase1)
         {
-            ChooseNextOrgel();
+            StartOrgelSequence();
         }
     }
 
@@ -145,7 +147,7 @@ public class OrgelManager : MonoBehaviour
         CurrentOrgelPlayingCount = Mathf.Max(0, CurrentOrgelPlayingCount);
 
         // ゲームオーバーでなければ、リストの「次のオルゴール」のカウントダウンを始める
-        if (GameManager.Instance != null && !GameManager.Instance.IsGameOver)
+        if (_orgelSequenceStarted && GameManager.Instance != null && !GameManager.Instance.IsGameOver)
         {
             ChooseNextOrgel();
         }
@@ -209,6 +211,24 @@ public class OrgelManager : MonoBehaviour
         CurrentTargetOrgel = nextOrgel;
 
         Debug.Log($"<color=green>【OrgelManager】次弾装填：{nextOrgel.gameObject.name} が抽選されました（{waitTime:F1}秒後に鳴ります）。</color>");
+    }
+
+    public void StartOrgelSequence()
+    {
+        // 二重開始を防止
+        if (_orgelSequenceStarted)
+        {
+            return;
+        }
+
+        if (_allOrgels == null || _allOrgels.Count == 0)
+        {
+            return;
+        }
+
+        _orgelSequenceStarted = true;
+
+        ChooseNextOrgel();
     }
 
     /// <summary>

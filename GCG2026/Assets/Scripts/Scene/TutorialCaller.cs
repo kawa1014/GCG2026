@@ -1,47 +1,567 @@
 using UnityEngine;
-
+using UnityEngine.Events;
+using System.Collections;
+using UnityEngine.SceneManagement;
 // 修正(川谷)
 public class TutorialCaller : MonoBehaviour
 {
-    public TutorialText tutorial;
+    [Header("吹き出し")]
+    [SerializeField]
+    private TutorialText tutorial;
 
+    [Header("各ページの文章")]
     [Tooltip("ここに各ページの文章を入力します")]
-    [TextArea(3, 5)] // インスペクターで文章を改行して入力しやすくする便利機能
-    public string[] pages;
+    [TextArea(3, 5)]
+    [SerializeField]
+    private string[] pages;
 
-    // 追加(川谷)現在何ページ目を表示しているかを記憶する変数
-    private int currentPageIndex = 0;
+    [Header("各ページで表示するUI")]
+    [Tooltip("文章と同じ番号のUIが表示されます")]
+    [SerializeField]
+    private GameObject[] pageUIs;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [Header("視線誘導")]
+    [SerializeField]
+    private TutorialManager tutorialManager;
+    private int currentPageIndex;
+
+    private bool tutorialFinished;
+    private Coroutine delayedUICoroutine;
+    private const int Phase4PageIndex = 3;
+    private bool canAdvancePage = false;
+    private bool phase1Hidden = false;
+
+    [Header("フェーズ3 SAN値UI")]
+    [SerializeField]
+    private GameObject sanTutorialUI;
+
+    [SerializeField]private SanTutorialPreview sanTutorialPreview;
+    private const int Phase3PageIndex = 2;
+
+    [Header("通常のSAN値UI")]
+    [SerializeField]
+    private GameObject sanUI;
+    private bool phase7Shown = false;
+    private bool waitingForPhase7 = false;
+    private const int Phase8PageIndex = 7;
+    private bool waitingForOrgelStop = false;
+    private const int Phase9PageIndex = 8;
+    private bool waitingForPhase9Sound = false;
+    private bool phase9Shown = false;
+
+    [Header("吹き出しの枠画像")]
+    [SerializeField]
+    private UnityEngine.UI.Image bubbleFrameImage;
+
+    [Header("ページ切り替え")]
+    [SerializeField]
+    private float pageChangeInterval = 0.1f;
+
+    [Header("チュートリアル終了時のシーン遷移")]
+    [SerializeField]
+    private CanvasGroup fadeCanvasGroup;
+    [SerializeField]
+    private float fadeOutDuration = 1f;
+    [SerializeField]
+    private string gameSceneName = "GameScene";
+    private Coroutine finishTutorialCoroutine;
+
+    private bool isChangingPage = false;
+    private Coroutine pageChangeCoroutine;
+    public static bool CanUpdateSan
     {
-        // ページが1つ以上設定されていれば、最初のページを表示
-        if (pages.Length > 0)
+        get;
+        private set;
+    }
+
+    private void Start()
+    {
+        if (fadeCanvasGroup != null)
         {
-            tutorial.StartTypewriter(pages[0]);
+            fadeCanvasGroup.gameObject.SetActive(true);
+            fadeCanvasGroup.alpha = 0f;
+            fadeCanvasGroup.blocksRaycasts = false;
+            fadeCanvasGroup.interactable = false;
+        }
+
+        IsTutorialActive = true;
+        CanUpdateSan = false;
+        currentPageIndex = 0;
+        tutorialFinished = false;
+
+        HideAllPageUI();
+        if (sanUI != null)
+        {
+            sanUI.SetActive(false);
+        }
+        if (pages != null && pages.Length > 0)
+        {
+            ShowPage(0);
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        // 左クリックで次のページへ
+        if (tutorialFinished)
+        {
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
-            currentPageIndex++;
+            OnClick();
+        }
+    }
 
-            if (currentPageIndex < pages.Length)
+    private void OnEnable()
+    {
+        OrgelSystem.OnOrgelStarted += HandleOrgelStarted;
+        OrgelSystem.OnOrgelStopped += HandleOrgelStopped;
+    }
+
+    private void OnDisable()
+    {
+        OrgelSystem.OnOrgelStarted -= HandleOrgelStarted;
+        OrgelSystem.OnOrgelStopped -= HandleOrgelStopped;
+    }
+
+    private void OnClick()
+    {
+        // フェーズ1の処理
+        if (currentPageIndex == 0 && !canAdvancePage)
+        {
+            if (isChangingPage)
             {
-                // 次のページの文章を渡す
-                tutorial.StartTypewriter(pages[currentPageIndex]);
+                return;
+            }
+            // 文字送り中なら、最初のクリックで全文表示
+            if (tutorial.IsTyping)
+            {
+                tutorial.CompleteTypewriter();
+                return;
+            }
+            // 全文表示後のクリックで吹き出しを消す
+            if (!phase1Hidden)
+            {
+                phase1Hidden = true;
+
+                tutorial.Hide();
+                HideAllPageUI();
+                if (OrgelManager.Instance != null)
+                {
+                    OrgelManager.Instance.StartOrgelSequence();
+                }
+            }
+            return;
+        }
+
+        // フェーズ2以降の文字送り中
+        if (tutorial.IsTyping)
+        {
+            tutorial.CompleteTypewriter();
+            return;
+        }
+
+        if (currentPageIndex == Phase8PageIndex && waitingForOrgelStop)
+        {
+            Debug.Log("オルゴールを止めるまで次へ進めません");
+            return;
+        }
+
+        if (waitingForPhase9Sound)
+        {
+            return;
+        }
+
+        // 全文表示後なら次のページへ
+        int nextPageIndex = currentPageIndex + 1;
+        const int phase7PageIndex = 6;
+
+        // 次がフェーズ7なら、近づくまで吹き出しを非表示にして待つ
+        if (nextPageIndex == phase7PageIndex)
+        {
+            waitingForPhase7 = true;
+
+            tutorial.Hide();
+            HideAllPageUI();
+
+            return;
+        }
+
+        if (nextPageIndex < pages.Length)
+        {
+            if (currentPageIndex == 1 && tutorialManager != null)
+            {
+                tutorialManager.ReturnLookFromTutorialClick();
+            }
+            StartPageChange(nextPageIndex);
+        }
+        else
+        {
+            StartFinishInterval();
+        }
+    }
+
+    private void ShowPage(int pageIndex)
+    {
+        currentPageIndex = pageIndex;
+
+        if (delayedUICoroutine != null)
+        {
+            StopCoroutine(delayedUICoroutine);
+            delayedUICoroutine = null;
+        }
+
+        HideAllPageUI();
+
+        
+        UpdateBubbleFrame(pageIndex);
+        tutorial.StartTypewriter(pages[pageIndex]);
+        if (pageIndex == Phase8PageIndex)
+        {
+            waitingForOrgelStop = true;
+            ShowPageUI(pageIndex);
+
+            Debug.Log("【Tutorial】フェーズ8を表示しました");
+            return;
+        }
+        if (pageIndex == Phase3PageIndex)
+        {
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.StartSanSystemFromPhase3();
             }
             else
             {
-                // 全ページ終わった時の処理(吹き出しを見えなくする)
-                tutorial.bubbleGroup.alpha = 0;
+                Debug.LogError("GameManager.Instanceがありません" );
             }
-
+            return;
         }
 
+        if (pageIndex == Phase4PageIndex)
+        {
+            // フェーズ4だけ、全文表示後に画像を表示
+            delayedUICoroutine = StartCoroutine(ShowUIAfterTyping(pageIndex));
+            return;
+        }
+           // ほかのページは文章と同時にUIを表示
+           ShowPageUI(pageIndex);
+    }
+
+    private void HideAllPageUI()
+    {
+        if (pageUIs != null)
+        {
+            foreach (GameObject pageUI in pageUIs)
+            {
+                if (pageUI != null)
+                {
+                    pageUI.SetActive(false);
+                }
+            }
+        }
+
+        if (sanTutorialUI != null)
+        {
+            sanTutorialUI.SetActive(false);
+        }
+    }
+
+    private void FinishTutorial()
+    {
+        if (tutorialFinished)
+        {
+            return;
+        }
+
+        tutorialFinished = true;
+        isChangingPage = false;
+
+        if (pageChangeCoroutine != null)
+        {
+            StopCoroutine(pageChangeCoroutine);
+            pageChangeCoroutine = null;
+        }
+        if (delayedUICoroutine != null)
+        {
+            StopCoroutine(delayedUICoroutine);
+            delayedUICoroutine = null;
+        }
+        HideAllPageUI();
+        tutorial.Hide();
+        if (finishTutorialCoroutine != null)
+        {
+            StopCoroutine(finishTutorialCoroutine);
+        }
+
+        finishTutorialCoroutine = StartCoroutine(FadeOutAndLoadGameScene());
+    }
+
+    private IEnumerator ShowUIAfterTyping(int pageIndex)
+    {
+        // 文字送りが終了するまで待つ
+        while (tutorial.IsTyping)
+        {
+            yield return null;
+        }
+
+        // 待っている間に別ページへ移動していたら表示しない
+        if (currentPageIndex != pageIndex)
+        {
+            yield break;
+        }
+
+        ShowPageUI(pageIndex);
+        delayedUICoroutine = null;
+    }
+
+    private void ShowPageUI(int pageIndex)
+    {
+        if (pageUIs == null || pageIndex < 0 || pageIndex >= pageUIs.Length ||
+            pageUIs[pageIndex] == null)
+        {
+            return;
+        }
+
+        GameObject currentUI = pageUIs[pageIndex];
+        currentUI.SetActive(true);
+
+        // SAN値UIの場合はプレビューを開始
+        SanTutorialPreview sanPreview = currentUI.GetComponentInChildren<SanTutorialPreview>(true);
+
+        if (sanPreview != null)
+        {
+            sanPreview.PlayPreview();
+        }
+    }
+
+    public void ShowPhase2()
+    {
+        // PagesのElement 1がフェーズ2
+        const int phase2PageIndex = 1;
+
+        if (pages == null || pages.Length <= phase2PageIndex)
+        {
+            return;
+        }
+        phase1Hidden = false;
+        canAdvancePage = true;
+        ShowPage(phase2PageIndex);
+    }
+    public void ShowPhase7()
+    {
+        const int phase7PageIndex = 6;
+        if (phase7Shown)
+        {
+            return;
+        }
+        if (!waitingForPhase7)
+        {
+            return;
+        }
+        if (pages == null || pages.Length <= phase7PageIndex)
+        {
+            return;
+        }
+
+        phase7Shown = true;
+        waitingForPhase7 = false;
+        ShowPage(phase7PageIndex);
+    }
+    private void ShowSanTutorial()
+    {
+        if (sanTutorialUI == null)
+        {
+            return;
+        }
+
+        if (sanTutorialPreview == null)
+        {
+            return;
+        }
+
+        // SAN値UIを表示
+        sanTutorialUI.SetActive(true);
+
+        sanTutorialPreview.PlayPreview();
+    }
+
+    private void HandleOrgelStopped(OrgelSystem stoppedOrgel)
+    {
+        // フェーズ8以外で止まった場合は無視
+        if (currentPageIndex != Phase8PageIndex)
+        {
+            return;
+        }
+
+        if (!waitingForOrgelStop)
+        {
+            return;
+        }
+
+        if (stoppedOrgel == null)
+        {
+            return;
+        }
+
+        waitingForOrgelStop = false;
+        // フェーズ8の吹き出しとUIを消す
+        tutorial.Hide();
+        HideAllPageUI();
+
+        // 次のオルゴールが鳴るまで待つ
+        waitingForPhase9Sound = true;
+    }
+
+    private void HandleOrgelStarted(OrgelSystem startedOrgel)
+    {
+        if (!waitingForPhase9Sound)
+        {
+            return;
+        }
+
+        if (phase9Shown)
+        {
+            return;
+        }
+
+        if (startedOrgel == null)
+        {
+            return;
+        }
+
+        if (pages == null || pages.Length <= Phase9PageIndex)
+        {
+            return;
+        }
+
+        waitingForPhase9Sound = false;
+        phase9Shown = true;
+
+        ShowPage(Phase9PageIndex);
+    }
+
+    private void StartPageChange(int nextPageIndex)
+    {
+        if (isChangingPage)
+        {
+            return;
+        }
+
+        if (pageChangeCoroutine != null)
+        {
+            StopCoroutine(pageChangeCoroutine);
+        }
+
+        pageChangeCoroutine = StartCoroutine(PageChangeRoutine(nextPageIndex));
+    }
+
+    private IEnumerator PageChangeRoutine(int nextPageIndex)
+    {
+        isChangingPage = true;
+
+        // 現在の吹き出しとページUIを一度消す
+        tutorial.Hide();
+        HideAllPageUI();
+
+        // ゲームが一時停止していても進む1秒待機
+        yield return new WaitForSecondsRealtime(pageChangeInterval);
+
+        ShowPage(nextPageIndex);
+
+        isChangingPage = false;
+        pageChangeCoroutine = null;
+    }
+
+    private void StartFinishInterval()
+    {
+        if (isChangingPage)
+        {
+            return;
+        }
+
+        if (pageChangeCoroutine != null)
+        {
+            StopCoroutine(pageChangeCoroutine);
+        }
+
+        pageChangeCoroutine =
+            StartCoroutine(FinishIntervalRoutine());
+    }
+
+    private IEnumerator FinishIntervalRoutine()
+    {
+        isChangingPage = true;
+
+        tutorial.Hide();
+        HideAllPageUI();
+
+        yield return new WaitForSecondsRealtime(pageChangeInterval);
+
+        pageChangeCoroutine = null;
+        isChangingPage = false;
+
+        FinishTutorial();
+    }
+
+    private void UpdateBubbleFrame(int pageIndex)
+    {
+        if (bubbleFrameImage == null)
+        {
+            return;
+        }
+
+        // フェーズ4・6・8では枠を非表示
+        bool hideFrame = pageIndex == 3 || pageIndex == 5 || pageIndex == 7;
+
+        bubbleFrameImage.enabled = !hideFrame;
+    }
+
+    private IEnumerator FadeOutAndLoadGameScene()
+    {
+        if (string.IsNullOrWhiteSpace(gameSceneName))
+        {
+            yield break;
+        }
+
+        if (fadeCanvasGroup == null)
+        {
+            IsTutorialActive = false;
+            SceneManager.LoadScene(gameSceneName);
+            yield break;
+        }
+
+        fadeCanvasGroup.gameObject.SetActive(true);
+        fadeCanvasGroup.blocksRaycasts = true;
+        fadeCanvasGroup.interactable = true;
+        fadeCanvasGroup.alpha = 0f;
+
+        float timer = 0f;
+
+        while (timer < fadeOutDuration)
+        {
+            timer += Time.unscaledDeltaTime;
+
+            float progress = Mathf.Clamp01(timer / Mathf.Max(0.01f, fadeOutDuration));
+
+            fadeCanvasGroup.alpha = progress;
+
+            yield return null;
+        }
+
+        fadeCanvasGroup.alpha = 1f;
+
+        IsTutorialActive = false;
+
+        SceneManager.LoadScene(gameSceneName);
+    }
+    private void Awake()
+    {
+        IsTutorialActive = true;
+    }
+    public static bool IsTutorialActive
+    {
+        get;
+        private set;
     }
 }

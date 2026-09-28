@@ -169,6 +169,16 @@ public class NewMonoBehaviourScript : MonoBehaviour
         StartCoroutine(FadeAndLoadRoutine("TitleScene", 1.0f));
     }
 
+    public void OnClickStartButton8()
+    {
+        StartCoroutine(FadeAndLoad8());
+    }
+    private IEnumerator FadeAndLoad8()
+    {
+        yield return FadeOut(1.0f);
+        SceneManager.LoadScene("MasterUp");
+    }
+
     public void FadeAndLoadScene(string sceneName, float duration = 1.0f)
     {
         StartCoroutine(FadeAndLoadRoutine(sceneName, duration));
