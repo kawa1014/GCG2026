@@ -190,11 +190,7 @@ public class GameManager : MonoBehaviour
         // チュートリアル中はSAN最大でもゲームオーバーにしない
         if (!TutorialCaller.IsTutorialActive && _currentFear >= MaxFear)
         {
-<<<<<<< HEAD
             GameOver("恐怖度が限界に達した", GameOverCause.SanityMax);
-=======
-            GameOver("恐怖度が限界に達した" );
->>>>>>> HappyBirthday/Morita
         }
     }
 
@@ -266,8 +262,8 @@ public class GameManager : MonoBehaviour
 
         // 恐怖度の割合(0.0～1.0)を計算し、CanvasGroupのAlphaに直接セットする
         // 恐怖度0で完全に透明、恐怖度100で真っ赤になります
-       // float fearRatio = _currentFear / MaxFear;
-       // FearVignetteGroup.alpha = fearRatio;
+        // float fearRatio = _currentFear / MaxFear;
+        // FearVignetteGroup.alpha = fearRatio;
 
         // SANUI更新
         UpdateSanUI();

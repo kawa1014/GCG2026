@@ -1578,6 +1578,8 @@ MonoBehaviour:
   closeSpeed: 3
   disableWhenClosed: 1
   closeThreshold: 0.001
+  rotateKey: 114
+  verticalRotationOffset: {x: 0, y: 0, z: 90}
 --- !u!4 &37917967
 Transform:
   m_ObjectHideFlags: 0
@@ -20901,11 +20903,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f7cb344ba7d55843bef8a6e87cfb529, type: 3}
---- !u!4 &505545638 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-  m_PrefabInstance: {fileID: 1419918481}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &505905503
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31412,11 +31409,11 @@ MonoBehaviour:
   _gameClearSceneName: GameclearScene
   _gameClearTransitionDelay: 1
   _gameClearFadeOutDuration: 1
+  _isGameClearPlayerStop: 1
   _gameOverSceneName: GameOverScene
   _gameOverTransitionDelay: 3
   _gameOverFadeOutDuration: 1
   _stopTargetPlayer: {fileID: 0}
-  _isGameClearPlayerStop: 1
   _isGameOverPlayerStop: 1
 --- !u!114 &752445676
 MonoBehaviour:
@@ -32039,6 +32036,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7ad8a9d7c214fef409842b8ac25ea6bd, type: 3}
   - {fileID: 21300000, guid: f856c3fb16477e846a50eaef608ebd83, type: 3}
   SanChangeInterval: 1
+  sanUIRoot: {fileID: 0}
+  MovieController: {fileID: 0}
 --- !u!4 &752445677
 Transform:
   m_ObjectHideFlags: 0
@@ -39259,59 +39258,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f7cb344ba7d55843bef8a6e87cfb529, type: 3}
---- !u!1 &910323485
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910323487}
-  - component: {fileID: 910323486}
-  m_Layer: 0
-  m_Name: PlayerMap (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &910323486
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910323485}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70b5e06da6f7ded448594d42ac1c5b08, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Map3DController
-  targetCamera: {fileID: 2141048104}
-  closedOffset: {x: 0, y: -1.5, z: -2}
-  openOffset: {x: 0, y: -0.13, z: 1.6}
-  rotationOffset: {x: 0, y: 0, z: 0}
-  openSpeed: 5
-  closeSpeed: 3
-  disableWhenClosed: 1
-  closeThreshold: 0.001
---- !u!4 &910323487
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910323485}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4973.92, y: 3.64, z: 3069.91}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 505545638}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &911479507
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40177,6 +40123,7 @@ MonoBehaviour:
   ExclusionRadius: 30
   MinWaitTime: 5
   MaxWaitTime: 15
+  waitForTutorialPhase1: 1
 --- !u!4 &941693836
 Transform:
   m_ObjectHideFlags: 0
@@ -59717,63 +59664,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f7cb344ba7d55843bef8a6e87cfb529, type: 3}
---- !u!1001 &1419918481
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 910323487}
-    m_Modifications:
-    - target: {fileID: 2398249987370749380, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_Name
-      value: map_select_clear
-      objectReference: {fileID: 0}
-    - target: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 3027433818847041406, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 90
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 646d25c4f6bbc3345ae26ed67ffee44a, type: 3}
 --- !u!1001 &1421556135
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -87693,11 +87583,11 @@ MonoBehaviour:
   _gameClearSceneName: GameclearScene
   _gameClearTransitionDelay: 1
   _gameClearFadeOutDuration: 1
+  _isGameClearPlayerStop: 1
   _gameOverSceneName: GameOverScene
   _gameOverTransitionDelay: 3
   _gameOverFadeOutDuration: 1
   _stopTargetPlayer: {fileID: 1849240967}
-  _isGameClearPlayerStop: 1
   _isGameOverPlayerStop: 1
 --- !u!114 &2111484500
 MonoBehaviour:
@@ -88320,6 +88210,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7ad8a9d7c214fef409842b8ac25ea6bd, type: 3}
   - {fileID: 21300000, guid: f856c3fb16477e846a50eaef608ebd83, type: 3}
   SanChangeInterval: 1
+  sanUIRoot: {fileID: 0}
+  MovieController: {fileID: 0}
 --- !u!4 &2111484501
 Transform:
   m_ObjectHideFlags: 0
@@ -90962,7 +90854,6 @@ SceneRoots:
   - {fileID: 1951066268}
   - {fileID: 1487339226}
   - {fileID: 606623204}
-  - {fileID: 910323487}
   - {fileID: 656192114}
   - {fileID: 55199727}
   - {fileID: 2111484501}
