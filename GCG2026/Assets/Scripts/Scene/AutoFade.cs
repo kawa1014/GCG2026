@@ -17,7 +17,7 @@ public class AutoFade : MonoBehaviour
 
     void Start()
     {
-        Invoke(nameof(StartFade), _executeDelay);
+        //Invoke(nameof(StartFade), _executeDelay);
     }
 
     private void StartFade()
