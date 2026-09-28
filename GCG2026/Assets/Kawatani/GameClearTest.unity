@@ -18749,6 +18749,7 @@ MonoBehaviour:
   DoorStandPosition: {fileID: 866219204}
   OutsidePosition: {fileID: 116333736}
   WalkSpeed: 2
+  ClearSceneName: GameclearScene
 --- !u!4 &1156972174
 Transform:
   m_ObjectHideFlags: 0
@@ -28711,11 +28712,11 @@ MonoBehaviour:
   _gameClearSceneName: GameclearScene
   _gameClearTransitionDelay: 1
   _gameClearFadeOutDuration: 1
+  _isGameClearPlayerStop: 1
   _gameOverSceneName: GameOverScene
   _gameOverTransitionDelay: 3
   _gameOverFadeOutDuration: 1
   _stopTargetPlayer: {fileID: 235500912}
-  _isGameClearPlayerStop: 1
   _isGameOverPlayerStop: 1
 --- !u!114 &1829355878
 MonoBehaviour:
@@ -28729,7 +28730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37a9661be68fd894a9e3bb294f39add7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  TimeLimit: 10
+  TimeLimit: 1
   MaxFear: 100
   FearIncreaseRate: 0.7
   FearRecoveryRate: 2

@@ -52,6 +52,10 @@ public class ClearMovieController : MonoBehaviour
     [SerializeField, Tooltip("自動で歩くスピード")]
     private float WalkSpeed = 2.0f;
 
+    [Header("シーン遷移設定")]
+    [SerializeField, Tooltip("ムービー終了後に遷移するクリアシーン名")]
+    private string ClearSceneName = "GameclearScene";
+
     /// <summary>
     /// GameManagerから呼ばれる、クリアムービーの開始メソッド
     /// </summary>
@@ -184,7 +188,7 @@ public class ClearMovieController : MonoBehaviour
 
         // リザルトシーンへ遷移
         Debug.Log("<color=yellow>9. リザルトシーンへ遷移します</color>");
-        SceneManager.LoadScene("ResultScene");
+        SceneManager.LoadScene("GameclearScene");
     }
 
     /// <summary>

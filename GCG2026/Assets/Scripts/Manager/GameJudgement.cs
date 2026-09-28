@@ -6,15 +6,16 @@ public class GameJudgement : MonoBehaviour
     [SerializeField]
     private GenericFader _genericFader;
 
-    // ゲームクリアシーン名
+    // ＝＝＝ クリア関連の変数はインスペクターのエラーを防ぐため残すか、不要なら削除してOKです ＝＝＝
     [SerializeField]
     private string _gameClearSceneName;
-    // シーン遷移までの余韻
     [SerializeField]
     private float _gameClearTransitionDelay = 1.0f;
-    // フェードアウトにかかる時間
     [SerializeField]
     private float _gameClearFadeOutDuration = 1.0f;
+    [SerializeField]
+    private bool _isGameClearPlayerStop = false;
+    // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
     // ゲームオーバーシーン名
     [SerializeField]
@@ -29,9 +30,7 @@ public class GameJudgement : MonoBehaviour
     // 停止対象のプレイヤー
     [SerializeField]
     private GameObject _stopTargetPlayer;
-    // ゲームクリア時にプレイヤーの操作を停止するかどうか
-    [SerializeField]
-    private bool _isGameClearPlayerStop = false;
+
     // ゲームオーバー時にプレイヤーの操作を停止するかどうか
     [SerializeField]
     private bool _isGameOverPlayerStop = true;
@@ -48,43 +47,24 @@ public class GameJudgement : MonoBehaviour
         _gameManager = GameManager.Instance;
     }
 
-    // ゲーム
     void Update()
     {
         if (_gameFinished) return;
 
-        if (_gameManager.IsGameClear)
+        // ▼ クリア遷移は ClearMovieController が行うため、ここにあった IsGameClear の処理を削除しました。
+
+        // ゲームオーバーになった場合のみ、こちらの処理を行う
+        if (_gameManager.IsGameOver)
         {
-            // ゲームクリアになったら
-
-            // Delay分待ってから遷移開始
-            Invoke(nameof(StartGameClear), _gameClearTransitionDelay);
-
-            // プレイヤーの操作を効かなくする
-            if (_isGameClearPlayerStop)
-                _stopTargetPlayer.GetComponent<PlayerController>()._isStop = true;
-
-            _gameFinished = true;
-        }
-        else if (_gameManager.IsGameOver)
-        {
-            // ゲームオーバーになったら
-
             // Delay分待ってから遷移開始
             Invoke(nameof(StartGameOver), _gameOverTransitionDelay);
 
             // プレイヤーの操作を効かなくする
-            if (_isGameOverPlayerStop)
+            if (_isGameOverPlayerStop && _stopTargetPlayer != null)
                 _stopTargetPlayer.GetComponent<PlayerController>()._isStop = true;
 
             _gameFinished = true;
         }
-    }
-
-    // ゲームクリアにフェードアウトしながら遷移
-    private void StartGameClear()
-    {
-        _genericFader.StartFadeOutAndLoad(_gameClearFadeOutDuration, _gameClearSceneName);
     }
 
     // ゲームオーバーにフェードアウトしながら遷移
