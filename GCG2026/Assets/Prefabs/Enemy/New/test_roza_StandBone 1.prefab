@@ -52,6 +52,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: test_roza_StandBone 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: e4389266c1f627c46a87cd7edf2f17c6, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 94bb0887b15f63041ad6247825146517, type: 2}
+    - target: {fileID: 5866666021909216657, guid: e4389266c1f627c46a87cd7edf2f17c6, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

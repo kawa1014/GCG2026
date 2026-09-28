@@ -15,21 +15,23 @@ public class ListenSkill : MonoBehaviour
 
     void Update()
     {
-        if (ListenCamera == null || BlurVolume == null) return;
+        //if (ListenCamera == null || BlurVolume == null) return;
 
         // Eキーを押した瞬間
         if (Input.GetKeyDown(KeyCode.E))
         {
             IsListening = true; // 聞き耳ONを知らせる
-            ListenCamera.SetActive(true);
-            BlurVolume.SetActive(true); // ぼやけエフェクトON
+            // オブジェクトがアタッチされている時だけエフェクトをONにする
+            if (ListenCamera != null) ListenCamera.SetActive(true);
+            if (BlurVolume != null) BlurVolume.SetActive(true);
         }
         // Eキーを離した瞬間
         else if (Input.GetKeyUp(KeyCode.E))
         {
             IsListening = false; // 聞き耳OFFを知らせる
-            ListenCamera.SetActive(false);
-            BlurVolume.SetActive(false); // ぼやけエフェクトOFF
+            // オブジェクトがアタッチされている時だけエフェクトをOFFにする
+            if (ListenCamera != null) ListenCamera.SetActive(false);
+            if (BlurVolume != null) BlurVolume.SetActive(false);
         }
     }
 }

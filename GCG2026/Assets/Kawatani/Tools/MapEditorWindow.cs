@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.TerrainTools;
@@ -31,6 +32,12 @@ public class MapEditorWindow : EditorWindow
     /// 現在はUIのみですが、今後はオブジェクトをスナップさせる際の基準地として使用します
     /// </summary>
     [SerializeField] float gridSize = 1.0f;
+
+    /// <summary>
+    /// 配置時の位置オフセット(プレハブのずれなどを補正するため)
+    /// </summary>
+    [Header("===配置オフセット===")]
+    [SerializeField] private Vector3 placementOffset = Vector3.zero;
 
     /// <summary>
     /// 配置したいプレハブを登録する
@@ -94,6 +101,7 @@ public class MapEditorWindow : EditorWindow
         currentLayer = EditorGUILayout.IntField("現在の階層", currentLayer);
         layerHeight = EditorGUILayout.FloatField("1階層の高さ", layerHeight);
         gridSize = EditorGUILayout.FloatField("グリッドサイズ", gridSize);
+        placementOffset = EditorGUILayout.Vector3Field("配置オフセット", placementOffset);
 
         EditorGUILayout.Space(); // 空間を開ける用
 
@@ -221,10 +229,10 @@ public class MapEditorWindow : EditorWindow
         {
             Vector3 hitPoint = ray.GetPoint(distance);
 
-            // グリッドスナップされた座標
+            // グリッドスナップされた座標にオフセットを加算
             float snappedX = Mathf.Round(hitPoint.x / gridSize) * gridSize;
             float snappedZ = Mathf.Round(hitPoint.z / gridSize) * gridSize;
-            Vector3 previewPosition = new Vector3(snappedX, currentY, snappedZ);
+            Vector3 previewPosition = new Vector3(snappedX, currentY, snappedZ)　+ placementOffset;
 
             // 配置予定のオブジェクトのインスタンス化または更新
             // まだ配置予定のオブジェクトが存在しない、または別のプレハブが選択された場合
@@ -338,3 +346,4 @@ public class MapEditorWindow : EditorWindow
         Handles.DrawSolidDisc(center, Vector3.up, 10f);
     }
 }
+#endif
