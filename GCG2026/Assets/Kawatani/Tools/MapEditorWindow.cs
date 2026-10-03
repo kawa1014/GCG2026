@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.TerrainTools;
@@ -345,3 +346,4 @@ public class MapEditorWindow : EditorWindow
         Handles.DrawSolidDisc(center, Vector3.up, 10f);
     }
 }
+#endif

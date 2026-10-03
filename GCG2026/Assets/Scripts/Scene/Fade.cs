@@ -139,10 +139,10 @@ public class NewMonoBehaviourScript : MonoBehaviour
     }
 
     // ゲームからリザルトへのフェード
-    public void OnClickStartButton3()
-    {
-        StartCoroutine(FadeAndLoadRoutine("ResultScene", 1.0f));
-    }
+    //public void OnClickStartButton3()
+    //{
+    //    StartCoroutine(FadeAndLoadRoutine("ResultScene", 1.0f));
+    //}
 
     // リザルトからセレクトへのフェード
     public void OnClickStartButton4()
@@ -167,6 +167,16 @@ public class NewMonoBehaviourScript : MonoBehaviour
     public void OnClickStartButton7()
     {
         StartCoroutine(FadeAndLoadRoutine("TitleScene", 1.0f));
+    }
+
+    public void OnClickStartButton8()
+    {
+        StartCoroutine(FadeAndLoad8());
+    }
+    private IEnumerator FadeAndLoad8()
+    {
+        yield return FadeOut(1.0f);
+        SceneManager.LoadScene("MasterUp");
     }
 
     public void FadeAndLoadScene(string sceneName, float duration = 1.0f)

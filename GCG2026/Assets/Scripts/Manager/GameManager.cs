@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,11 +10,21 @@ using UnityEngine.UIElements;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    // 【追加】ゲームオーバーの原因を定義する列挙型
+    public enum GameOverCause
+    {
+        SanityMax, // SAN値が限界に達した
+        EnemyCaught // エネミー捕まった
+    }
+
     //---シングルトン---
     /// <summary>
     /// 他のスクリプトからGameManager.Instanceでアクセスできるようにする変数
     /// </summary>
     public static GameManager Instance { get; private set; }
+
+    // ゲームオーバー時に発火するイベント(死因も渡せる)
+    public event Action<GameOverCause> OnGameOverEvent;
 
     [Header("ゲームルール設定")]
     /// <summary>
@@ -64,11 +75,21 @@ public class GameManager : MonoBehaviour
 
     private float _sanTimer = 0.0f;
     private int _sanIndex = 0;
+    [Header("SAN値UI表示設定")]
+    [SerializeField]
+    private GameObject sanUIRoot;
+
+    // フェーズ3から通常SAN処理を動かすか
+    private bool _sanSystemStarted = false;
 
     //---内部状態を管理する変数---
     private float _currentFear = 0.0f; ///< 現在の恐怖度
     private bool _isGameOver = false; ///< ゲームオーバーフラグ
     private bool _isGameClear = false; ///< ゲームクリアフラグ
+
+    [Header("クリア演出")]
+    [Tooltip("クリアムービーを制御するスクリプト")]
+    public ClearMovieController MovieController;
 
     /// <summary>
     /// 外部(他のスクリプト)からゲームオーバーかどうかを確認するためのプロパティ
@@ -102,7 +123,27 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         UpdateTimerUI();
-        UpdateFearUI();
+        if (TutorialCaller.IsTutorialActive)
+        {
+            // フェーズ3までは非表示
+            _sanSystemStarted = false;
+
+            if (sanUIRoot != null)
+            {
+                sanUIRoot.SetActive(false);
+            }
+        }
+        else
+        {
+            // チュートリアルがない場合は通常どおり開始
+            _sanSystemStarted = true;
+
+            if (sanUIRoot != null)
+            {
+                sanUIRoot.SetActive(true);
+            }
+            UpdateFearUI();
+        }
     }
 
     /// <summary>
@@ -112,66 +153,59 @@ public class GameManager : MonoBehaviour
     {
         // 終了済みの場合は何もしない
         if (_isGameOver || _isGameClear) return;
-
-        // 制限時間の処理
-        TimeLimit -= Time.deltaTime;
-        UpdateTimerUI();
-
-        if (TimeLimit <= 0.0f)
+        if (!TutorialCaller.IsTutorialActive)
         {
-            GameClear();
+            TimeLimit -= Time.deltaTime;
+            UpdateTimerUI();
+
+            if (TimeLimit <= 0f)
+            {
+                GameClear();
+                return;
+            }
+        }
+
+        // 通常ゲーム中、またはチュートリアルの
+        // フェーズ3以降ならSAN値を進める
+        bool canUpdateFear = !TutorialCaller.IsTutorialActive || _sanSystemStarted;
+
+        if (!canUpdateFear)
+        {
             return;
         }
 
-        // OrgelManagerに「今何個なってる？」と直接聞きに行くようにしました
         if (OrgelManager.Instance != null && OrgelManager.Instance.CurrentOrgelPlayingCount > 0)
         {
-            // 1個でも鳴っていれば、一定速度で上昇
             _currentFear += FearIncreaseRate * Time.deltaTime;
         }
         else
         {
-            // 全て止まっていれば徐々に回復
             _currentFear -= FearRecoveryRate * Time.deltaTime;
         }
 
-        _currentFear = Mathf.Clamp(_currentFear, 0.0f, MaxFear);
-        // 恐怖度のUIを更新
+        _currentFear = Mathf.Clamp(_currentFear, 0f, MaxFear);
+
         UpdateFearUI();
 
-        if (_currentFear >= MaxFear)
+        // チュートリアル中はSAN最大でもゲームオーバーにしない
+        if (!TutorialCaller.IsTutorialActive && _currentFear >= MaxFear)
         {
-            GameOver("恐怖度が限界に達した");
+            GameOver("恐怖度が限界に達した", GameOverCause.SanityMax);
         }
-
-        _sanTimer += Time.deltaTime;
-
-        //if(_sanTimer >= SanChangeInterval)
-        //{
-        //    _sanTimer = 0.0f;
-
-        //    // 次の画像へ
-        //    _sanIndex++;
-
-        //    // 範囲のチェック
-        //    if (_sanIndex >= SanSprites.Length)
-        //        _sanIndex = SanSprites.Length - 1;
-
-        //    // Imageに変換
-        //    if (SanImage != null)
-        //        SanImage.sprite = SanSprites[_sanIndex];
-        //}
     }
 
     /// <summary>
     /// @brief ゲームーバーの処理
     /// @brief reason ゲームオーバーの理由(コンソール表示用)
     /// </summary>
-    public void GameOver(string reason)
+    public void GameOver(string reason, GameOverCause cause)
     {
         _isGameOver = true;
 
         Debug.Log($"<color=red>【Game Over】{reason}</color>");
+
+        // 【追加】ゲームオーバー家bンとを発火して、登録しているほかのスクリプトに通知する
+        OnGameOverEvent?.Invoke(cause);
 
         //if (TimeText != null)
         //{
@@ -192,15 +226,16 @@ public class GameManager : MonoBehaviour
         _isGameClear = true;
         Debug.Log("<color=cyan>【Game Clear】朝まで生き延びた！</color>");
 
-        //if (TimeText != null)
-        //{
-        //    TimeText.text = "SURVIVED";
-        //}
-
-        // 3秒後にQuitGameメソッドを実行してゲームを閉じる
-        //Invoke(nameof(QuitGame), 3.0f);
-
-        // 今後ここでクリア画面を表示する処理を作る
+        // ムービー演出を開始する
+        if (MovieController != null)
+        {
+            MovieController.StartClearMovie();
+        }
+        else
+        {
+            // コントローラーが設定されていない場合は保険でリザルトへ
+            UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
+        }
     }
 
     /// <summary>
@@ -227,8 +262,8 @@ public class GameManager : MonoBehaviour
 
         // 恐怖度の割合(0.0～1.0)を計算し、CanvasGroupのAlphaに直接セットする
         // 恐怖度0で完全に透明、恐怖度100で真っ赤になります
-       // float fearRatio = _currentFear / MaxFear;
-       // FearVignetteGroup.alpha = fearRatio;
+        // float fearRatio = _currentFear / MaxFear;
+        // FearVignetteGroup.alpha = fearRatio;
 
         // SANUI更新
         UpdateSanUI();
@@ -243,18 +278,16 @@ public class GameManager : MonoBehaviour
         // 既にゲームオーバー状態なら処理を重複させないためにブロック
         if (_isGameOver || _isGameClear) return;
 
-        // 恐怖度を強制的に最大値（MaxFear）に上書きする
-        _currentFear = MaxFear;
-
-        // 画面の赤いエフェクト（Vignette）を最大にするためにUIを更新
-        UpdateFearUI();
-
         // 理由を添えてゲームオーバー処理を実行
-        GameOver("エネミーに捕獲されたため、恐怖度が限界を突破した");
+        GameOver("エネミーに捕獲されたため、恐怖度が限界を突破した", GameOverCause.EnemyCaught);
     }
 
     private void UpdateSanUI()
     {
+        if (TutorialCaller.IsTutorialActive && !_sanSystemStarted)
+        {
+            return;
+        }
         if (SanImage == null || SanSprites == null || SanSprites.Length == 0)
             return;
 
@@ -271,6 +304,58 @@ public class GameManager : MonoBehaviour
         SanImage.sprite = SanSprites[index];
     }
 
+    public void ResetFearAfterTutorial()
+    {
+        _currentFear = 0f;
+
+        _sanTimer = 0f;
+        _sanIndex = 0;
+
+        // SAN画像を最初の画像へ戻す
+        if (SanImage != null && SanSprites != null && SanSprites.Length > 0)
+        {
+            SanImage.sprite = SanSprites[0];
+        }
+
+        // 赤い画面演出も初期化
+        if (FearVignetteGroup != null)
+        {
+            FearVignetteGroup.alpha = 0f;
+        }
+
+        Debug.Log(
+            "チュートリアル終了：恐怖度を0に戻しました"
+        );
+    }
+
+    public void StartSanSystemFromPhase3()
+    {
+        if (_sanSystemStarted)
+        {
+            return;
+        }
+
+        _sanSystemStarted = true;
+
+        // フェーズ3開始時は恐怖度0から開始
+        _currentFear = 0f;
+
+        if (SanImage != null && SanSprites != null && SanSprites.Length > 0)
+        {
+            SanImage.sprite = SanSprites[0];
+        }
+
+        if (sanUIRoot != null)
+        {
+            sanUIRoot.SetActive(true);
+        }
+        int playingCount = 0;
+
+        if (OrgelManager.Instance != null)
+        {
+            playingCount = OrgelManager.Instance.CurrentOrgelPlayingCount;
+        }
+    }
     /// <summary>
     /// @brief ゲームアプリケーション自体を終了する処理
     /// @details Unityエディター上でのプレイ停止と、ビルド後のアプリ終了の両方に対応します
