@@ -2515,7 +2515,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: a943f957053302546805e92986198827, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 923ed8904dcca8749b8ce3f430afe481, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &150303834
 Transform:
@@ -7436,71 +7436,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fabf12a13d9df914caf45f07e99c06d2, type: 3}
---- !u!1001 &551934061
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1106191461980324367, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_Name
-      value: XSfloor (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 3606017476238639741, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: d0aa8687a0b72554e943ccfe5325bda5, type: 2}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -5003.24
-      objectReference: {fileID: 0}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 11.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 3017.7202
-      objectReference: {fileID: 0}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6321044532998874185, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a72ad815d82cf984fb8d1d8a65108ee4, type: 3}
 --- !u!1001 &552935350
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9762,6 +9697,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7ad8a9d7c214fef409842b8ac25ea6bd, type: 3}
   - {fileID: 21300000, guid: f856c3fb16477e846a50eaef608ebd83, type: 3}
   SanChangeInterval: 1
+  MovieController: {fileID: 0}
 --- !u!4 &695401237
 Transform:
   m_ObjectHideFlags: 0
@@ -9793,11 +9729,11 @@ MonoBehaviour:
   _gameClearSceneName: GameclearScene
   _gameClearTransitionDelay: 1
   _gameClearFadeOutDuration: 1
+  _isGameClearPlayerStop: 1
   _gameOverSceneName: GameOverScene
   _gameOverTransitionDelay: 3
   _gameOverFadeOutDuration: 1
   _stopTargetPlayer: {fileID: 32924659}
-  _isGameClearPlayerStop: 1
   _isGameOverPlayerStop: 1
 --- !u!114 &700215101 stripped
 MonoBehaviour:
@@ -31995,7 +31931,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6827922206972827507, guid: f2e47fef3232e7844ad3f427b56111dd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3031.2202
+      value: 3020
       objectReference: {fileID: 0}
     - target: {fileID: 6827922206972827507, guid: f2e47fef3232e7844ad3f427b56111dd, type: 3}
       propertyPath: m_LocalRotation.w
@@ -34323,7 +34259,6 @@ SceneRoots:
   - {fileID: 1490120019}
   - {fileID: 1625397235}
   - {fileID: 207417136}
-  - {fileID: 551934061}
   - {fileID: 1811578450}
   - {fileID: 2098341984}
   - {fileID: 945987303}
