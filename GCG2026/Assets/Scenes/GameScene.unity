@@ -5926,6 +5926,7 @@ MonoBehaviour:
   ExclusionRadius: 30
   MinWaitTime: 5
   MaxWaitTime: 15
+  waitForTutorialPhase1: 1
 --- !u!4 &443298052
 Transform:
   m_ObjectHideFlags: 0
@@ -9088,7 +9089,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37a9661be68fd894a9e3bb294f39add7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  TimeLimit: 180
+  TimeLimit: 1
   MaxFear: 100
   FearIncreaseRate: 0.7
   FearRecoveryRate: 2
@@ -9697,6 +9698,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7ad8a9d7c214fef409842b8ac25ea6bd, type: 3}
   - {fileID: 21300000, guid: f856c3fb16477e846a50eaef608ebd83, type: 3}
   SanChangeInterval: 1
+  sanUIRoot: {fileID: 0}
   MovieController: {fileID: 0}
 --- !u!4 &695401237
 Transform:
