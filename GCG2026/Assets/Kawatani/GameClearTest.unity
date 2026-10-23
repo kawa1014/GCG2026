@@ -18752,6 +18752,10 @@ MonoBehaviour:
   DoorStandPosition: {fileID: 866219204}
   OutsidePosition: {fileID: 116333736}
   WalkSpeed: 2
+  NightVolume: {fileID: 1525266678}
+  SunLight: {fileID: 714572172}
+  MorningLightIntensity: 1
+  SunriseDuration: 3
   ClearSceneName: GameclearScene
 --- !u!4 &1156972174
 Transform:
@@ -23934,6 +23938,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fabf12a13d9df914caf45f07e99c06d2, type: 3}
+--- !u!114 &1525266678 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4476409601484992526, guid: fdf610bda0d80534da09b53195efda8f, type: 3}
+  m_PrefabInstance: {fileID: 924298182}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
 --- !u!1001 &1526727724
 PrefabInstance:
   m_ObjectHideFlags: 0

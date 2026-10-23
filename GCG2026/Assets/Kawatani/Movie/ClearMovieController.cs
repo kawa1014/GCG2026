@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -52,6 +53,20 @@ public class ClearMovieController : MonoBehaviour
     [SerializeField, Tooltip("自動で歩くスピード")]
     private float WalkSpeed = 2.0f;
 
+    [Header("朝になる演出設定")]
+
+    [SerializeField, Tooltip("夜の暗闇を作っているVolume(これの影響力を0にして暗闇を消します)")]
+    private Volume NightVolume;
+
+    [SerializeField, Tooltip("太陽の光になるDirectionLight(これの光を強くして明るくする)")]
+    private Light SunLight;
+
+    [SerializeField, Tooltip("完全に朝になった時の太陽の明るさ")]
+    private float MorningLightIntensity = 1.0f;
+
+    [SerializeField, Tooltip("朝になるまでにかける時間(秒)。この秒数をかけて徐々に明るくなっていく")]
+    private float SunriseDuration = 3.0f;
+
     [Header("シーン遷移設定")]
     [SerializeField, Tooltip("ムービー終了後に遷移するクリアシーン名")]
     private string ClearSceneName = "GameclearScene";
@@ -74,6 +89,11 @@ public class ClearMovieController : MonoBehaviour
             Debug.Log("1. プレイヤーの操作を停止しました");
         }
 
+        // 黒フェードに入る前に、空を明るくする処理を呼び出します
+        Debug.Log("朝になる演出を開始します");
+        yield return SunriseRoutine();
+        Debug.Log("朝になりました");
+
         // 黒色のフェード処理
         if (FadeImage != null)
         {
@@ -92,12 +112,30 @@ public class ClearMovieController : MonoBehaviour
             // 一時的に無効
             CharacterController characterController = TargetPlayerController.GetComponent<CharacterController>();
             if (characterController != null) characterController.enabled = false;
-
+            
+            // 位置をワープさせる
             PlayerTransform.position = MoviewStartPosition.position;
-            PlayerTransform.rotation = MoviewStartPosition.rotation;
+
+            // 画面が真っ暗な瞬間に、一足先に「次の目的地」と同じ向き（Y軸のみ）にセットしておく
+            if (DoorStandPosition != null)
+            {
+                Vector3 targetEuler = DoorStandPosition.rotation.eulerAngles;
+                PlayerTransform.rotation = Quaternion.Euler(0, targetEuler.y, 0);
+            }
+            else
+            {
+                Vector3 startEuler = MoviewStartPosition.rotation.eulerAngles;
+                PlayerTransform.rotation = Quaternion.Euler(0, startEuler.y, 0);
+            }
+
+            // プレイヤーの子オブジェクトにある「カメラ」を見つけ出し、上下の角度を完全に正面(0,0,0)にリセットする
+            Camera playerCamera = TargetPlayerController.GetComponentInChildren<Camera>();
+            if (playerCamera != null)
+            {
+                playerCamera.transform.localRotation = Quaternion.identity; // 視点を真正面で固定
+            }
 
             if (characterController != null) characterController.enabled = true;
-            Debug.Log("3. 初期位置へのワープ完了");
         }
         else
         {
@@ -115,7 +153,7 @@ public class ClearMovieController : MonoBehaviour
         if (DoorStandPosition != null)
         {
             Debug.Log("5. 扉の前へ移動開始");
-            yield return AutoWalkTo(DoorStandPosition.position, 5.0f);
+            yield return AutoWalkTo(DoorStandPosition, 5.0f);
             Debug.Log("5. 扉の前へ移動完了");
         }
         else
@@ -170,7 +208,7 @@ public class ClearMovieController : MonoBehaviour
         if (OutsidePosition != null)
         {
             Debug.Log("7. 外へ移動開始");
-            yield return AutoWalkTo(OutsidePosition.position, 10.0f);
+            yield return AutoWalkTo(OutsidePosition, 10.0f);
             Debug.Log("7. 外へ移動完了");
         }
         else
@@ -192,11 +230,59 @@ public class ClearMovieController : MonoBehaviour
     }
 
     /// <summary>
-    /// 目的地点まで自動で歩く処理
+    /// 徐々に朝にする処理
+    /// (夜のVolume効果を消しつつ、太陽の光を強くする)
+    /// </summary>
+    private IEnumerator SunriseRoutine()
+    {
+        // 設定漏れ防止：インスペクターでどちらもセットされていなければスキップする
+        if (NightVolume == null && SunLight == null)
+        {
+            Debug.LogWarning("朝の演出用の設定が空のため、明るくする処理をスキップします");
+            yield break;
+        }
+
+        float time = 0.0f;
+
+        // 現在の夜の暗さと光の強さを記憶しておく
+        float startVolumeWeight = (NightVolume != null) ? NightVolume.weight : 0.0f;
+        float startLightIntensity = (SunLight != null) ? SunLight.intensity : 0.0f;
+
+        // 指定した時間をかけて少しずつ変化させる
+        while(time < SunriseDuration)
+        {
+            time += Time.deltaTime;
+
+            // 今何パーセント終わったかを表す用
+            float t = time / SunriseDuration;
+
+            if (NightVolume != null)
+            {
+                // 最初の暗さから、0に向かって変化させます
+                NightVolume.weight = Mathf.Lerp(startVolumeWeight, 0.0f, t);
+            }
+
+            if (SunLight != null)
+            {
+                // 光の強さを、最初の状態から朝の明るさへ変化させます
+                SunLight.intensity = Mathf.Lerp(startLightIntensity, MorningLightIntensity, t);
+            }
+
+            // 1フレーム待ってからループを繰り返す
+            yield return null;
+        }
+
+        // 時間が来たら、最後に年のためキッチリ目標の数値を入れる
+        if (NightVolume != null) NightVolume.weight = 0f;
+        if (SunLight != null) SunLight.intensity = MorningLightIntensity;
+    }
+
+    /// <summary>
+    /// 目標地点の Transform を受け取り、その「向き」に視点を固定して歩く
     /// </summary>
     /// <param name="targetPosition">目標地点</param>
     /// <param name="timeout">何秒経ったら諦めて次の処理に進むか</param>
-    private IEnumerator AutoWalkTo(Vector3 targetPosition, float timeout)
+    private IEnumerator AutoWalkTo(Transform targetPoint, float timeout)
     {
         if (PlayerTransform == null || TargetPlayerController == null)
         {
@@ -205,12 +291,25 @@ public class ClearMovieController : MonoBehaviour
         }
 
         Vector3 playerPosNoY = new Vector3(PlayerTransform.position.x, 0, PlayerTransform.position.z);
-        Vector3 targetPosNoY = new Vector3(targetPosition.x, 0, targetPosition.z);
+        Vector3 targetPosNoY = new Vector3(targetPoint.position.x, 0, targetPoint.position.z);
+
+        Vector3 targetEuler = targetPoint.rotation.eulerAngles;
+        PlayerTransform.rotation = Quaternion.Euler(0, targetEuler.y, 0);
+
+        // 歩行中も視点リセットをキープするためにカメラを取得
+        Camera playerCamera = TargetPlayerController.GetComponentInChildren<Camera>();
+
+        // ムービー中は壁や扉に引っかからないよう、物理演算の当たり判定をオフにする
+        CharacterController characterController = TargetPlayerController.GetComponent<CharacterController>();
+        if (characterController != null)
+        {
+            characterController.enabled = false;
+        }
 
         float timer = 0.0f;
 
         // 目的地との距離が0.3以上あるなら、近づき続ける
-        while (Vector3.Distance(playerPosNoY, targetPosNoY) > 0.3f)
+        while (Vector3.Distance(playerPosNoY, targetPosNoY) > 1.0f)
         {
             // 経過時間をカウント
             timer += Time.deltaTime;
@@ -222,26 +321,23 @@ public class ClearMovieController : MonoBehaviour
                 break;
             }
 
-            // CharacterControllerを使って移動
-            CharacterController characterController = TargetPlayerController.GetComponent<CharacterController>();
-            if (characterController != null)
-            {
-                // ターゲットへの方向ベクトル計算
-                Vector3 direction = (targetPosition - PlayerTransform.position).normalized;
 
-                // Move()は1フレームの移動量(速度×Time.deltaTime)を渡す
-                characterController.Move(direction * WalkSpeed * Time.deltaTime);
-
-                // 歩く方向にプレイヤーを少しずつ振り向かせる
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                PlayerTransform.rotation = Quaternion.Slerp(PlayerTransform.rotation, targetRotation, Time.deltaTime * 5.0f);
-            }
-            else
+            PlayerTransform.rotation = Quaternion.Euler(0, targetEuler.y, 0);
+            if (playerCamera != null)
             {
-                // characterControllerがない場合の保険
-                PlayerTransform.position = Vector3.MoveTowards(PlayerTransform.position, targetPosition, WalkSpeed * Time.deltaTime);
+                playerCamera.transform.localRotation = Quaternion.identity;
             }
+
+            // 物理演算を無視して、直接「等速」で目的地へ移動させる（MoveTowards）
+            // 高さがズレないように、目的地側のY座標をプレイヤーの今のY座標に合わせて計算します
+            Vector3 currentPos = PlayerTransform.position;
+            Vector3 destination = new Vector3(targetPoint.position.x, currentPos.y, targetPoint.position.z);
+
+            PlayerTransform.position = Vector3.MoveTowards(currentPos, destination, WalkSpeed * Time.deltaTime);
+
             yield return null;
+
+            playerPosNoY = new Vector3(PlayerTransform.position.x, 0, PlayerTransform.position.z);
         }
     }
 
