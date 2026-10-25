@@ -52,6 +52,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: New_Rozawall
       objectReference: {fileID: 0}
+    - target: {fileID: 4995165979100193175, guid: dbfe39feb763edc458786e3d1176d90d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 750
+      objectReference: {fileID: 0}
+    - target: {fileID: 4995165979100193175, guid: dbfe39feb763edc458786e3d1176d90d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 7.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8156392676412055898, guid: dbfe39feb763edc458786e3d1176d90d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 750
+      objectReference: {fileID: 0}
+    - target: {fileID: 8156392676412055898, guid: dbfe39feb763edc458786e3d1176d90d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.29
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
