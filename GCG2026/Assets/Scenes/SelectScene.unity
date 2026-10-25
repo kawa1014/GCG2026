@@ -601,7 +601,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &384458657
 Transform:
   m_ObjectHideFlags: 0
@@ -730,8 +730,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Select
   checkMark: {fileID: 292855282}
-  sceneToLoad: 
-  fadeController: {fileID: 0}
+  sceneToLoad: Stage3
+  fadeController: {fileID: 731060632}
   audioSource: {fileID: 1463422869}
   cursorMoveSE: {fileID: 8300000, guid: 714eda950d680054bb50f089e515a8c7, type: 3}
   decisionSE: {fileID: 8300000, guid: 3fd78639ab0166242a522065e8c37eb5, type: 3}
@@ -1000,6 +1000,7 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   decisionSE: {fileID: 0}
   exitSE: {fileID: 0}
+  girlAfterImage: {fileID: 0}
 --- !u!4 &731060633
 Transform:
   m_ObjectHideFlags: 0
@@ -1923,7 +1924,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1106302777
 Transform:
   m_ObjectHideFlags: 0

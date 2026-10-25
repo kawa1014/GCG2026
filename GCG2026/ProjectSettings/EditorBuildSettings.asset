@@ -32,5 +32,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/BetaOkuda/MasterUp.unity
     guid: 28566720872c2dd468714c07df567761
+  - enabled: 1
+    path: Assets/Scenes/Stage3.unity
+    guid: 3177fbfd701a7a4418562ade93c7f3ff
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
