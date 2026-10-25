@@ -204,18 +204,11 @@ public class GameManager : MonoBehaviour
 
         Debug.Log($"<color=red>【Game Over】{reason}</color>");
 
+        // 現在のプレイ中のシーンのシーン名を記憶する
+        RetryManager.LastSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
         // 【追加】ゲームオーバー家bンとを発火して、登録しているほかのスクリプトに通知する
         OnGameOverEvent?.Invoke(cause);
-
-        //if (TimeText != null)
-        //{
-        //    TimeText.text = "GAME OVER";
-        //}
-
-        // 3秒後にQuitGameメソッドを実行してゲームを閉じる
-        //Invoke(nameof(QuitGame), 3.0f);
-
-        // 今後ここでリトライ画面を表示する処理を作る
     }
 
     /// <summary>
@@ -234,7 +227,7 @@ public class GameManager : MonoBehaviour
         else
         {
             // コントローラーが設定されていない場合は保険でリザルトへ
-            UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("GameOverScene");
         }
     }
 
