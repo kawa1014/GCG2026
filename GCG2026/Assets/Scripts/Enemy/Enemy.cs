@@ -76,7 +76,13 @@ public class Enemy : MonoBehaviour
     // 【追加】アニメーション制御用(川谷)
     [Header("アニメーション制御")]
     public Animator animator;
-    
+
+    [Header("捕獲演出設定")]
+    [Tooltip("シーン内にある EnemyCatchController をアタッチ")]
+    public EnemyCatchController catchController;
+
+    private bool isCaught = false;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -478,7 +484,7 @@ public class Enemy : MonoBehaviour
             // GameManagerが存在するか安全確認してから、ゲームオーバー処理を呼び出す
             if (GameManager.Instance != null)
             {
-                GameManager.Instance.MaxOutFearAndGameOver();
+                TriggerCatchSequence();
             }
         }
     }
@@ -501,6 +507,27 @@ public class Enemy : MonoBehaviour
                 Debug.Log($"【Enemy】プレイヤーとの距離が {distanceToPlayer:F1}m になったため、捕獲しました！");
 
                 // GameManagerのゲームオーバー処理を呼び出す
+                TriggerCatchSequence();
+            }
+        }
+    }
+
+    private void TriggerCatchSequence()
+    {
+        if (isCaught) return;
+        isCaught = true;
+
+        // 既存の即座のゲームオーバーの代わりに、演出コルーチンを起動
+        if (catchController != null)
+        {
+            PlayerController pc = player != null ? player.GetComponent<PlayerController>() : null;
+            StartCoroutine(catchController.PlayCatchRoutine(transform, animator, player, pc));
+        }
+        else
+        {
+            // キャッチコントローラーがアタッチされていない場合の保険
+            if (GameManager.Instance != null)
+            {
                 GameManager.Instance.MaxOutFearAndGameOver();
             }
         }

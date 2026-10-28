@@ -120,6 +120,12 @@ public class OrgelManager : MonoBehaviour
         // シーン内に存在するすべてのオルゴールを自動取得してリストに登録
         _allOrgels = FindObjectsByType<OrgelSystem>(FindObjectsSortMode.None).ToList();
 
+        // もしチュートリアルシーンでなかったら強制的に開始
+        if (TutorialCaller.IsTutorialActive == false)
+        {
+            waitForTutorialPhase1 = false;
+        }
+
         // 最初のオルゴールを抽選
         if (_allOrgels.Count > 0 && !waitForTutorialPhase1)
         {

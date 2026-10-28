@@ -298039,7 +298039,7 @@ MonoBehaviour:
   ExclusionRadius: 30
   MinWaitTime: 5
   MaxWaitTime: 15
-  waitForTutorialPhase1: 1
+  waitForTutorialPhase1: 0
 --- !u!4 &2021177603
 Transform:
   m_ObjectHideFlags: 0
