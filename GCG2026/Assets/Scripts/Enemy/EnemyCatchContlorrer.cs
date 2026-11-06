@@ -50,6 +50,11 @@ public class EnemyCatchController : MonoBehaviour
         if (enemyAnimator != null)
         {
             enemyAnimator.SetTrigger("Catch");
+            Debug.Log("【デバッグ】Animatorの 'Catch' トリガーを送信しました！");
+        }
+        else
+        {
+            Debug.LogError("【エラー】エネミーの Animator がアタッチされていません！");
         }
 
         Debug.Log("【演出】ローザの捕獲アニメーション再生開始");
@@ -69,7 +74,6 @@ public class EnemyCatchController : MonoBehaviour
     /// </summary>
     private IEnumerator RedFadeRoutine()
     {
-        // シーン内からフェード用Imageを自動で探す
         if (redFadeImage == null)
         {
             GameObject foundObj = GameObject.Find(fadeImageObjectName);
@@ -78,7 +82,6 @@ public class EnemyCatchController : MonoBehaviour
                 redFadeImage = foundObj.GetComponent<Image>();
             }
 
-            // それでも見つからない場合は、エラーを防ぐためにコード側で一時的なフェード用Imageを自動生成する
             if (redFadeImage == null)
             {
                 Canvas canvas = FindObjectOfType<Canvas>();
@@ -119,7 +122,6 @@ public class EnemyCatchController : MonoBehaviour
         }
         else
         {
-            // どうしてもImageが用意できない場合の保険待機
             yield return new WaitForSeconds(FadeDuration);
         }
     }

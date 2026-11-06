@@ -82,6 +82,7 @@ public class Enemy : MonoBehaviour
     public EnemyCatchController catchController;
 
     private bool isCaught = false;
+    private bool isCatchRoutineStarted = false; // 追加：捕獲演出中かどうかを保持するフラグ
 
     private void Awake()
     {
@@ -133,6 +134,9 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        // 捕獲演出がすでに始まっている場合は、敵の強制停止処理をスルーしてアニメーションを維持させる
+        if (isCatchRoutineStarted) return;
+
         //ゲームオーバー状態なら最優先でエネミーの動きを止める処理
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
         {
@@ -516,8 +520,23 @@ public class Enemy : MonoBehaviour
     {
         if (isCaught) return;
         isCaught = true;
+        isCatchRoutineStarted = true;
 
-        // 既存の即座のゲームオーバーの代わりに、演出コルーチンを起動
+        // 捕まった瞬間にエネミー自身の移動や物理挙動を完全に停止させる
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+            agent.enabled = false; // NavMeshAgentの干渉を断つ
+        }
+
+        // 【追加】もし catchController が設定されていなければ、自動でシーン内から探す
+        if (catchController == null)
+        {
+            catchController = FindAnyObjectByType<EnemyCatchController>();
+        }
+
+        // 演出コルーチンを起動
         if (catchController != null)
         {
             PlayerController pc = player != null ? player.GetComponent<PlayerController>() : null;
@@ -525,7 +544,7 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            // キャッチコントローラーがアタッチされていない場合の保険
+            Debug.LogWarning("【Enemy】EnemyCatchControllerが見つからないため、通常のゲームオーバー処理にフォールバックします。");
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.MaxOutFearAndGameOver();
