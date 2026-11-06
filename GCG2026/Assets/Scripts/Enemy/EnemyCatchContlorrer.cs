@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 public class EnemyCatchController : MonoBehaviour
 {
     [Header("UI設定")]
-    [SerializeField, Tooltip("赤色フェード用Imageのオブジェクト名（シーン内を探す用。空欄なら自動生成も可）")]
+    [SerializeField, Tooltip("シーン上に配置した赤色フェード用のImageのオブジェクト名")]
     private string fadeImageObjectName = "RedFadeImage";
 
     private Image redFadeImage;
@@ -70,7 +70,7 @@ public class EnemyCatchController : MonoBehaviour
     }
 
     /// <summary>
-    /// 赤色のフェードを徐々に不透明にするコルーチン（Imageがない場合は自動生成する安全設計）
+    /// 赤色のフェードを徐々に不透明にするコルーチン（インスペクターの色を維持する仕様）
     /// </summary>
     private IEnumerator RedFadeRoutine()
     {
@@ -97,6 +97,7 @@ public class EnemyCatchController : MonoBehaviour
                     rect.anchoredPosition = Vector2.zero;
 
                     redFadeImage = imgObj.AddComponent<Image>();
+                    redFadeImage.color = Color.red; // 自動生成の場合のみデフォルトで赤にする
                 }
             }
         }
@@ -104,24 +105,27 @@ public class EnemyCatchController : MonoBehaviour
         if (redFadeImage != null)
         {
             redFadeImage.gameObject.SetActive(true);
-            Color color = Color.red;
-            color.a = 0f;
-            redFadeImage.color = color;
+
+            // 【修正】インスペクターで設定された色（RGB）をそのまま取得し、最初は透明（Alpha=0）にする
+            Color baseColor = redFadeImage.color;
+            baseColor.a = 0f;
+            redFadeImage.color = baseColor;
 
             float time = 0f;
             while (time < FadeDuration)
             {
                 time += Time.deltaTime;
-                color.a = Mathf.Clamp01(time / FadeDuration);
-                redFadeImage.color = color;
+                baseColor.a = Mathf.Clamp01(time / FadeDuration);
+                redFadeImage.color = baseColor;
                 yield return null;
             }
 
-            color.a = 1f;
-            redFadeImage.color = color;
+            baseColor.a = 1f;
+            redFadeImage.color = baseColor;
         }
         else
         {
+            Debug.LogWarning("【警告】RedFadeImageが見つからないため、フェードをスキップします。");
             yield return new WaitForSeconds(FadeDuration);
         }
     }

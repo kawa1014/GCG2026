@@ -129,7 +129,16 @@ public class Enemy : MonoBehaviour
     // 【追加】エネミーの初期化と出現位置ワープ処理(川谷)
     private void InitializeEnemy()
     {
+        // スポーンした瞬間（有効化された時）に、シーン内から EnemyCatchController を自動で探して取得する
+        if (catchController == null)
+        {
+            catchController = FindAnyObjectByType<EnemyCatchController>();
 
+            if (catchController == null)
+            {
+                Debug.LogWarning("【Enemy】シーン内に EnemyCatchController が見つかりませんでした！");
+            }
+        }
     }
 
     void Update()
