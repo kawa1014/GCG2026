@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
 using UnityEngine.SceneManagement;
+
 // 修正(川谷)
 public class TutorialCaller : MonoBehaviour
 {
@@ -35,7 +36,7 @@ public class TutorialCaller : MonoBehaviour
     [SerializeField]
     private GameObject sanTutorialUI;
 
-    [SerializeField]private SanTutorialPreview sanTutorialPreview;
+    [SerializeField] private SanTutorialPreview sanTutorialPreview;
     private const int Phase3PageIndex = 2;
 
     [Header("通常のSAN値UI")]
@@ -155,6 +156,16 @@ public class TutorialCaller : MonoBehaviour
             return;
         }
 
+        // フェーズ9表示中は自動で遷移するため、クリックによるページ進行をさせない（文字の全表示だけ許可）
+        if (currentPageIndex == Phase9PageIndex)
+        {
+            if (tutorial.IsTyping)
+            {
+                tutorial.CompleteTypewriter();
+            }
+            return;
+        }
+
         // フェーズ2以降の文字送り中
         if (tutorial.IsTyping)
         {
@@ -214,7 +225,6 @@ public class TutorialCaller : MonoBehaviour
 
         HideAllPageUI();
 
-        
         UpdateBubbleFrame(pageIndex);
         tutorial.StartTypewriter(pages[pageIndex]);
         if (pageIndex == Phase8PageIndex)
@@ -233,7 +243,7 @@ public class TutorialCaller : MonoBehaviour
             }
             else
             {
-                Debug.LogError("GameManager.Instanceがありません" );
+                Debug.LogError("GameManager.Instanceがありません");
             }
             return;
         }
@@ -244,8 +254,17 @@ public class TutorialCaller : MonoBehaviour
             delayedUICoroutine = StartCoroutine(ShowUIAfterTyping(pageIndex));
             return;
         }
-           // ほかのページは文章と同時にUIを表示
-           ShowPageUI(pageIndex);
+
+        if (pageIndex == Phase9PageIndex)
+        {
+            ShowPageUI(pageIndex);
+            // テキスト表示開始と同時に5秒カウントダウンして強制終了させる
+            StartCoroutine(Phase9AutoTransition());
+            return;
+        }
+
+        // ほかのページは文章と同時にUIを表示
+        ShowPageUI(pageIndex);
     }
 
     private void HideAllPageUI()
@@ -501,6 +520,16 @@ public class TutorialCaller : MonoBehaviour
         pageChangeCoroutine = null;
         isChangingPage = false;
 
+        FinishTutorial();
+    }
+
+    // ★フェーズ9専用の自動遷移コルーチン
+    private IEnumerator Phase9AutoTransition()
+    {
+        // テキスト表示開始時から5秒間待機
+        yield return new WaitForSeconds(5f);
+
+        // 5秒経過で強制的にチュートリアル終了し、フェードアウトへ
         FinishTutorial();
     }
 
