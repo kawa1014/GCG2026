@@ -5,42 +5,65 @@ public class Pause : MonoBehaviour
 {
     [SerializeField] private GameObject pauseCanvas;
     private bool isPaused = false;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
-        
+        // 開始時は確実にポーズ画面を消し、時間を動かしておく
+        if (pauseCanvas != null) pauseCanvas.SetActive(false);
+        Time.timeScale = 1.0f;
     }
 
-    // Update is called once per frame
     void Update()
     {
-
-        //if(Input.GetKeyDown(KeyCode.Escape))
-        //{
-        //    if (isPaused)
-        //        PauseGame();
-        //    else
-        //        ResumeGame();
-        //}
+        // Escキーでポーズと再開を切り替える
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isPaused)
+            {
+                ResumeGame();
+            }
+            else
+            {
+                PauseGame();
+            }
+        }
     }
 
-    public void ResumeGame()
+    /// <summary>
+    /// ゲームを一時停止する
+    /// </summary>
+    public void PauseGame()
     {
-        pauseCanvas.SetActive(true);
-        Time.timeScale = 1.0f;
         isPaused = true;
+        if (pauseCanvas != null) pauseCanvas.SetActive(true);
+        Time.timeScale = 0.0f;   // ゲーム停止
 
+        // ポーズ中はUIのボタンを押せるようにカーソルを表示する
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
 
-    public void PauseGame()
+    /// <summary>
+    /// ゲームを再開する
+    /// </summary>
+    public void ResumeGame()
     {
-        pauseCanvas.SetActive(false);
-        Time.timeScale = 0.0f;   // ゲーム停止
         isPaused = false;
+        if (pauseCanvas != null) pauseCanvas.SetActive(false);
+        Time.timeScale = 1.0f;   // ゲーム再開
 
+        // ゲーム中は視点移動のためにカーソルを隠す
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    /// <summary>
+    /// ポーズ画面からオプション画面を呼び出す
+    /// </summary>
+    public void OpenOptionScene()
+    {
+        // 普通にロードするとプレイ中のゲーム画面が破棄されてしまうため、
+        // 「LoadSceneMode.Additive」を使ってゲーム画面の上にオプションシーンを重ねて表示します。
+        SceneManager.LoadScene("OptionScene", LoadSceneMode.Additive);
     }
 }

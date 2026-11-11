@@ -176,7 +176,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     private IEnumerator FadeAndLoad8()
     {
         yield return FadeOut(1.0f);
-        SceneManager.LoadScene("MasterUp");
+        SceneManager.LoadScene("TutorialScene");
     }
 
     public void FadeAndLoadScene(string sceneName, float duration = 1.0f)

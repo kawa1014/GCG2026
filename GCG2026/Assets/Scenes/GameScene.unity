@@ -4249,11 +4249,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fdf610bda0d80534da09b53195efda8f, type: 3}
---- !u!1 &283718310 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6490487375573049699, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
-  m_PrefabInstance: {fileID: 7212508617780002798}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &284082172
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17259,7 +17254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99d7495bdc681ac479a75f300569ad19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pause
-  pauseCanvas: {fileID: 283718310}
+  pauseCanvas: {fileID: 1116502450}
 --- !u!4 &1116502452
 Transform:
   m_ObjectHideFlags: 0
@@ -34440,6 +34435,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1116502451}
+    - target: {fileID: 1005711176862406061, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ResumeGame
+      objectReference: {fileID: 0}
     - target: {fileID: 1382234792967042492, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -34520,11 +34519,56 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5340450421363002372, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5340450421363002372, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_RenderMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5340450421363002372, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_SortingOrder
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6490487375573049699, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
       propertyPath: m_Name
       value: PauseCanvas
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6490487375573049699, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1116502451}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OpenOptionScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Pause, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5760371366863448995, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

@@ -6218,6 +6218,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7803797039782112583, guid: 4debb529244267e43956ef1e64f7c955, type: 3}
+      propertyPath: OrgelAnimator
+      value: 
+      objectReference: {fileID: 904641660}
+    - target: {fileID: -7803797039782112583, guid: 4debb529244267e43956ef1e64f7c955, type: 3}
+      propertyPath: OrgelAudioSource
+      value: 
+      objectReference: {fileID: 904641658}
     - target: {fileID: -3585292507319353892, guid: 4debb529244267e43956ef1e64f7c955, type: 3}
       propertyPath: lowPassFilter
       value: 
@@ -6226,6 +6234,10 @@ PrefabInstance:
       propertyPath: listenerTransform
       value: 
       objectReference: {fileID: 2047513347}
+    - target: {fileID: 3214650538154323062, guid: 4debb529244267e43956ef1e64f7c955, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8623247381042254803, guid: 4debb529244267e43956ef1e64f7c955, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4975.9785
@@ -22903,6 +22915,16 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c74217dd4c34a1c4e8650560be1f21d8, type: 3}
+--- !u!82 &904641658 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -4814825648218863379, guid: 4debb529244267e43956ef1e64f7c955, type: 3}
+  m_PrefabInstance: {fileID: 220715598}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &904641660 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3214650538154323062, guid: 4debb529244267e43956ef1e64f7c955, type: 3}
+  m_PrefabInstance: {fileID: 220715598}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &906490010
 GameObject:
   m_ObjectHideFlags: 0
@@ -23279,9 +23301,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3476381937346203381, guid: 4a7a7eeeeb576be49936cfd4e3e18f78, type: 3}
-    - {fileID: 5625380145504174786, guid: 4a7a7eeeeb576be49936cfd4e3e18f78, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
