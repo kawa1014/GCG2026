@@ -4249,6 +4249,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fdf610bda0d80534da09b53195efda8f, type: 3}
+--- !u!1 &283718310 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6490487375573049699, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+  m_PrefabInstance: {fileID: 7212508617780002798}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &284082172
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5713,7 +5718,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.6698113, g: 0.17377181, b: 0.17377181, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -17254,7 +17259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99d7495bdc681ac479a75f300569ad19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pause
-  pauseCanvas: {fileID: 1116502450}
+  pauseCanvas: {fileID: 283718310}
 --- !u!4 &1116502452
 Transform:
   m_ObjectHideFlags: 0
@@ -29199,7 +29204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -30660,7 +30665,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -34531,6 +34536,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 5952543799977542951, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6490487375573049699, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
       propertyPath: m_Name
       value: PauseCanvas
@@ -34538,6 +34547,10 @@ PrefabInstance:
     - target: {fileID: 6490487375573049699, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562797479567207244, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

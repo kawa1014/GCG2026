@@ -250,9 +250,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a604da24faeab814eae2460aac4bb223, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioVolumeUI
-  bgmSource: {fileID: 0}
-  volumeSlider: {fileID: 0}
-  saveKey: BGMVolume
 --- !u!114 &112591364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,9 +300,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a604da24faeab814eae2460aac4bb223, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioVolumeUI
-  bgmSource: {fileID: 0}
-  volumeSlider: {fileID: 0}
-  saveKey: BGMVolume
 --- !u!114 &112591367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,9 +312,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a604da24faeab814eae2460aac4bb223, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioVolumeUI
-  bgmSource: {fileID: 0}
-  volumeSlider: {fileID: 0}
-  saveKey: BGMVolume
 --- !u!1 &133137786
 GameObject:
   m_ObjectHideFlags: 0
@@ -4771,6 +4762,8 @@ MonoBehaviour:
   _cameraSensitivitySlider: {fileID: 1221357854}
   _tutorialButton: {fileID: 0}
   _tutorialSceneName: TutorialScene
+  _closeButton: {fileID: 4264825386682754522}
+  _fadeScript: {fileID: 771629276}
 --- !u!1 &1823785876
 GameObject:
   m_ObjectHideFlags: 0
@@ -5940,6 +5933,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1818495869}
   m_SourcePrefab: {fileID: 100100000, guid: 4dfde7197ba1ae64687652a6c4f36b56, type: 3}
+--- !u!114 &4264825386682754522 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6033347948589288315, guid: 4dfde7197ba1ae64687652a6c4f36b56, type: 3}
+  m_PrefabInstance: {fileID: 4264825386682754521}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

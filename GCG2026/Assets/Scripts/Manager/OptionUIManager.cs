@@ -30,6 +30,14 @@ public class OptionUIManager : MonoBehaviour
     [SerializeField] private Button _tutorialButton;
     [SerializeField] private string _tutorialSceneName = "TutorialScene";
 
+    [Header("戻る設定")]
+    [Tooltip("オプション画面を閉じるボタン（exitボタン）")]
+    [SerializeField] private Button _closeButton;
+
+    // ★追加：フェード処理を行うスクリプトへの参照（クラス名はそのままNewMonoBehaviourScriptを使用）
+    [Tooltip("タイトルへ戻るフェード演出用。ヒエラルキーのFadeControllerをアタッチしてください")]
+    [SerializeField] private NewMonoBehaviourScript _fadeScript;
+
     // 保存キー
     private const string KeyMasterVolume = "MasterVolume";
     private const string KeyBgmVolume = "BGMVolume";
@@ -46,35 +54,30 @@ public class OptionUIManager : MonoBehaviour
 
     private void LoadSettings()
     {
-        // 1. 保存された値を読み込む（値がなければデフォルト値を入れる）
         float savedMasterVol = PlayerPrefs.GetFloat(KeyMasterVolume, 1.0f);
         float savedBgmVol = PlayerPrefs.GetFloat(KeyBgmVolume, 1.0f);
         float savedSeVol = PlayerPrefs.GetFloat(KeySeVolume, 1.0f);
         float savedGamma = PlayerPrefs.GetFloat(KeyGammaValue, 1.0f);
-        float savedSensitivity = PlayerPrefs.GetFloat(KeyCameraSensitivity, 200.0f); // 初期値をPlayerSettingsに合わせた200に変更
+        float savedSensitivity = PlayerPrefs.GetFloat(KeyCameraSensitivity, 200.0f);
 
-        // 2. スライダーの見た目に反映させる
         if (_masterVolumeSlider != null) _masterVolumeSlider.value = savedMasterVol;
         if (_bgmVolumeSlider != null) _bgmVolumeSlider.value = savedBgmVol;
         if (_seVolumeSlider != null) _seVolumeSlider.value = savedSeVol;
         if (_gammaSlider != null) _gammaSlider.value = savedGamma;
         if (_cameraSensitivitySlider != null) _cameraSensitivitySlider.value = savedSensitivity;
 
-        // 3. 実際のゲームシステムに値を適用する
         ApplyMasterVolume(savedMasterVol);
         ApplyCameraSensitivity(savedSensitivity);
     }
 
     private void RegisterEvents()
     {
-        // タブ切り替え
         for (int i = 0; i < _tabButtons.Length; i++)
         {
             int index = i;
             if (_tabButtons[i] != null) _tabButtons[i].onClick.AddListener(() => SwitchPanel(index));
         }
 
-        // スライダー操作時に保存 ＋ すぐにゲームに反映（Apply）させる
         if (_masterVolumeSlider != null)
             _masterVolumeSlider.onValueChanged.AddListener(val => {
                 PlayerPrefs.SetFloat(KeyMasterVolume, val);
@@ -96,35 +99,19 @@ public class OptionUIManager : MonoBehaviour
                 ApplyCameraSensitivity(val);
             });
 
-        // チュートリアル
         if (_tutorialButton != null) _tutorialButton.onClick.AddListener(GoToTutorialScene);
+        if (_closeButton != null) _closeButton.onClick.AddListener(CloseOption);
     }
 
-    /// <summary>
-    /// マスター音量を実際のゲームに反映させる処理
-    /// </summary>
     private void ApplyMasterVolume(float volume)
     {
-        // Unity全体のすべての音量を根本から変更する
         AudioListener.volume = volume;
-
-        // OrgelManagerが存在する場合は、そちらのMasterVolumeも同期する
-        if (OrgelManager.Instance != null)
-        {
-            OrgelManager.Instance.MasterVolume = volume;
-        }
+        if (OrgelManager.Instance != null) OrgelManager.Instance.MasterVolume = volume;
     }
 
-    /// <summary>
-    /// カメラ感度を実際のゲーム(PlayerSettings)に反映させる処理
-    /// </summary>
     private void ApplyCameraSensitivity(float sensitivity)
     {
-        if (_playerSettings != null)
-        {
-            // ScriptableObjectの値を直接書き換えることで、プレイヤーに即座に反映される
-            _playerSettings.MouseSensitivity = sensitivity;
-        }
+        if (_playerSettings != null) _playerSettings.MouseSensitivity = sensitivity;
     }
 
     private void SwitchPanel(int activeIndex)
@@ -138,6 +125,35 @@ public class OptionUIManager : MonoBehaviour
     private void GoToTutorialScene()
     {
         PlayerPrefs.Save();
+    }
+
+    private void CloseOption()
+    {
+        PlayerPrefs.Save();
+
+        if (SceneManager.sceneCount > 1)
+        {
+            // プレイ中（ポーズ中）に開かれた場合は、ポーズを再開して自身を破棄
+            Pause pauseScript = Object.FindFirstObjectByType<Pause>();
+            if (pauseScript != null)
+            {
+                pauseScript.ReturnFromOption();
+            }
+            SceneManager.UnloadSceneAsync("OptionScene");
+        }
+        else
+        {
+            // ★変更：タイトル画面から開かれた場合は、Fadeスクリプトの「オプション→タイトル遷移」を呼び出す
+            if (_fadeScript != null)
+            {
+                _fadeScript.OnClickStartButton7(); // Fade.csに書かれているタイトルへ戻る処理
+            }
+            else
+            {
+                // ※万が一Fadeスクリプトが設定されていなかった場合の保険
+                SceneManager.LoadScene("TitleScene");
+            }
+        }
     }
 
     private void OnDestroy()
