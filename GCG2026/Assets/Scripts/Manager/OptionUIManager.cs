@@ -58,7 +58,7 @@ public class OptionUIManager : MonoBehaviour
         float savedBgmVol = PlayerPrefs.GetFloat(KeyBgmVolume, 1.0f);
         float savedSeVol = PlayerPrefs.GetFloat(KeySeVolume, 1.0f);
         float savedGamma = PlayerPrefs.GetFloat(KeyGammaValue, 1.0f);
-        float savedSensitivity = PlayerPrefs.GetFloat(KeyCameraSensitivity, 200.0f);
+        float savedSensitivity = PlayerPrefs.GetFloat(KeyCameraSensitivity, 10.0f);
 
         if (_masterVolumeSlider != null) _masterVolumeSlider.value = savedMasterVol;
         if (_bgmVolumeSlider != null) _bgmVolumeSlider.value = savedBgmVol;

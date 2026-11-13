@@ -19,6 +19,9 @@ public class Pause : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            // もしオプション画面が開いてる状態なら、ここで処理を中断する
+            if (SceneManager.GetSceneByName("OptionScene").isLoaded) return;
+
             if (isPaused) ResumeGame();
             else PauseGame();
         }
