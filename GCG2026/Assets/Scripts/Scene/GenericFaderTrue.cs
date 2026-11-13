@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
-/// フェード演出を行い、シーン遷移（特にリトライ時の元のシーンへの遷移）を管理するクラス
+/// フェード演出を行い、シーン遷移（リトライやステージ選択）を管理するクラス
 /// </summary>
 public class GenericFaderTrue : MonoBehaviour
 {
@@ -14,8 +14,6 @@ public class GenericFaderTrue : MonoBehaviour
 
     [SerializeField, Tooltip("フェードイン・フェードアウトにかかる時間（秒）")]
     private float _duration = 1.0f;
-
-    // ※ _sceneName はインスペクターから設定せず、RetryManagerから動的に取得するため削除しました
 
     /// <summary>
     /// 画面を徐々に表示するフェードイン処理
@@ -34,10 +32,9 @@ public class GenericFaderTrue : MonoBehaviour
             color.a = 1.0f - (time / duration);
             fadeImage.color = color;
 
-            yield return null; // 1フレーム待機
+            yield return null;
         }
 
-        // 最終的な色を完全に透明にして補正
         Color endColor = fadeImage.color;
         endColor.a = 0.0f;
         fadeImage.color = endColor;
@@ -60,28 +57,39 @@ public class GenericFaderTrue : MonoBehaviour
             color.a = time / duration;
             fadeImage.color = color;
 
-            yield return null; // 1フレーム待機
+            yield return null;
         }
 
-        // 最終的な色を完全に不透明(黒など)にして補正
         Color endColor = fadeImage.color;
         endColor.a = 1.0f;
         fadeImage.color = endColor;
     }
 
     /// <summary>
+    /// 【リスタートボタン用】
     /// フェードアウトを開始し、RetryManagerに保存されたシーン（死亡したシーン）を読み込む
     /// </summary>
     public void StartFadeOutAndLoad()
     {
-        // RetryManagerに保存されているシーン名を取得
-        // ※直接起動した場合などでシーン名が空の場合は、安全策として現在のシーンを読み込む
+        Debug.Log($"<color=yellow>[Fader] RetryManagerに保存されているシーン名: '{RetryManager.LastSceneName}'</color>");
+
         string targetScene = string.IsNullOrEmpty(RetryManager.LastSceneName)
             ? SceneManager.GetActiveScene().name
             : RetryManager.LastSceneName;
 
-        // フェードアウトとシーン読み込みのコルーチンを開始
+        Debug.Log($"<color=yellow>[Fader] 最終的に遷移しようとしているシーン名: '{targetScene}'</color>");
+
         StartCoroutine(FadeOutAndLoadRoutine(_duration, targetScene));
+    }
+
+    /// <summary>
+    /// 【ステージセレクトボタン等用】
+    /// UIボタンから呼び出し、引数で指定した任意のシーン名へフェードアウトして遷移する
+    /// </summary>
+    /// <param name="sceneName">遷移先のシーン名（例："SelectScene"）</param>
+    public void LoadSpecificScene(string sceneName)
+    {
+        StartCoroutine(FadeOutAndLoadRoutine(_duration, sceneName));
     }
 
     /// <summary>
@@ -89,10 +97,7 @@ public class GenericFaderTrue : MonoBehaviour
     /// </summary>
     private IEnumerator FadeOutAndLoadRoutine(float duration, string sceneName)
     {
-        // フェードアウトが完全に終わるまで待機
         yield return FadeOut(duration);
-
-        // ターゲットのシーンを読み込む
         SceneManager.LoadScene(sceneName);
     }
 }

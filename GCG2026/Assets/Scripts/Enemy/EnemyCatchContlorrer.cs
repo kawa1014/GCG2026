@@ -100,8 +100,16 @@ public class EnemyCatchController : MonoBehaviour
         // 赤色のフェードイン画面が真っ赤になっていく処理
         yield return RedFadeRoutine();
 
-        // ゲームオーバーシーンへ遷移
-        SceneManager.LoadScene(GameOverSceneName);
+        // 直接シーン遷移せず、GameManagerのゲームオーバー処理（捕獲死因）を呼び出す
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.MaxOutFearAndGameOver();
+        }
+        else
+        {
+            // 万が一GameManagerが存在しない場合の保険
+            SceneManager.LoadScene(GameOverSceneName);
+        }
     }
 
     /// <summary>
