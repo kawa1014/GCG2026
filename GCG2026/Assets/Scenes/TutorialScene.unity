@@ -42994,11 +42994,44 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5340450421363002372, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_SortingOrder
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 6490487375573049699, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
       propertyPath: m_Name
       value: PauseCanvas
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1591703675}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OpenOptionScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Pause, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919327952427341150, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5760371366863448995, guid: 6f6108af10740a744934610eb8fa861d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -47614,7 +47647,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -48543,7 +48576,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -54744,7 +54777,6 @@ SceneRoots:
   - {fileID: 812306113}
   - {fileID: 53177877}
   - {fileID: 112469528}
-  - {fileID: 1679931029}
   - {fileID: 430263011}
   - {fileID: 1363843593}
   - {fileID: 556297202}
@@ -55337,4 +55369,5 @@ SceneRoots:
   - {fileID: 586872388}
   - {fileID: 176376433}
   - {fileID: 1382183838}
+  - {fileID: 1679931029}
   - {fileID: 220715598}

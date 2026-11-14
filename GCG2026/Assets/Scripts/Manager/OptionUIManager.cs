@@ -34,9 +34,15 @@ public class OptionUIManager : MonoBehaviour
     [Tooltip("オプション画面を閉じるボタン（exitボタン）")]
     [SerializeField] private Button _closeButton;
 
+    [Header("EventSystem設定")]
+    [SerializeField] private GameObject _optionEventSystem;
+
     // ★追加：フェード処理を行うスクリプトへの参照（クラス名はそのままNewMonoBehaviourScriptを使用）
     [Tooltip("タイトルへ戻るフェード演出用。ヒエラルキーのFadeControllerをアタッチしてください")]
     [SerializeField] private NewMonoBehaviourScript _fadeScript;
+
+    [Header("フェード画像設定")]
+    [SerializeField] private GameObject _fadeImageObject;
 
     // 保存キー
     private const string KeyMasterVolume = "MasterVolume";
@@ -45,8 +51,37 @@ public class OptionUIManager : MonoBehaviour
     private const string KeyGammaValue = "GammaValue";
     private const string KeyCameraSensitivity = "CameraSensitivity";
 
+    private void Awake()
+    {
+        // シーンが複数ある場合（ゲーム中から開かれた場合）
+        if (SceneManager.sceneCount > 1)
+        {
+            // そもそもオフのままなのでエラーは叫ばない。安全に削除する
+            if (_optionEventSystem != null) Destroy(_optionEventSystem);
+        }
+        else
+        {
+            // タイトルから単独で開かれた場合のみ、叩き起こす（オンにする）
+            if (_optionEventSystem != null) _optionEventSystem.SetActive(true);
+        }
+    }
+
     private void Start()
     {
+        // もしゲーム中（ポーズ画面）から開かれた場合は、フェードの黒い画面を無効化する
+        if (PlayerPrefs.GetInt("FromGameScene", 0) == 1)
+        {
+            if (_fadeScript != null)
+            {
+                _fadeScript.gameObject.SetActive(false);
+            }
+
+            if (_fadeImageObject != null) _fadeImageObject.SetActive(false);
+            // 使い終わったフラグは0にリセットしておく
+            PlayerPrefs.SetInt("FromGameScene", 0);
+            PlayerPrefs.Save();
+        }
+
         LoadSettings();
         RegisterEvents();
         SwitchPanel(0);

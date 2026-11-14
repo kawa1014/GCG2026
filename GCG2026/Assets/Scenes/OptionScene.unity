@@ -316,9 +316,6 @@ GameObject:
   - component: {fileID: 112591362}
   - component: {fileID: 112591365}
   - component: {fileID: 112591364}
-  - component: {fileID: 112591363}
-  - component: {fileID: 112591366}
-  - component: {fileID: 112591367}
   m_Layer: 5
   m_Name: AudioPanel
   m_TagString: Untagged
@@ -347,21 +344,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &112591363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112591361}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a604da24faeab814eae2460aac4bb223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AudioVolumeUI
-  bgmSource: {fileID: 0}
-  volumeSlider: {fileID: 0}
-  saveKey: BGMVolume
 --- !u!114 &112591364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,36 +382,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 112591361}
   m_CullTransparentMesh: 1
---- !u!114 &112591366
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112591361}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a604da24faeab814eae2460aac4bb223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AudioVolumeUI
-  bgmSource: {fileID: 0}
-  volumeSlider: {fileID: 0}
-  saveKey: BGMVolume
---- !u!114 &112591367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112591361}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a604da24faeab814eae2460aac4bb223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AudioVolumeUI
-  bgmSource: {fileID: 0}
-  volumeSlider: {fileID: 0}
-  saveKey: BGMVolume
 --- !u!1 &127044387
 GameObject:
   m_ObjectHideFlags: 0
@@ -850,7 +802,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &547791974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1430,7 +1382,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 869639419}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &869639421
 Camera:
   m_ObjectHideFlags: 0
@@ -2289,7 +2241,9 @@ MonoBehaviour:
   _tutorialButton: {fileID: 0}
   _tutorialSceneName: TutorialScene
   _closeButton: {fileID: 4264825386682754522}
+  _optionEventSystem: {fileID: 547791973}
   _fadeScript: {fileID: 771629276}
+  _fadeImageObject: {fileID: 1934444212}
 --- !u!1 &1823785876
 GameObject:
   m_ObjectHideFlags: 0
@@ -2706,6 +2660,10 @@ PrefabInstance:
     - target: {fileID: 6033347948589288315, guid: 4dfde7197ba1ae64687652a6c4f36b56, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnClickStartButton7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314918122068634860, guid: 4dfde7197ba1ae64687652a6c4f36b56, type: 3}
+      propertyPath: m_SortingOrder
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8482583437891424883, guid: 4dfde7197ba1ae64687652a6c4f36b56, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

@@ -54,6 +54,9 @@ public class Pause : MonoBehaviour
         // y–â‘è1‚Ì‰ğŒˆzƒIƒvƒVƒ‡ƒ“‚ğŠJ‚­uŠÔ‚Éƒ|[ƒY‰æ–Ê‚ÌUI‚ğˆê’U‰B‚·
         if (pauseCanvas != null) pauseCanvas.SetActive(false);
 
+        PlayerPrefs.SetInt("FromGameScene", 1);
+        PlayerPrefs.Save();
+
         SceneManager.LoadScene("OptionScene", LoadSceneMode.Additive);
     }
 
