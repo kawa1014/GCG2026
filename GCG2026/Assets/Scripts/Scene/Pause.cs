@@ -6,6 +6,9 @@ public class Pause : MonoBehaviour
     [SerializeField] private GameObject pauseCanvas;
     private bool isPaused = false;
 
+    [Header("Quit時の遷移先シーン名")]
+    [SerializeField] private string _stageSelectSceneName = "SelectScene";
+
     void Start()
     {
         if (pauseCanvas != null) pauseCanvas.SetActive(false);
@@ -64,5 +67,15 @@ public class Pause : MonoBehaviour
     public void ReturnFromOption()
     {
         if (pauseCanvas != null) pauseCanvas.SetActive(true);
+    }
+
+    // Quitボタンに割り当てるメソッド
+    public void QuitGame()
+    {
+        // 1. 止めていた時間を元に戻す（超重要）
+        Time.timeScale = 1.0f;
+
+        // 2. 遷移先のシーン（ステージセレクト画面）を読み込む
+        SceneManager.LoadScene(_stageSelectSceneName);
     }
 }
