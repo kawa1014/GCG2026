@@ -52070,6 +52070,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54c489519601ca749b5505456b9df31e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TutorialRoomEntranceTrigger
+  tutorialCaller: {fileID: 11681703}
 --- !u!1001 &2030746060
 PrefabInstance:
   m_ObjectHideFlags: 0
